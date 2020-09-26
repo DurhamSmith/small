@@ -9,7 +9,9 @@
 (defmethod initialize-instance :after ((strand dna-helix-strand) &key)
   "Creates all DNA-NT CHEM-OBJS for the strand"
   ;; Loop for length and
-  ;;; Rotate vbb and scale vaxis to get nts 
+  ;;; Rotate vbb and scale vaxis to get nts vbb and cm. use helixs vn and create nts with them (setting prev and next appropriately)
+  
+  
   )
 
 (defun make-helix-strand (va vbb len &opt tfms seq)

@@ -1,4 +1,5 @@
 (in-package :small)
+;;;; NOTE: strand nt subobjs should can contain ids nt number in that strands sequence, them the strand can be gotten (traverse length) or the strand and its partner can be gotten (traverse prev next) or check if a strand is a solo strand or part of a  composite one (len = prev-next traversal len
 
 (defclass/std dna-strand (dna)
   ((vaxis :doc "A vector pointing in the 5'->3' direction")
