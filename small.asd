@@ -29,5 +29,7 @@
   :pathname "tests/"
   :serial t
   :components ((:file "package")
-               (:file "chem-obj-tests")))
+               (:file "chem-obj-tests")
+	       (:file "dna-tests")
+	       (:file "dna-tile-tests")))
 
