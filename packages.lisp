@@ -1,4 +1,4 @@
 (defpackage :small
-  (:use #:cl #:prove #:asdf #:magicl))
+  (:use #:cl #:asdf #:magicl))
 
 (in-package :small)

@@ -10,3 +10,8 @@
 
 
 
+;; (describe 'chem-obj)
+
+
+;; (type-of (make-instance 'chem-obj))
+;; (class-of (make-instance 'chem-obj))
