@@ -10,7 +10,15 @@
 
 
 
-;; (describe 'chem-obj)
+(defgeneric connect (o1 o2 &key &allow-other-keys)
+  (:documentation "Connects two chem-objs. Rules for these should be written for each type of connections that should be written as generic functions that specialize on them. Examples of connects are joining of nucleotides to form DNA strands or connecting nanoparticles to DNA strands")
+  (:method ((o1 chem-obj) (o2 chem-obj) &key &allow-other-keys)
+    (error "There is no valid connection type between ~A and ~A" (class-of o1) (class-of o2))
+    ))
+
+    
+(find-class 'chem-obj)
+;;(describe 'chem-obj)
 
 
 ;; (type-of (make-instance 'chem-obj))

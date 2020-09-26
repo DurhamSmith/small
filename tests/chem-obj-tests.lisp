@@ -1,9 +1,10 @@
 (in-package #:small-tests)
 
-(define-test numbers
-  (of-type integer 5)
-  (true (numberp 2/3))
-  (false (numberp :keyword))
-  (is-values (values 0 "1")
-    (= 0)
-    (equal "1")))
+(define-test "Test chem-obj class"
+  
+  (define-test "Test connecting two chem-objs without specialized connect methods fail"
+    (skip "Not ready yet"
+      (is = 0 1)
+      (is = 0 1)
+      (is = 0 1))))
+  
