@@ -6,3 +6,9 @@
   (:documentation "A class for DNA chem-objs. Defines constants and connect methods"))
 
 (describe 'dna)
+
+
+(defgeneric make-partner (obj)
+  (:documentation "Return a complementary DNA CHEM-OBJ for the given DNA CHEM-OBJ")
+  (:method ((obj dna))
+    (error "generic function #'make-partner not implemented for ~A" (class-of obj))))
