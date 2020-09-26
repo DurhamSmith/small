@@ -16,9 +16,12 @@
   ;; 			  ((add-to-scaff (create-triangle tile k))
   ;; 			   (when (between k 1 3)
   ;; 			     (add-to-scaff (scaff-bridge k)))))
-  ;; (create-staples)
+  ;; (add-staples (create-staple-briges))
   )
 
+
+(defmethod create-staple-bridges (tile dna-tile)
+  "Creates all the staple bridges to connect triangle 1-4 together. Returns a list of DNA-SINGLE-STRAND's")
 
 (describe #'create-triangle)
 (defmethod create-triangle ((tile dna-tile) k)
@@ -41,7 +44,7 @@
   (make-instance 'dna-tile-triangle :tfms tfms))
 
 (defmethod initialize-instance :after ((tri dna-tile-triangle) &key)
-  "Create the dna-origami chem-objs that represent the the scaffold strand (scaff helixes = 2r = 22, scaff loops = 21, scaff bridges not included) and staple strands (TODO NUMBER, this excludes staples that also form staple bridges)"
+  "Create the dna-origami chem-objs that represent the scaffold strand (scaff helixes = 2r = 22, scaff loops = 21, scaff bridges not included) and staple strands (TODO NUMBER, this excludes staples that also form staple bridges)"
   ;; 1: Create scaff helixes
   ;;; Get starting positions of the bases on the 5' and 3' end of helix i
   ;;; Get vec for 5-3 dir of helix axis
