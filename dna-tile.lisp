@@ -48,7 +48,7 @@
   ;; 1: Create scaff helix
   ;;; Get starting positions of the bases on the 5' and 3' end of helix i
   ;;; Get vec for 5-3 dir of helix axis
-  ;;; Get a unit vec that point in the direction from where the scaffold base joins the backbone (i.e opposite of oxdna backbone-base vec but the same as the paper theta on page 8 of the SI) in the two-dimensional plane of the j th base pair in the i th row). This vec should be perpendicular to v5-3 but doesn't need to be (e.g. in strained models)
+  ;;; Get vbb = theta on page 8 of the papers sup info
   ;;; Create a double helix strand and add it to scaff-subobjs
   ;; 2: Create scaff loops
   ;;; vaxis points from helix i's last scaff nt (3' end) and helix i+1's first scaff nt (5' end)
