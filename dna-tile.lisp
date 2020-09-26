@@ -24,13 +24,13 @@
   "Creates all the staple bridges to connect triangle 1-4 together. Returns a list of DNA-SINGLE-STRAND's")
 
 (describe #'create-triangle)
-(defmethod create-triangle ((tile dna-tile) k)
-  "Returns a triangle DNA structure correctly rotated for the position of its index, k"
-  ;(make-tile :tfms equal)
+(defun create-triangle (&opt (k 1))
+  "Returns a DNA-TILE-TRIANGLE CHEM-OBJ correctly rotated for the position of its index, k"
+  ;(make-dna-tile-triangle :tfms equal)
 )
 
 (defmethod scaff-bridge ((tile dna-tile) k &key num-nts)
-  "Create and returns a dna-single-strand which originates at nucleotide ai of triangle k's 2r-th helixes scaffold strand (SC_{k,2r,a_{2r}}) and ends at (SC_{(k+1),1,a_1}). num-nts nuclotides are added, if num-nts are not specified then $\frac{euclidean dist}{single-nt-len}"
+  "Create and returns a DNA-SINGLE-STRAND which originates at NUCLEOTIDE ai of DNA-TILE-TRIANGLE k's 2r-th helixes scaffold DNA-SINGLE (SC_{k,2r,a_{2r}}) and ends at (SC_{(k+1),1,a_1}). num-nts nuclotides are added, if num-nts are not specified then $\frac{euclidean dist}{single-nt-len}"
   )
 
 
@@ -38,14 +38,14 @@
 ;; dna-tile-triangle class. A composite chem-obj used in the construction of dna-tile 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defclass/std dna-tile-triangle (dna-origami)
-  (:documentation "A dna-origami chem-obj that contains the scaffold strand (including scaff loops, excluding scaff bridges) and staple strands (excluding those that that also form staple bridges)"))
+  (:documentation "A DNA-ORIGAMI CHEM-OBJ that contains the scaffold strand (including scaff loops, excluding scaff bridges) and staple strands (excluding those that that also form staple bridges)"))
 
 (defun make-dna-tile-triangle (&key tfms)
   (make-instance 'dna-tile-triangle :tfms tfms))
 
 (defmethod initialize-instance :after ((tri dna-tile-triangle) &key)
   "Create the dna-origami chem-objs that represent the scaffold strand (scaff helixes = 2r = 22, scaff loops = 21, scaff bridges not included) and staple strands (TODO NUMBER, this excludes staples that also form staple bridges)"
-  ;; 1: Create scaff helixes
+  ;; 1: Create scaff helix
   ;;; Get starting positions of the bases on the 5' and 3' end of helix i
   ;;; Get vec for 5-3 dir of helix axis
   ;;; Get a unit vec that point in the direction from where the scaffold base joins the backbone (i.e opposite of oxdna backbone-base vec but the same as the paper theta on page 8 of the SI) in the two-dimensional plane of the j th base pair in the i th row). This vec should be perpendicular to v5-3 but doesn't need to be (e.g. in strained models)
