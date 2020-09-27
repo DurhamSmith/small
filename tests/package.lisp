@@ -1,5 +1,5 @@
 (defpackage :small-tests
-  (:use #:cl #:small #:parachute))
+  (:use #:cl #:parachute  #:small))
 
 (in-package :small-tests)
 
