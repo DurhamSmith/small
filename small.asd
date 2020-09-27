@@ -8,8 +8,8 @@
   :components ((:file "packages")
 	       (:file "linear-algebra")
 	       (:file "chem-obj")
-	       ;; (:file "dna" :depends-on ("chem-obj"))
-	       ;; (:file "dna-nt" :depends-on ("dna"))
+	       (:file "dna" :depends-on ("chem-obj"))
+	       (:file "dna-nt" :depends-on ("dna"))
 	       ;; (:file "dna-strand" :depends-on ("dna-nt"))
 	       ;; (:file "dna-single-strand" :depends-on ("dna-strand"))
 	       ;; (:file "dna-helix-strand" :depends-on ("dna-strand"))
@@ -31,7 +31,7 @@
   :serial t
   :components ((:file "package")
                (:file "chem-obj-tests")
-	       ;; (:file "dna-tests")
+	       (:file "dna-nt-tests")
 	       ;; (:file "dna-tile-tests")
 	       ))
 
