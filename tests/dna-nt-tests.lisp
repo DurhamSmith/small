@@ -17,3 +17,15 @@
 
 
 
+(define-test "Test oxdna-config"
+  :parent dna-nt-suite
+  (let* ((cm (v3 1 0 0))
+	 (vbb (v3 0 1 0))
+	 (vn (v3 0 0 1))
+	 (nt (make-dna-nt :cm cm :vbb vbb :vn vn)))
+    (is equal
+	"1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0"
+	(oxdna-config nt))))
+
+
+

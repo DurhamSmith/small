@@ -19,7 +19,7 @@
   (tref v3 2))
 
 
-(defun print-v3 (v3 &key (stream t) (prepend "") (append ""))
+(defun print-v3 (v3 &key (stream nil) (prepend "") (append ""))
   "Prints V3 to stream."
   (format stream "~A~f ~f ~f~A" prepend (x v3) (y v3) (z v3) append))
 

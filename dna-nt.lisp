@@ -26,17 +26,13 @@
 (defgeneric oxdna-config (obj &key &allow-other-keys)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key &allow-other-keys)
-    (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L))
-	(concatenate 'string
-		     (print-v3 cm)
-		     (print-v3 vbb)
-		     (print-v3 vn)
-		     (print-v3 v)
-		     (print-v3 L))
-    ))
-  
+    (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) obj
+      (concatenate 'string 
+		   (print-v3 cm)
+		   (print-v3 vbb :prepend " ")
+		   (print-v3 vn :prepend " ")
+		   (print-v3 v :prepend " ")
+		   (print-v3 L :prepend " ")))))
 
-  (concatenate 'string
-	       (print-v3 (v3 1 1 1))
-	       ""
-		     (print-v3 (v3 1 1 1)))
+
+
