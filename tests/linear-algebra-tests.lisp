@@ -21,4 +21,5 @@
     (is = 2d0 (z v))))
 
 (define-test "print-v3 outputs correctly"
-  (is equal "1.0 2.0 3.0" (print-v3 (v3 1 2 3) :stream nil)))
+  (is equal "1.0 2.0 3.0" (print-v3 (v3 1 2 3) :stream nil))
+  (is equal "pre1.0 2.0 3.0app" (print-v3 (v3 1 2 3) :stream nil :prepend "pre" :append "app")))
