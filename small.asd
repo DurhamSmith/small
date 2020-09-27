@@ -30,6 +30,7 @@
   :pathname "tests/"
   :serial t
   :components ((:file "package")
+	       (:file "linear-algebra-tests")
                (:file "chem-obj-tests")
 	       (:file "dna-nt-tests")
 	       ;; (:file "dna-tile-tests")

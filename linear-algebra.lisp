@@ -9,6 +9,22 @@
     v))
 
 
+(defun x (v3)
+  (tref v3 0))
+
+(defun y (v3)
+  (tref v3 1))
+
+(defun z (v3)
+  (tref v3 2))
+
+
+(defun print-v3 (v3 &key (stream t))
+  "Prints V3 to stream"
+  (format stream "~f ~f ~f" (x v3) (y v3) (z v3)))
+
+
+
 (shape (v3 0 0 0))
 
 

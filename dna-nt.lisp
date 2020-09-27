@@ -17,7 +17,13 @@
 ;;;; Creation Functions
 (defun make-dna-nt (&key cm vbb vn tfms)
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
-  (make-instance 'dna-nt :cm cm :vbb vbb :vn vn))
+  (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :tfms tfms ))
 
-
+(defgeneric oxdna-config (obj &key &allow-other-keys)
+  (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
+  (:method ((obj dna-nt) &key &allow-other-keys)
+    ;; (print-v3)
+    t
+    ))
   
+
