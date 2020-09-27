@@ -17,5 +17,7 @@
 ;;;; Creation Functions
 (defun make-dna-nt (&key cm vbb vn tfms)
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
-  (make-instance 'dna-nt))
+  (make-instance 'dna-nt :cm cm :vbb vbb :vn vn))
+
+
   
