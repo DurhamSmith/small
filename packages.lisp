@@ -12,6 +12,7 @@
 	   #:next
 	   #:dna-nt   ; DNA-NT CHEM-OBJ related
 	   #:make-dna-nt
+	   #:connect-nts
 	   #:oxdna-config))
 
 (in-package :small)

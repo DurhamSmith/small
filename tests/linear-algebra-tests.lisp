@@ -6,13 +6,14 @@
 	 (z 3)
 	 (type-spec '(double-float))
 	 (v (v3 x y z))
-	 (vx (tref v3 0))
-	 (vy (tref v3 1))
-	 (vz (tref v3 2)))
+	 (vx (x v))
+	 (vy (y v))
+	 (vz (z v)))
     (is = vx (coerce x type-spec))
     (is = vy (coerce y type-spec))
     (is = vz (coerce z type-spec))
-    (is = (shape v) 3)))
+    (is equal '(3) (magicl:shape v))))
+
 
 (define-test "Test v3 accessor fns: x, y z"
   (let* ((v (v3 0 1 2)))

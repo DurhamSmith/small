@@ -58,9 +58,46 @@
 
 ;;; Implementation of CHEM-OBJs required method
 
+
+
+(defun connect-nts (&rest nts)
+  "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided"
+  ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
+   (append (mapcar #'connect nts (cdr nts)) (last nts)))
+	
+
+
+;;;; THIS IS MORE FOR TRAVERSAL
+;; (defun connect-nts (&rest nts)
+;;   "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided" ;TODO better list traversal
+;;   ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
+;;   (when (< (length nts) 2)
+;;     (error "DNA-NT:CONNECT-NTS requires at least two nucleotides. Got: ~A" nts))
+;;   (let* ((orig (first nts))
+;; 	 (nt orig)
+;; 	 (prev-nts (loop while (prev nt) 
+;; 			 do (setf nt (prev nt))
+;; 			 collect (nt)))
+;; 	 (nt orig)
+;; 	 (next-nts (loop while (next nt) 
+;; 			 do (setf nt (next nt))
+;; 			 collect (nt)))
+;; 	 (all-nts (append prev-nts
+;; 			  (list orig)
+;; 			  next-nts)))
+;;     all-nts))
+      
+	
+
 (defmethod connect ((o1 dna-nt) (o2 dna-nt) &key &allow-other-keys)
   "Sets (next o1) = o2 and (prev o2) = o1"
   (setf (next o1) o2)
   (setf (prev o2) o1)
   o1)
   
+
+
+(defun containing-strand (nt)
+  "Returns an ordered list of all the DNA-NT connected to nt. The car of the list is the most (prev nt) of all DNA-NTs connected to nt"
+  t  
+)
