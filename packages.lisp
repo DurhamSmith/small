@@ -11,6 +11,7 @@
 	   #:prev
 	   #:next
 	   #:dna-nt   ; DNA-NT CHEM-OBJ related
+	   #:base
 	   #:make-dna-nt
 	   #:connect-nts
 	   #:connected-nts

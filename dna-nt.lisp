@@ -75,25 +75,17 @@
 (defgeneric oxdna-topology (obj &key all start prev next strand) ;TODO check param list (maybe use &rest &allow-other-keys)
   (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1))
-    (with-accessors ((base base)) obj
-      (oxdna-topology-from-seq base :start start :prev prev))))
+    (let* ((bases (if all
+		      (reduce #'(lambda (nts nt)
+				  (concatenate 'string nts (base nt)))
+			      (connected-nts obj)
+			      :initial-value "")
+		      (base obj))))
+      (oxdna-topology-from-seq bases :start start :prev prev))))
 
 
-
-
-
-
-;; (defun connected-nts (nt)
-;;   "Returns a LIST of DNA-NT, ordered 5'->3"
-;;   (let* ((first-nt (do () 
-
-
-
-
-;;;; THIS IS MORE FOR TRAVERSAL
 (defun connected-nts (nt)
-  "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided" ;TODO better list traversal
-  ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
+  "Returns a LIST of DNA-NT, ordered 5'->3"
   (let* ((orig nt)
 	 (prev-nts (reverse (loop while (prev nt) 
 				  do (setf nt (prev nt))
@@ -109,9 +101,7 @@
 
 
 
-;;; Implementation of CHEM-OBJs required method
-
-
+;;; Implementation of CHEM-OBJs required methods
 
 (defun connect-nts (&rest nts)
   "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided"
