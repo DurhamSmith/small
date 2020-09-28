@@ -27,6 +27,16 @@
 	"1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0"
 	(oxdna-config nt))))
 
+(define-test "Test DNA-NT:CONNECT"
+  :parent dna-nt-suite
+  (let* ((v (v3 1 1 1))
+	 (-v (magicl:scale v -1))
+	 (nt1 (make-dna-nt :cm v :vbb v :vn v))
+	 (nt2 (make-dna-nt :cm -v :vbb -v :vn -v)))
+    (isnt eq nt1 nt2)
+    (connect nt1 nt2)
+    (is eq nt2 (next nt1))))
 
+	 
+    
 
-(zerop -0d0)

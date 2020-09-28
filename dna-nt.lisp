@@ -57,3 +57,10 @@
 
 
 ;;; Implementation of CHEM-OBJs required method
+
+(defmethod connect ((o1 dna-nt) (o2 dna-nt) &key &allow-other-keys)
+  "Sets (next o1) = o2 and (prev o2) = o1"
+  (setf (next o1) o2)
+  (setf (prev o2) o1)
+  o1)
+  
