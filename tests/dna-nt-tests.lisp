@@ -29,7 +29,7 @@
 
 
 
-(define-test "Test DNA-NT:oxdna-topology"
+(define-test "Test DNA-NT:oxdna-topology single DNA-NT only"
   :parent dna-nt-suite
   (let* ((cm (v3 1 0 0))
 	 (vbb (v3 0 1 0))
@@ -41,6 +41,27 @@
 	(oxdna-topology nt)
       (is equal ans-top top)
       (is equal ans-header header))))
+
+
+(define-test "Test DNA-NT:oxdna-topology traversing multiple nts"
+  (let* ((v1 (v3 1 1 1))
+	 (nt1 (make-dna-nt :base "G"))
+	 (nt2 (make-dna-nt :base "C"))
+	 (nt3 (make-dna-nt :base "G"))
+	 (nt4 (make-dna-nt :base "T"))
+	 (nt5 (make-dna-nt :base "T"))
+	 (nt6 (make-dna-nt :base "G"))
+	 (ans-top '("1 G -1 1" "1 C 0 2" "1 G 1 3" "1 T 2 4" "1 T 3 5" "1 G 4 -1"))
+	 (ans-header "6 1"))
+    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
+    (multiple-value-bind (top header)
+	(oxdna-topology nt4 :all t)
+      (is equal ans-top top)
+      (is equal ans-header header))))
+
+
+
+
 
 
 (define-test "Test DNA-NT:CONNECT"
