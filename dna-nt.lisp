@@ -27,22 +27,22 @@
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
-(fmakunbound 'oxdna-topology)
-(defgeneric oxdna-topology (obj &key all start prev next strand) ;TODO check param list (maybe use &rest &allow-other-keys)
+
+(defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;TODO check param list (maybe use &rest &allow-other-keys)
   (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
-  (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1))
+  (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1) (inc-headers t))
     (let* ((bases (if all
 		      (reduce #'(lambda (nts nt)
 				  (concatenate 'string nts (base nt)))
 			      (connected-nts obj)
 			      :initial-value "")
 		      (base obj))))
-      (oxdna-topology-from-seq bases :start start :prev prev))))
+      (oxdna-topology-from-seq bases :start start :prev prev :inc-headers inc-headers))))
 
 
-(defgeneric oxdna-config (obj &key &allow-other-keys)
+(defgeneric oxdna-config (obj &key all inc-headers)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
-  (:method ((obj dna-nt) &key &allow-other-keys)
+  (:method ((obj dna-nt) &key (all nil) (inc-headers t))
     (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) obj
       (let* ((oxbb (scale vbb -1)) ;oxDNA needs these vecs in the opposite direction of how we store them
 	     (oxn (scale vn -1)))
@@ -72,12 +72,14 @@ start: (for topology) the starting index to be used for the .top file's first DN
 prev: (for topology) the index to be used for DNA-NT before the first DNA-NT in the .top file. -1 means not connected to another nt ('INTEGER)
 next: (for topology) the index to be used for DNA-NT after the last DNA-NT in the .top file. -1 means not connected to another nt('INTEGER)
 strand: (for topology) the strand number to be used for the .top file ('INTEGER)")
-  (:method ((obj dna-nt) &key (all t) (start 0) (prev -1) (next -1) (strand 1))
-   
-    ))
+  (:method ((obj dna-nt) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
+    (let* ((nts (connected-nts obj)))))
+  )
+		
 
-(defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1))
-  "Returns VALUES 0: (list 'string) of topologly lines 1: topology-header 'string"
+(defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1) (inc-headers t))
+  "Returns VALUES 0: (list 'string) of topologly lines 1: topology-header 'string
+If inc-headers = true the header strings are prepended to the list of topology strings"
   (when (< (length seq) 1)
     (error "oxdna-topology-from-seq seq cannot be empty. It is: ~A" seq))
   (unless (typep seq 'STRING)
@@ -86,20 +88,24 @@ strand: (for topology) the strand number to be used for the .top file ('INTEGER)
 	 (end (+ start (- len 1)))
 	 (top-header (format nil "~A ~A" len strand-num))
 	 (top-lines (loop for i from start upto end collect ;TODO better use of step forms
-					      (let* ((i+1 (+ i 1))
-						     (i-1 (- i 1))
-						     (pnt (if (= i start)
-							      prev
-							      i-1))
-						     (nnt (if (= i end)
-							      next
-							      i+1))
-						     (base (subseq seq
-								   (- i start)
-								   (- i+1 start)))
-						     (nt-top (format nil "~A ~A ~A ~A"
-								     strand-num base pnt nnt)))
-						nt-top))))
+						    (let* ((i+1 (+ i 1))
+							   (i-1 (- i 1))
+							   (pnt (if (= i start)
+								    prev
+								    i-1))
+							   (nnt (if (= i end)
+								    next
+								    i+1))
+							   (base (subseq seq
+									 (- i start)
+									 (- i+1 start)))
+							   (nt-top (format nil "~A ~A ~A ~A"
+									   strand-num base pnt nnt)))
+						      nt-top)))
+	 (top-lines (if inc-headers
+			(append (list top-header) top-lines)
+			top-lines)))
+    (break "~A inc ~A ~A" top-lines inc-headers (null inc-headers))
     (values top-lines top-header)))
 
 

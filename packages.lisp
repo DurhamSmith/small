@@ -19,6 +19,7 @@
 	   #:connected-nts
 	   #:oxdna-config
 	   #:oxdna-topology
-	   #:oxdna-topology-from-seq))
+	   #:oxdna-topology-from-seq
+	   #:write-oxdna))
 
 (in-package :small)

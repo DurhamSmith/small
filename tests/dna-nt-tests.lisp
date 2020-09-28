@@ -38,7 +38,7 @@
 	 (ans-top '("1 G -1 -1"))
 	 (ans-header "1 1"))
     (multiple-value-bind (top header)
-	(oxdna-topology nt)
+	(oxdna-topology nt :inc-headers nil)
       (is equal ans-top top)
       (is equal ans-header header))))
 
@@ -55,7 +55,7 @@
 	 (ans-header "6 1"))
     (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
     (multiple-value-bind (top header)
-	(oxdna-topology nt4 :all t)
+	(oxdna-topology nt4 :all t :inc-headers nil)
       (is equal ans-top top)
       (is equal ans-header header))))
 
@@ -110,8 +110,6 @@
 
 
 
-
-
 (define-test "Test (oxdna-topology-from-seq ...)"
   (let* ((seq "GCGTTG")
 	 (ans1 '("1 G -1 1" "1 C 0 2" "1 G 1 3" "1 T 2 4" "1 T 3 5" "1 G 4 -1"))
@@ -119,23 +117,42 @@
 	 (ans3 '("2 G 0 11" "2 C 10 12" "2 G 11 13" "2 T 12 14" "2 T 13 15" "2 G 14 99"))
 	 (ans-header "6 1"))
     (multiple-value-bind (lines header)
-	(oxdna-topology-from-seq seq)
+	(oxdna-topology-from-seq seq :inc-headers nil)
       (is equal ans1 lines)
       (is equal ans-header header))
     (multiple-value-bind (lines header)
-	(oxdna-topology-from-seq seq :start 10 :prev 0 :next 99)
+	(oxdna-topology-from-seq seq :start 10 :prev 0 :next 99 :inc-headers nil)
       (is equal ans2 lines)
       (is equal ans-header header))
     (multiple-value-bind (lines header)
-	(oxdna-topology-from-seq seq :prev 0 :start 10 :next 99 :strand-num 2)
-      (is equal ans3 lines)
-      (is equal "6 2" header))))
+	(oxdna-topology-from-seq seq :prev 0 :start 10 :next 99 :strand-num 2 :inc-headers nil)
+      (is equal "6 2" header)
+      (is equal ans3 lines))
+    (multiple-value-bind (lines header)
+	(oxdna-topology-from-seq seq :inc-headers t)
+      (is equal (append (list ans-header) ans1) lines)
+      (is equal ans-header header))))
 
 
-(append '(1 2) '(2 3))
+(define-test "TEST: (write-oxdna 'DNA-NT :all t)"
+  (let* ((v1 (v3 1 1 1))
+	 (v2 (magicl:scale v1 2))
+	 (v3 (magicl:scale v1 3))
+	 (v4 (magicl:scale v1 4))
+	 (v5 (magicl:scale v1 5))
+	 (v6 (magicl:scale v1 6))
+	 (nt1 (make-dna-nt :cm v1 :vbb v1 :vn v1 :base "G")) 
+	 (nt2 (make-dna-nt :cm v2 :vbb v2 :vn v2 :base "C"))
+	 (nt3 (make-dna-nt :cm v3 :vbb v3 :vn v3 :base "G"))
+	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
+	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
+	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G")))
+    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
+    (write-oxdna nt4 :filename "write-oxdna-test")))
 
 (define-test "TEST: oxdna->file"
   ;; TODO cm, vbb, vn are all in the same. Not a physical use case
+  (skip "Not ready yet")
   (let* ((v1 (v3 1 1 1))
 	 (v2 (magicl:scale v1 2))
 	 (v3 (magicl:scale v1 3))
@@ -152,5 +169,5 @@
     (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
     (oxdna->file "oxtest"
 		 (mapcar #'oxdna-config (connected-nts nt4))
-		 (oxdna-topology nt4 :all t)))
+		 (oxdna-topology nt4 :all t))))
     
