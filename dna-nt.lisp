@@ -27,6 +27,19 @@
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
+(fmakunbound 'oxdna-topology)
+(defgeneric oxdna-topology (obj &key all start prev next strand) ;TODO check param list (maybe use &rest &allow-other-keys)
+  (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
+  (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1))
+    (let* ((bases (if all
+		      (reduce #'(lambda (nts nt)
+				  (concatenate 'string nts (base nt)))
+			      (connected-nts obj)
+			      :initial-value "")
+		      (base obj))))
+      (oxdna-topology-from-seq bases :start start :prev prev))))
+
+
 (defgeneric oxdna-config (obj &key &allow-other-keys)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key &allow-other-keys)
@@ -48,6 +61,20 @@
     (write-list conf-f conf)
     (write-list top-f top)))
 
+
+(defgeneric write-oxdna (obj &key filename all start prev next strand)
+  (:documentation "Writes a DNA CHEM-OBJ's oxDNA config and topology file to [filename].oxdna and [filename].top respectively
+
+obj: A 'DNA 'CHEM-OBJ
+filename: name that should be used for the config and top file ('STRING)
+all: if t will give the topology and config for all the DNA-NTs connected to obj ('BOOLEAN)
+start: (for topology) the starting index to be used for the .top file's first DNA-NT ('INTEGER) SEE: https://dna.physics.ox.ac.uk/index.php/Documentation#Configuration_and_topology_files
+prev: (for topology) the index to be used for DNA-NT before the first DNA-NT in the .top file. -1 means not connected to another nt ('INTEGER)
+next: (for topology) the index to be used for DNA-NT after the last DNA-NT in the .top file. -1 means not connected to another nt('INTEGER)
+strand: (for topology) the strand number to be used for the .top file ('INTEGER)")
+  (:method ((obj dna-nt) &key (all t) (start 0) (prev -1) (next -1) (strand 1))
+   
+    ))
 
 (defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1))
   "Returns VALUES 0: (list 'string) of topologly lines 1: topology-header 'string"
@@ -77,17 +104,7 @@
 
 
 
-(fmakunbound 'oxdna-topology)
-(defgeneric oxdna-topology (obj &key all start prev next strand) ;TODO check param list (maybe use &rest &allow-other-keys)
-  (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
-  (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1))
-    (let* ((bases (if all
-		      (reduce #'(lambda (nts nt)
-				  (concatenate 'string nts (base nt)))
-			      (connected-nts obj)
-			      :initial-value "")
-		      (base obj))))
-      (oxdna-topology-from-seq bases :start start :prev prev))))
+
 
 
 (defun connected-nts (nt)
