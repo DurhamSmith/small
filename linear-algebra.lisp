@@ -38,7 +38,15 @@
 
 
 
-(shape (v3 0 0 0))
+(defun print-list (file lst) 
+  "Prints each element of the lists in rest to file)"
+  ;; TODO ADD TESTS
+  (with-open-file (f file :direction :output :if-exists :supersede)
+    (dolist (l lst)
+      (format f "~A~%" l))))
+
+
+
 
 
 
