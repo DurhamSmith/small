@@ -27,6 +27,22 @@
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key &allow-other-keys)
     (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) obj
+      (let* ((oxbb (scale vbb -1)) ;oxDNA needs these vecs in the opposite direction of how we store them
+	     (oxn (scale vn -1)))
+	(concatenate 'string 
+		     (print-v3 cm)
+		     (print-v3 oxbb :prepend " ")
+		     (print-v3 oxn :prepend " ")
+		     (print-v3 v :prepend " ")
+		     (print-v3 L :prepend " "))))))
+
+
+
+(defgeneric oxdna-topology (obj &key &allow-other-keys)
+  (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
+  (:method ((obj dna-nt) &key &allow-other-keys)
+    (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) obj
+      ;;TODO Finish
       (concatenate 'string 
 		   (print-v3 cm)
 		   (print-v3 vbb :prepend " ")
@@ -36,3 +52,8 @@
 
 
 
+
+
+
+
+;;; Implementation of CHEM-OBJs required method
