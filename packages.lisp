@@ -13,6 +13,7 @@
 	   #:dna-nt   ; DNA-NT CHEM-OBJ related
 	   #:make-dna-nt
 	   #:connect-nts
+	   #:connected-nts
 	   #:oxdna-config
 	   #:oxdna-topology
 	   #:oxdna-topology-from-seq))

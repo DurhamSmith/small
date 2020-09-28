@@ -20,6 +20,8 @@
 ;;;; Generic Functions specialized on DNA CHEM-OBJs
 
 
+
+
 ;;;; Creation Functions
 (defun make-dna-nt (&key cm vbb vn base tfms)
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
@@ -81,12 +83,29 @@
 
 
 
+;; (defun connected-nts (nt)
+;;   "Returns a LIST of DNA-NT, ordered 5'->3"
+;;   (let* ((first-nt (do () 
 
 
 
 
-
-
+;;;; THIS IS MORE FOR TRAVERSAL
+(defun connected-nts (nt)
+  "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided" ;TODO better list traversal
+  ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
+  (let* ((orig nt)
+	 (prev-nts (reverse (loop while (prev nt) 
+				  do (setf nt (prev nt))
+				  collect nt)))
+	 (nt orig)
+	 (next-nts (loop while (next nt) 
+			 do (setf nt (next nt))
+			 collect nt))
+	 (all-nts (append prev-nts
+			  (list orig)
+			  next-nts)))
+    all-nts))
 
 
 
@@ -101,25 +120,7 @@
 
 
 
-;;;; THIS IS MORE FOR TRAVERSAL
-;; (defun connect-nts (&rest nts)
-;;   "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided" ;TODO better list traversal
-;;   ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
-;;   (when (< (length nts) 2)
-;;     (error "DNA-NT:CONNECT-NTS requires at least two nucleotides. Got: ~A" nts))
-;;   (let* ((orig (first nts))
-;; 	 (nt orig)
-;; 	 (prev-nts (loop while (prev nt) 
-;; 			 do (setf nt (prev nt))
-;; 			 collect (nt)))
-;; 	 (nt orig)
-;; 	 (next-nts (loop while (next nt) 
-;; 			 do (setf nt (next nt))
-;; 			 collect (nt)))
-;; 	 (all-nts (append prev-nts
-;; 			  (list orig)
-;; 			  next-nts)))
-;;     all-nts))
+
 
 
 

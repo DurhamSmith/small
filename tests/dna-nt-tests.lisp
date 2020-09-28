@@ -60,6 +60,16 @@
       (is equal ans-header header))))
 
 
+(define-test "Test DNA-NT:connected-nts"
+  (let* ((nt1 (make-dna-nt :base "G"))
+	 (nt2 (make-dna-nt :base "C"))
+	 (nt3 (make-dna-nt :base "G"))
+	 (nt4 (make-dna-nt :base "T"))
+	 (nt5 (make-dna-nt :base "T"))
+	 (nt6 (make-dna-nt :base "G"))
+	 (answer (list nt1 nt2 nt3 nt4 nt5 nt6)))
+    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
+    (is equal answer (connected-nts nt4))))
 
 
 
