@@ -38,7 +38,7 @@
 
 
 
-(defun print-list (file lst) 
+(defun write-list (file lst) 
   "Prints each element of the lists in rest to file)"
   ;; TODO ADD TESTS
   (with-open-file (f file :direction :output :if-exists :supersede)

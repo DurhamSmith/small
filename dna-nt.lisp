@@ -12,7 +12,6 @@
 	 :std "?"))
   (:documentation "A class for a DNA nucleotide CHEM-OBJ. NTs are defined similary to that of oxdna using a center of mass, a vector from base to backbone and a vector normal to the face of the base. Our vn and vbb are defined OPPOSITE to that of oxdna"))
 
-
 ;;;; Generic Functions specific to DNA CHEM-OBJs (only exist when specilized on DNA CHEM-OBJs
 
 
@@ -23,7 +22,8 @@
 
 
 ;;;; Creation Functions
-(defun make-dna-nt (&key cm vbb vn base tfms)
+(defun make-dna-nt (&key cm vbb vn (base "?") tfms)
+  ; TODO Make the arg list better. Right now things will be overwritten
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
@@ -41,6 +41,12 @@
 		     (print-v3 L :prepend " "))))))
 
 
+(defun oxdna->file (file conf top)
+  "Writes a LIST of STRINGS containing conf to [file].oxdna and LIST of STRINGS containing conf to file.conf"
+  (let* ((conf-f (concatenate 'string file ".oxdna"))
+	 (top-f (concatenate 'string file ".top")))
+    (write-list conf-f conf)
+    (write-list top-f top)))
 
 
 (defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1))

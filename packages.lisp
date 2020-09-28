@@ -4,7 +4,9 @@
 	   #:x
 	   #:y
 	   #:z
-	   #:print-v3 
+	   #:print-v3
+	   #:write-list ; MISC
+	   #:oxdna->file
 	   #:chem-obj ; CHEM-OBJ related 
 	   #:connect
 	   #:dna      ; DNA CHEM-OBJ related

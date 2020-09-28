@@ -112,7 +112,6 @@
 
 
 
-
 (define-test "Test (oxdna-topology-from-seq ...)"
   (let* ((seq "GCGTTG")
 	 (ans1 '("1 G -1 1" "1 C 0 2" "1 G 1 3" "1 T 2 4" "1 T 3 5" "1 G 4 -1"))
@@ -133,3 +132,25 @@
       (is equal "6 2" header))))
 
 
+(append '(1 2) '(2 3))
+
+(define-test "TEST: oxdna->file"
+  ;; TODO cm, vbb, vn are all in the same. Not a physical use case
+  (let* ((v1 (v3 1 1 1))
+	 (v2 (magicl:scale v1 2))
+	 (v3 (magicl:scale v1 3))
+	 (v4 (magicl:scale v1 4))
+	 (v5 (magicl:scale v1 5))
+	 (v6 (magicl:scale v1 6))
+	 (nt1 (make-dna-nt :cm v1 :vbb v1 :vn v1 :base "G")) 
+	 (nt2 (make-dna-nt :cm v2 :vbb v2 :vn v2 :base "C"))
+	 (nt3 (make-dna-nt :cm v3 :vbb v3 :vn v3 :base "G"))
+	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
+	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
+	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G"))
+	 (config))
+    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
+    (oxdna->file "oxtest"
+		 (mapcar #'oxdna-config (connected-nts nt4))
+		 (oxdna-topology nt4 :all t)))
+    
