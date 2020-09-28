@@ -17,7 +17,7 @@
 
 
 
-(define-test "Test oxdna-config"
+(define-test "Test DNA-NT:oxdna-config"
   :parent dna-nt-suite
   (let* ((cm (v3 1 0 0))
 	 (vbb (v3 0 1 0))
@@ -26,6 +26,22 @@
     (is equal
 	"1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0"
 	(oxdna-config nt))))
+
+
+
+(define-test "Test DNA-NT:oxdna-topology"
+  :parent dna-nt-suite
+  (let* ((cm (v3 1 0 0))
+	 (vbb (v3 0 1 0))
+	 (vn (v3 0 0 1))
+	 (nt (make-dna-nt :cm cm :vbb vbb :vn vn :base "G"))
+	 (ans-top '("1 G -1 -1"))
+	 (ans-header "1 1"))
+    (multiple-value-bind (top header)
+	(oxdna-topology nt)
+      (is equal ans-top top)
+      (is equal ans-header header))))
+
 
 (define-test "Test DNA-NT:CONNECT"
   :parent dna-nt-suite
@@ -65,8 +81,8 @@
   
 
 	 
-    
-(define-test "oxdna-topology-from-seq"
+
+(define-test "Test (oxdna-topology-from-seq ...)"
   (let* ((seq "GCGTTG")
 	 (ans1 '("1 G -1 1" "1 C 0 2" "1 G 1 3" "1 T 2 4" "1 T 3 5" "1 G 4 -1"))
 	 (ans2 '("1 G 0 11" "1 C 10 12" "1 G 11 13" "1 T 12 14" "1 T 13 15" "1 G 14 99"))
@@ -84,3 +100,5 @@
 	(oxdna-topology-from-seq seq :prev 0 :start 10 :next 99 :strand-num 2)
       (is equal ans3 lines)
       (is equal "6 2" header))))
+
+

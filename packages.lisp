@@ -14,6 +14,7 @@
 	   #:make-dna-nt
 	   #:connect-nts
 	   #:oxdna-config
+	   #:oxdna-topology
 	   #:oxdna-topology-from-seq))
 
 (in-package :small)

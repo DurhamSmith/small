@@ -21,9 +21,9 @@
 
 
 ;;;; Creation Functions
-(defun make-dna-nt (&key cm vbb vn tfms)
+(defun make-dna-nt (&key cm vbb vn base tfms)
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
-  (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :tfms tfms ))
+  (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
 (defgeneric oxdna-config (obj &key &allow-other-keys)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
@@ -37,21 +37,6 @@
 		     (print-v3 oxn :prepend " ")
 		     (print-v3 v :prepend " ")
 		     (print-v3 L :prepend " "))))))
-
-
-
-(fmakunbound 'oxdna-topology)
-(defgeneric oxdna-topology (obj &key all prev next) ;TODO check param list (maybe use &rest &allow-other-keys)
-  (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
-  (:method ((obj dna-nt) &key (all nil) (prev -1) (next -))
-    (with-accessors ((base base)) obj
-      ;;TODO Finish
-      (concatenate 'string 
-		   (print-v3 cm)
-		   (print-v3 vbb :prepend " ")
-		   (print-v3 vn :prepend " ")
-		   (print-v3 v :prepend " ")
-		   (print-v3 L :prepend " ")))))
 
 
 
@@ -81,6 +66,18 @@
 								     strand-num base pnt nnt)))
 						nt-top))))
     (values top-lines top-header)))
+
+
+
+(fmakunbound 'oxdna-topology)
+(defgeneric oxdna-topology (obj &key all start prev next strand) ;TODO check param list (maybe use &rest &allow-other-keys)
+  (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
+  (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1))
+    (with-accessors ((base base)) obj
+      (oxdna-topology-from-seq base :start start :prev prev))))
+
+
+
 
 
 
