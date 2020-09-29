@@ -72,10 +72,16 @@ K: Kinetic Energy
 box-padding: If b is not supplied the differecnec between the max and min x, y and z coord are added to box-padding and are used in place of b
 "
   ;;TODO allow to take both v3 and strings
-  (let ((tline (format nil "t = ~f" time))  ;TODO check if this should be an int or real
-	(bline (if b
-		   (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
-		   (format nil "b = ~f ~f ~f" (x box-padding) (y box-padding) (z box-padding))))
+  (let* ((tline (format nil "t = ~f" time))  ;TODO check if this should be an int or real
+	 (box (if all
+		  (bounds (mapcar #'cm (connected-nts nt)))
+		  (v3 1 1 1))) ; Default box size for a single nucleotide (1nm^3) TODO choose better and defparameter
+	 (box (if box-padding
+		  (.+ box box-padding)
+		  box))
+	 (bline (if b
+	       (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
+	       (format nil "b = ~f ~f ~f" (x box) (y box) (z box))))
 	(eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
     (list tline bline eline)))
 

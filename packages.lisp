@@ -6,6 +6,7 @@
 	   #:z
 	   #:print-v3
 	   #:on-v3-axis
+	   #:bounds
 	   #:write-list ; MISC
 	   #:oxdna->file
 	   #:chem-obj ; CHEM-OBJ related 

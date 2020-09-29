@@ -35,6 +35,19 @@
     (is equal 2d0 (on-v3-axis #'max 'y vecs :by #'reduce))
     (is equal 3d0 (on-v3-axis #'max 'z vecs :by #'reduce))))
 
+
+(define-test "(bounds)"
+  ;; todo test ()  and (())  handling
+  (let* ((v- (v3 -1 -2 -3))
+	 (v0 (v3 0 0 0))
+	 (v+ (v3 1 2 3))
+	 (vecs (list v- v0 v+)))
+    (multiple-value-bind (range min max)
+	(bounds vecs)
+      (is #'magicl:= (magicl:.- v+ v-) range)
+      (is #'magicl:= v- min)
+      (is #'magicl:= v+ max))))
+
     
 
 

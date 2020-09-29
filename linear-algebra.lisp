@@ -28,9 +28,25 @@
 (defun z (v3)
   (v3-elem v3 2))
 
-(defun bounded-region (&rest vecs)
-  "Returns a v3 with x-coords = max-x-of-all-vecs - min-x-of-all-vecs. y and z entires are computed similarly"
-  t)
+(defun bounds (&rest vecs)
+  "Returns VALUES with the first being a v3 with x-coords 
+= max-x-of-all-vecs - min-x-of-all-vecs 
+ y and z entires are computed similarly
+and the second two the vectors containing the min and max coords respectively "
+  (let* ((vecs (if (typep (car vecs) 'cons)
+		   (first vecs)  ;to handle vecs = (v1 ..) & ((v1 ...))
+		   vecs))
+	 (mx (on-v3-axis #'min 'x vecs :by #'reduce))
+	 (my (on-v3-axis #'min 'y vecs :by #'reduce))
+	 (mz (on-v3-axis #'min 'z vecs :by #'reduce))
+	 (min (v3 mx my mz))
+	 (mx (on-v3-axis #'max 'x vecs :by #'reduce))
+	 (my (on-v3-axis #'max 'y vecs :by #'reduce))
+	 (mz (on-v3-axis #'max 'z vecs :by #'reduce))
+	 (max (v3 mx my mz))
+	 (range (.- max min)))
+    (values range min max)))
+	 
 
 (defun on-v3-axis (fn axis vecs &key (by #'mapcar))
   "Applies fn to a LIST by by of all elements of (axis vec) for vec in vecs
