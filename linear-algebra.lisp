@@ -28,6 +28,21 @@
 (defun z (v3)
   (v3-elem v3 2))
 
+(defun bounded-region (&rest vecs)
+  "Returns a v3 with x-coords = max-x-of-all-vecs - min-x-of-all-vecs. y and z entires are computed similarly"
+  t)
+
+(defun on-v3-axis (fn axis vecs &key (by #'mapcar))
+  "Applies fn to a LIST by by of all elements of (axis vec) for vec in vecs
+fn: FUNCTION
+axis: SYMBOL ('x 'y 'z are vaild inputs)
+vecs: LIST
+by: The list mapping function
+"
+  ;;TODO handle vecs as a list or as rest params
+  (let* ((all-elems (mapcar axis vecs)))
+    (funcall by fn all-elems)))
+	      
 
 
 (z (scale (v3 1 0 0) -1))

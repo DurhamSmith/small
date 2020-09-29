@@ -79,19 +79,19 @@ box-padding: If b is not supplied the differecnec between the max and min x, y a
 	(eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
     (list tline bline eline)))
 
-(defun oxdna-box-size (nt &key
-			    (all t)
-			    (box-padding (v3 0d0 0d0 0d0) box-padding-supplied-p))
-  (let* ((nts (if all
-		  (connected-nts t)
-		  (list nt)))
-	 (mins (mapcar #'lambda (x)
-		       ((let* ((var val))
-			  )
+;; (defun oxdna-box-size (nt &key
+;; 			    (all t)
+;; 			    (box-padding (v3 0d0 0d0 0d0) box-padding-supplied-p))
+;;   (let* ((nts (if all
+;; 		  (connected-nts t)
+;; 		  (list nt)))
+;; 	 (mins (mapcar #'lambda (x)
+;; 		       ((let* ((var val))
+;; 			  )
 
-		       nts)
+;; 		       nts)
 	      
-	(
+;;        )))))
 
 
 (defun oxdna-config-string (nt)
@@ -129,9 +129,15 @@ next: (for topology) the index to be used for DNA-NT after the last DNA-NT in th
 strand: (for topology) the strand number to be used for the .top file ('INTEGER)")
   (:method ((obj dna-nt) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
     (let* ((conf (oxdna-config obj :inc-headers t :all t))
-	   (top (oxdna-topology obj :inc-headers t :all t :start start :prev prev :next next :strand strand))))
-      (oxdna->file filename conf top)))
-		
+	   (top (oxdna-topology obj :inc-headers t
+				    :all t
+				    :start start
+				    :prev prev
+				    :next next
+				    :strand strand)))
+      (oxdna->file filename conf top))))
+  
+
 
 (defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1) (inc-headers t))
   "Returns VALUES 0: (list 'string) of topologly lines 1: topology-header 'string

@@ -173,7 +173,7 @@
 	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
 	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
 	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G"))
-	 (ans-all ("t = 0.0" "b = 5.0 5.0 5.0" "E = 0.0 0.0 0.0"))
+	 (ans-all '("t = 0.0" "b = 5.0 5.0 5.0" "E = 0.0 0.0 0.0"))
 	 (ans-single (list "t = 0.0" "b = 4.0 4.0 4.0" "E = 0.0 0.0 0.0"))
 	 (ans-b (list "t = 0.0" "b = 7.0 7.0 7.0" "E = 0.0 0.0 0.0")))
     (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
