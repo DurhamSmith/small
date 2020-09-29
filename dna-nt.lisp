@@ -43,7 +43,44 @@
 (defgeneric oxdna-config (obj &key all inc-headers)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (inc-headers t))
-    (oxdna-config-string obj)))
+    (let* ((conf (if all
+		     (mapcar #'(lambda (x)
+				 (oxdna-config-string x))
+			     (connected-nts obj))
+		     (oxdna-config-string obj)))
+	   (header (oxdna-config-header obj :all all))
+	   (conf (if inc-headers
+		     (append header conf)
+		     conf)))
+      (values conf header))))
+		    
+		     
+(defun oxdna-config-header (nt &key
+			  (all t)
+			  (time 0)
+			  b
+			  (U 0d0)
+			  (K 0d0)
+			  (box-padding (v3 1d0 0d0 0d0)))
+  "Returns a LIST containing the 3 oxDNA header strings.
+nt: DNA-NT
+all: Bool
+time: the timestep T at which the configuration has been printed
+b: the length of the box sides in MAGICL:VECTOR (Lx Ly Lz) Tip: (small:v3 x y z) creates these
+U: Potential Energy
+K: Kinetic Energy
+box-padding: If b is not supplied the differecnec between the max and min x, y and z coord are added to box-padding and are used in place of b
+"
+  ;;TODO allow to take both v3 and strings
+  (let ((tline (format nil "t = ~f" time))  ;TODO check if this should be an int or real
+	(bline (if b
+		   (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
+		   (format nil "b = ~f ~f ~f" (x box-padding) (y box-padding) (z box-padding))))
+	(eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
+    (list tline bline eline)))
+
+	      
+	
 
 
 (defun oxdna-config-string (nt)

@@ -160,6 +160,34 @@
     (of-type 'STRING res)
     (is equal "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0" res)))
 
+(define-test "TEST: (oxdna-config-header nt)"
+  (let* ((v1 (v3 1 1 1))
+	 (v2 (magicl:scale v1 2))
+	 (v3 (magicl:scale v1 3))
+	 (v4 (magicl:scale v1 4))
+	 (v5 (magicl:scale v1 5))
+	 (v6 (magicl:scale v1 6))
+	 (nt1 (make-dna-nt :cm v1 :vbb v1 :vn v1 :base "G")) 
+	 (nt2 (make-dna-nt :cm v2 :vbb v2 :vn v2 :base "C"))
+	 (nt3 (make-dna-nt :cm v3 :vbb v3 :vn v3 :base "G"))
+	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
+	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
+	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G"))
+	 (ans-all (list "t = 0.0" "b = 5.0 5.0 5.0" "E = 0.0 0.0 0.0"))
+	 (ans-single (list "t = 0.0" "b = 4.0 4.0 4.0" "E = 0.0 0.0 0.0"))
+	 (ans-b (list "t = 0.0" "b = 7.0 7.0 7.0" "E = 0.0 0.0 0.0")))
+    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
+    (define-test "(oxdna-config-header nt :all t)"
+      (is equal ans-all (oxdna-config-header nt4 :all t)))
+    (define-test "(oxdna-config-header nt :all nil)"
+      (is equal ans-single (oxdna-config-header nt4 :all nil)))
+    (define-test "(oxdna-config-header nt :all b) test b gets used over calc"
+      (is equal ans-b (oxdna-config-header nt4 :all t :b (v3 7 7 7))))))
+
+
+
+;;(remove-test "(oxdna-header nt :all nil)")
+
 (define-test "TEST: oxdna->file"
   ;; TODO cm, vbb, vn are all in the same. Not a physical use case
   (skip "Not ready yet")
