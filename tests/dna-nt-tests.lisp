@@ -1,5 +1,6 @@
 (in-package #:small-tests)
 
+
 (define-test dna-nt-suite)  
 
 (define-test "Test make-dna-nt creates a DNA-NT CHEM-OBJ"
@@ -149,6 +150,15 @@
 	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G")))
     (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
     (write-oxdna nt4 :filename "write-oxdna-test")))
+
+(define-test "TEST: oxdna-config-string"
+  (let* ((cm (v3 1 0 0))
+	 (vbb (v3 0 1 0))
+	 (vn (v3 0 0 1))
+	 (nt (make-dna-nt :cm cm :vbb vbb :vn vn))
+	 (res (oxdna-config-string nt)))
+    (of-type 'STRING res)
+    (is equal "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0" res)))
 
 (define-test "TEST: oxdna->file"
   ;; TODO cm, vbb, vn are all in the same. Not a physical use case

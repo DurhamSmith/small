@@ -18,6 +18,7 @@
 	   #:connect-nts
 	   #:connected-nts
 	   #:oxdna-config
+	   #:oxdna-config-string
 	   #:oxdna-topology
 	   #:oxdna-topology-from-seq
 	   #:write-oxdna))

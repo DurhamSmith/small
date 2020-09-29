@@ -43,15 +43,23 @@
 (defgeneric oxdna-config (obj &key all inc-headers)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (inc-headers t))
-    (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) obj
-      (let* ((oxbb (scale vbb -1)) ;oxDNA needs these vecs in the opposite direction of how we store them
-	     (oxn (scale vn -1)))
-	(concatenate 'string 
-		     (print-v3 cm)
-		     (print-v3 oxbb :prepend " ")
-		     (print-v3 oxn :prepend " ")
-		     (print-v3 v :prepend " ")
-		     (print-v3 L :prepend " "))))))
+    (oxdna-config-string obj)))
+
+
+(defun oxdna-config-string (nt)
+  "Returns a STRING with the oxdna config for nt.
+nt:  DNA-NT
+Returns: String
+Notes: For oxdna config spec see https://dna.physics.ox.ac.uk/index.php/Documentation#Configuration_and_topology_files"
+  (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) nt
+    (let* ((oxbb (scale vbb -1)) ;oxDNA needs these vecs in the opposite direction of how we store them
+	   (oxn (scale vn -1)))
+      (concatenate 'string 
+		   (print-v3 cm)
+		   (print-v3 oxbb :prepend " ")
+		   (print-v3 oxn :prepend " ")
+		   (print-v3 v :prepend " ")
+		   (print-v3 L :prepend " ")))))
 
 
 (defun oxdna->file (file conf top)
@@ -62,9 +70,8 @@
     (write-list top-f top)))
 
 
-(defgeneric write-oxdna (obj &key filename all start prev next strand)
+(defgeneric write-oxdna  (obj &key filename all start prev next strand)
   (:documentation "Writes a DNA CHEM-OBJ's oxDNA config and topology file to [filename].oxdna and [filename].top respectively
-
 obj: A 'DNA 'CHEM-OBJ
 filename: name that should be used for the config and top file ('STRING)
 all: if t will give the topology and config for all the DNA-NTs connected to obj ('BOOLEAN)
@@ -73,8 +80,9 @@ prev: (for topology) the index to be used for DNA-NT before the first DNA-NT in 
 next: (for topology) the index to be used for DNA-NT after the last DNA-NT in the .top file. -1 means not connected to another nt('INTEGER)
 strand: (for topology) the strand number to be used for the .top file ('INTEGER)")
   (:method ((obj dna-nt) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
-    (let* ((nts (connected-nts obj)))))
-  )
+    (let* ((conf (oxdna-config obj :inc-headers t :all t))
+	   (top (oxdna-topology obj :inc-headers t :all t :start start :prev prev :next next :strand strand))))
+      (oxdna->file filename conf top)))
 		
 
 (defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1) (inc-headers t))
@@ -105,7 +113,7 @@ If inc-headers = true the header strings are prepended to the list of topology s
 	 (top-lines (if inc-headers
 			(append (list top-header) top-lines)
 			top-lines)))
-    (break "~A inc ~A ~A" top-lines inc-headers (null inc-headers))
+;    (break "~A inc ~A ~A" top-lines inc-headers (null inc-headers))
     (values top-lines top-header)))
 
 
