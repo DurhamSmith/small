@@ -20,8 +20,10 @@
 	   #:oxdna-config
 	   #:oxdna-config-string
 	   #:oxdna-config-header
+	   #:oxdna-box-size
 	   #:oxdna-topology
 	   #:oxdna-topology-from-seq
-	   #:write-oxdna))
+	   #:write-oxdna
+	   ))
 
 (in-package :small)

@@ -61,7 +61,7 @@
 			  b
 			  (U 0d0)
 			  (K 0d0)
-			  (box-padding (v3 1d0 0d0 0d0)))
+			  box-padding)
   "Returns a LIST containing the 3 oxDNA header strings.
 nt: DNA-NT
 all: Bool
@@ -79,8 +79,19 @@ box-padding: If b is not supplied the differecnec between the max and min x, y a
 	(eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
     (list tline bline eline)))
 
+(defun oxdna-box-size (nt &key
+			    (all t)
+			    (box-padding (v3 0d0 0d0 0d0) box-padding-supplied-p))
+  (let* ((nts (if all
+		  (connected-nts t)
+		  (list nt)))
+	 (mins (mapcar #'lambda (x)
+		       ((let* ((var val))
+			  )
+
+		       nts)
 	      
-	
+	(
 
 
 (defun oxdna-config-string (nt)
