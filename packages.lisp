@@ -1,4 +1,3 @@
-;
 (defpackage :small
   (:use #:cl #:asdf #:magicl #:defclass-std)
   (:export #:v3       ; vector related 
