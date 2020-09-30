@@ -52,7 +52,7 @@ If inc-headers=nil retuns a LIST")
 			     (connected-nts obj))
 		     (oxdna-config-string obj)))
 	   (header (oxdna-config-header obj :all all))
-	   (conf (if (typep conf 'STRING) ;make list so downstream fns can process
+	   (conf (if (typep conf 'STRING) ;make list if only 1 elem, since downstream fn need lists
 		     (list conf)
 		     conf))
 	   (conf (if inc-headers
@@ -147,7 +147,6 @@ strand: (for topology) the strand number to be used for the .top file ('INTEGER)
 				    :prev prev
 				    :next next
 				    :strand strand)))
-      (break "~A" conf)
       (oxdna->file filename conf top))))
   
 
