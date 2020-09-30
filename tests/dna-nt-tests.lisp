@@ -23,7 +23,7 @@
 	 (vn (v3 0 0 1))
 	 (nt (make-dna-nt :cm cm :vbb vbb :vn vn)))
     (is equal
-	"1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0"
+	'("1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0")
 	(oxdna-config nt :inc-headers nil))
     (is equal
 	'("t = 0.0" "b = 1.0 1.0 1.0" "E = 0.0 0.0 0.0" "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0")
@@ -76,7 +76,6 @@
 
 
 (define-test "Test DNA-NT:CONNECT"
-  :parent dna-nt-suite
   (let* ((v (v3 1 1 1))
 	 (-v (magicl:scale v -1))
 	 (nt1 (make-dna-nt :cm v :vbb v :vn v))
@@ -124,7 +123,7 @@
     (multiple-value-bind (lines header)
 	(oxdna-topology-from-seq seq :start 10 :prev 0 :next 99 :inc-headers nil)
       (is equal ans2 lines)
-      (is equal ans-header header))
+      (is equal ans-header header))n
     (multiple-value-bind (lines header)
 	(oxdna-topology-from-seq seq :prev 0 :start 10 :next 99 :strand-num 2 :inc-headers nil)
       (is equal "6 2" header)
@@ -135,22 +134,6 @@
       (is equal ans-header header))))
 
 
-(define-test "TEST: (write-oxdna 'DNA-NT :all t)"
-  (let* ((v1 (v3 1 1 1))
-	 (v2 (magicl:scale v1 2))
-	 (v3 (magicl:scale v1 3))
-	 (v4 (magicl:scale v1 4))
-	 (v5 (magicl:scale v1 5))
-	 (v6 (magicl:scale v1 6))
-	 (nt1 (make-dna-nt :cm v1 :vbb v1 :vn v1 :base "G")) 
-	 (nt2 (make-dna-nt :cm v2 :vbb v2 :vn v2 :base "C"))
-	 (nt3 (make-dna-nt :cm v3 :vbb v3 :vn v3 :base "G"))
-	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
-	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
-	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G")))
-    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
-    (write-oxdna nt4 :filename "write-oxdna-test")))
-
 (define-test "TEST: oxdna-config-string"
   (let* ((cm (v3 1 0 0))
 	 (vbb (v3 0 1 0))
@@ -159,25 +142,6 @@
 	 (res (oxdna-config-string nt)))
     (of-type 'STRING res)
     (is equal "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0" res)))
-
-(define-test "(oxdna-box-size nt :all)"
-  (let* ((v1 (v3 1 1 1))
-	 (v2 (magicl:scale v1 2))
-	 (v3 (magicl:scale v1 3))
-	 (v4 (magicl:scale v1 4))
-	 (v5 (magicl:scale v1 5))
-	 (v6 (magicl:scale v1 6))
-	 (nt1 (make-dna-nt :cm v1 :vbb v1 :vn v1 :base "G")) 
-	 (nt2 (make-dna-nt :cm v2 :vbb v2 :vn v2 :base "C"))
-	 (nt3 (make-dna-nt :cm v3 :vbb v3 :vn v3 :base "G"))
-	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
-	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
-	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G"))
-	 (ans-all '("t = 0.0" "b = 5.0 5.0 5.0" "E = 0.0 0.0 0.0"))
-	 (ans-single (list "t = 0.0" "b = 4.0 4.0 4.0" "E = 0.0 0.0 0.0"))
-	 (ans-b (list "t = 0.0" "b = 7.0 7.0 7.0" "E = 0.0 0.0 0.0")))
-    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
-    (is equal "" t)))
 
 
 (define-test "TEST: (oxdna-config-header nt)"
@@ -229,3 +193,22 @@
 		 (mapcar #'oxdna-config (connected-nts nt4))
 		 (oxdna-topology nt4 :all t))))
     
+
+
+(define-test "TEST: (write-oxdna 'DNA-NT :all t)"
+  (let* ((v1 (v3 1 1 1))
+	 (v2 (magicl:scale v1 2))
+	 (v3 (magicl:scale v1 3))
+	 (v4 (magicl:scale v1 4))
+	 (v5 (magicl:scale v1 5))
+	 (v6 (magicl:scale v1 6))
+	 (nt1 (make-dna-nt :cm v1 :vbb v1 :vn v1 :base "G")) 
+	 (nt2 (make-dna-nt :cm v2 :vbb v2 :vn v2 :base "C"))
+	 (nt3 (make-dna-nt :cm v3 :vbb v3 :vn v3 :base "G"))
+	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
+	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
+	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G")))
+    (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
+    (write-oxdna nt4 :filename "write-oxdna-test" :all nil)))
+
+

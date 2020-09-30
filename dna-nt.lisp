@@ -43,17 +43,20 @@
 (defgeneric oxdna-config (obj &key all inc-headers)
   (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config
 
-If inc-headers=t returs a LIST
-If inc-headers=t retuns a STRING")
+If inc-headers=t returns a LIST
+If inc-headers=nil retuns a LIST")
   (:method ((obj dna-nt) &key (all nil) (inc-headers t))
     (let* ((conf (if all
 		     (mapcar #'(lambda (x)
-				 (oxdna-config-string x))
+				(oxdna-config-string x))
 			     (connected-nts obj))
 		     (oxdna-config-string obj)))
 	   (header (oxdna-config-header obj :all all))
+	   (conf (if (typep conf 'STRING) ;make list so downstream fns can process
+		     (list conf)
+		     conf))
 	   (conf (if inc-headers
-		     (append header (list conf))
+		     (append header conf)
 		     conf)))
       (values conf header))))
 		    
@@ -77,7 +80,7 @@ box-padding: If b is not supplied the differecnec between the max and min x, y a
   ;;TODO allow to take both v3 and strings
   (let* ((tline (format nil "t = ~f" time))  ;TODO check if this should be an int or real
 	 (box (if all
-		  (bounds (mapcar #'cm (connected-nts nt)))
+		  (bounds (mapcar #'cm (connected-nts nt))) ; bounds returns vec of vmaxs - vmins
 		  (v3 1 1 1))) ; Default box size for a single nucleotide (1nm^3) TODO choose better and defparameter
 	 (box (if box-padding
 		  (.+ box box-padding)
@@ -137,13 +140,14 @@ prev: (for topology) the index to be used for DNA-NT before the first DNA-NT in 
 next: (for topology) the index to be used for DNA-NT after the last DNA-NT in the .top file. -1 means not connected to another nt('INTEGER)
 strand: (for topology) the strand number to be used for the .top file ('INTEGER)")
   (:method ((obj dna-nt) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
-    (let* ((conf (oxdna-config obj :inc-headers t :all t))
+    (let* ((conf (oxdna-config obj :inc-headers t :all all))
 	   (top (oxdna-topology obj :inc-headers t
-				    :all t
+				    :all all
 				    :start start
 				    :prev prev
 				    :next next
 				    :strand strand)))
+      (break "~A" conf)
       (oxdna->file filename conf top))))
   
 
