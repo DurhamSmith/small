@@ -41,7 +41,10 @@
 
 
 (defgeneric oxdna-config (obj &key all inc-headers)
-  (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
+  (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config
+
+If inc-headers=t returs a LIST
+If inc-headers=t retuns a STRING")
   (:method ((obj dna-nt) &key (all nil) (inc-headers t))
     (let* ((conf (if all
 		     (mapcar #'(lambda (x)
@@ -50,7 +53,7 @@
 		     (oxdna-config-string obj)))
 	   (header (oxdna-config-header obj :all all))
 	   (conf (if inc-headers
-		     (append header conf)
+		     (append header (list conf))
 		     conf)))
       (values conf header))))
 		    

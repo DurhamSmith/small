@@ -1,10 +1,9 @@
 (in-package #:small-tests)
 
 
-(define-test dna-nt-suite)  
+
 
 (define-test "Test make-dna-nt creates a DNA-NT CHEM-OBJ"
-  :parent dna-nt-suite
   (let* ((cm (v3 1 0 0))
 	 (vbb (v3 0 1 0))
 	 (vn (v3 0 0 1))
@@ -19,19 +18,20 @@
 
 
 (define-test "Test DNA-NT:oxdna-config"
-  :parent dna-nt-suite
   (let* ((cm (v3 1 0 0))
 	 (vbb (v3 0 1 0))
 	 (vn (v3 0 0 1))
 	 (nt (make-dna-nt :cm cm :vbb vbb :vn vn)))
     (is equal
 	"1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0"
-	(oxdna-config nt))))
+	(oxdna-config nt :inc-headers nil))
+    (is equal
+	'("t = 0.0" "b = 1.0 1.0 1.0" "E = 0.0 0.0 0.0" "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0")
+	(oxdna-config nt :inc-headers t))))
 
 
 
 (define-test "Test DNA-NT:oxdna-topology single DNA-NT only"
-  :parent dna-nt-suite
   (let* ((cm (v3 1 0 0))
 	 (vbb (v3 0 1 0))
 	 (vn (v3 0 0 1))
@@ -194,7 +194,7 @@
 	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
 	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G"))
 	 (ans-all (list "t = 0.0" "b = 5.0 5.0 5.0" "E = 0.0 0.0 0.0"))
-	 (ans-single (list "t = 0.0" "b = 4.0 4.0 4.0" "E = 0.0 0.0 0.0"))
+	 (ans-single (list "t = 0.0" "b = 1.0 1.0 1.0" "E = 0.0 0.0 0.0")) ; single nts get a box on 1nm^3 TODO choose good size
 	 (ans-b (list "t = 0.0" "b = 7.0 7.0 7.0" "E = 0.0 0.0 0.0")))
     (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
     (define-test "(oxdna-config-header nt :all t)"
