@@ -8,6 +8,13 @@
 	 (v (from-list `(,x ,y ,z) '(3))))
     v))
 
+(defun v3l (l  &key (type-spec '(double-float)))
+  (v3 (nth 0 l) (nth 1 l) (nth 2 l)))
+
+(defun as-unit-vec (v)
+  (scale v (/ 1 (norm v))))
+    
+
 ;;; Accessor functions for 3D Vecs. We have the zero check so we can print 0 instead of -0 when we magicl:scale (todo create PR to fix this)
 
 (defun v3-elem (v3 idx)

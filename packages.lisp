@@ -1,9 +1,11 @@
 (defpackage :small
   (:use #:cl #:asdf #:magicl #:defclass-std)
   (:export #:v3       ; vector related 
+	   #:v3l
 	   #:x
 	   #:y
 	   #:z
+	   #:as-unit-vec
 	   #:print-v3
 	   #:on-v3-axis
 	   #:bounds
