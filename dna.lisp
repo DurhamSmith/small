@@ -12,3 +12,10 @@
   (:documentation "Return a complementary DNA CHEM-OBJ for the given DNA CHEM-OBJ")
   (:method ((obj dna))
     (error "generic function #'make-partner not implemented for ~A" (class-of obj))))
+
+
+(defmethod dna-connect ((o1 dna) (o2 dna))
+  "Returns VAUES o1 o2 after setting o2:prev = o1, o1:next = o2"
+  (setf (next o1) o2)
+  (setf (prev o2) o1)
+  (values o1 o2))

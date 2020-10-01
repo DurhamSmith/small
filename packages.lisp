@@ -33,6 +33,7 @@
 	   #:oxdna-topology
 	   #:oxdna-topology-from-seq
 	   #:write-oxdna
+	   #:make-dna-strand
 	   ))
 
 (in-package :small)

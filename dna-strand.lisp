@@ -10,7 +10,13 @@
    (seq :doc "The sequence of the strand (length must be equal to len)"))
   (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a parent for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
 
-(defmethod connect (o1 strand) (o2 strand)
-  "Sets (end o1) = (end o2) and connects their nucleotides"
-  (dna-connect o1 o2)
-  )
+(defmethod connect ((o1 dna-strand) (o2 dna-strand) &rest rest)
+  "Sets (end o1) = (end o2) and connects their nucleotides"  
+  (dna-connect o1 o2))
+
+(defun make-dna-strand (&rest rest)
+  (make-instance 'dna-strand))
+
+
+
+ 
