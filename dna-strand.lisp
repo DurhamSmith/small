@@ -20,26 +20,26 @@
   (make-instance 'dna-strand))
 
 
-(defgeneric grow (strand &key nts head)
+(defgeneric grow (strand &key nts 5end)
   (:documentation "Returns s after adding num nt to the 3' end of strand. 
-If head=t nt is added to the 5' end.
+If 5end=t nt is added to the 5' end.
 If nt=nil the next DNA-NT is calculated via (next-nt s)")
-  (:method ((strand dna-strand) &key nts head)
+  (:method ((strand dna-strand) &key nts 5end)
     (typecase nts
       (integer (if (= 1 nts)
-		   (grow strand :head head)
+		   (grow strand :5end 5end)
 		   (progn
-		     (grow strand :head head)
-		     (grow strand :nts (- nts 1) :head head))))
-      (null (add-nt strand :head head))
+		     (grow strand :5end 5end)
+		     (grow strand :nts (- nts 1) :5end 5end))))
+      (null (add-nt strand :5end 5end))
       (t (error "(grow strand) does not support type: ~A" nts)))))
 
 
-(defgeneric add-nt (strand &key nt head)
-  (:documentation "Returns (values strand nt) after adding DNA-NT nt to the 3' end of strand. If head=t adds it to the 5' end of strand")
-  (:method ((strand dna-strand &key nt head))
+(defgeneric add-nt (strand &key nt 5end)
+  (:documentation "Returns (values strand nt) after adding DNA-NT nt to the 3' end of strand. If 5end=t adds it to the 5' end of strand")
+  (:method ((strand dna-strand &key nt 5end))
     (typecase nt
-      (if head
+      (if 5end
 	  (connect-nts nt (nts strand))
 	  (connect-nts (nts strand) nt)))
     (t (error "(grow strand) not supported for type: ~A" nt))))
