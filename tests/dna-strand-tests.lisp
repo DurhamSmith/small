@@ -35,8 +35,29 @@
   ;; TODO check 3end and length are preserved
   )
 
-
-;(remove-test "(grow dna-strand)")
+(remove-test "(add-nt dna-strand)")
+(define-test "(add-nt dna-strand)" 
+  (let* ((s (make-dna-strand))
+	 (nt1 (make-dna-nt))
+	 (nt2 (make-dna-nt))
+	 (nt3 (make-dna-nt)))
+    (is equal nil (5end s))
+    (is equal nil (3end s))
+    (add-nt s :nt nt1)
+    (is equal nt1 (5end s :all nil))
+    (is equal nt1 (3end s :all nil))
+    (is equal (list nt1) (connected-nts (5end s)))
+    (add-nt s :nt nt2)
+    (is equal nt1 (5end s :all nil))
+    (is equal nt2 (3end s :all nil))
+    (is equal (list nt1 nt2) (connected-nts (5end s)))
+    (add-nt s :nt nt3 :5end t)
+    (is equal nt3 (5end s :all nil))
+    (is equal nt2 (3end s :all nil))
+    (is equal (list nt3 nt1 nt2) (connected-nts (5end s)))
+  ;;todo more tests for multi-stranded cases
+  ))
+					;(remove-test "(grow dna-strand)")
 ;; (define-test "(grow dna-strand)"
 ;;   (let* ((s (make-dna-strand))
 ;; 	 (nt1 (make-dna-nt))
@@ -56,31 +77,9 @@
 ;; 	  (nts s :all nil)))))
 
 
-;;(remove-test "(add-nt dna-strand)")
-;; (define-test "(add-nt dna-strand)" 
-;;   (let* ((s (make-dna-strand))
-;; 	 (nt1 (make-dna-nt))
-;; 	 (nt2 (make-dna-nt))
-;; 	 (nt3 (make-dna-nt)))
-;;     (skip "Not implemented"
-;;       (is eq nil (5end))
-;;       (is eq nil (3end))
-;;       (add-nt s nt1)
-;;       (is eq nt1 (5end s :nt t))
-;;       (is eq nt1 (3end s :nt t))
-;;       (is eq (list nt1) (nts s))
-;;       (add-nt s nt2)
-;;       (is eq nt1 (5end s :nt t))
-;;       (is eq nt2 (3end s :nt t))
-;;       (is eq (list nt1 nt2) (nts s))
-;;       (add-nt s nt3 :5end t)
-;;       (is eq nt3 (5end s :nt t))
-;;       (is eq nt2 (3end s :nt t))
-;;       (is eq (list nt3 nt1 nt2) (nts s)))
-;;     ;;TODO more tests for multi-stranded cases
-;;     ))
-    
-    
-	
-   
-    
+
+
+
+
+
+

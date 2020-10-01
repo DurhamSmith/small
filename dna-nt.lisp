@@ -212,7 +212,10 @@ If inc-headers = true the header strings are prepended to the list of topology s
 (defun connect-nts (&rest nts)
   "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided"
   ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
-  (append (mapcar #'connect nts (cdr nts)) (last nts)))
+ ; (break "~a~%" nts)
+  (let ((nts (alexandria:flatten nts)))
+;    (break "~A~%" nts)
+    (append (mapcar #'connect nts (cdr nts)) (last nts))))
 
 
 
@@ -222,6 +225,7 @@ If inc-headers = true the header strings are prepended to the list of topology s
 
 (defmethod connect ((o1 dna-nt) (o2 dna-nt) &rest rest)
   "Sets (next o1) = o2 and (prev o2) = o1"
+;  (break "DNA nt CONNECT")
   (dna-connect o1 o2))
 
 
