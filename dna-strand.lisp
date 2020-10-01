@@ -41,17 +41,17 @@
 (defmethod connect ((o1 dna-strand) (o2 dna-strand) &rest rest)
   
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"  
-  (dna-connect o1 o2)
-  (connect-nts (connected-nts o1) (connected o2)))
+  (dna-connect o1 o2))
+;TODO implemment full logic  (connect-nts (connected-nts o1) (connected o2)))
 
 (defun make-dna-strand (&rest rest)
   (make-instance 'dna-strand))
 
 
 (defgeneric grow (strand &key nts 5end)
-  (:documentation "Returns s after adding num nt to the 3' end of strand. 
-If 5end=t nt is added to the 5' end.
-If nt=nil the next DNA-NT is calculated via (next-nt s)")
+  (:documentation "returns s after adding num nt to the 3' end of strand. 
+if 5end=t nt is added to the 5' end.
+if nt=nil the next dna-nt is calculated via (next-nt s)")
   (:method ((strand dna-strand) &key nts 5end)
     (typecase nts
       (integer (if (= 1 nts)
@@ -60,20 +60,38 @@ If nt=nil the next DNA-NT is calculated via (next-nt s)")
 		      (grow strand :5end 5end)
 		      (grow strand :nts (- nts 1) :5end 5end))))
       (null (add-nt strand :5end 5end))
-      (t (error "(grow strand) does not support type: ~A" nts)))))
+      (t (error "(grow strand) does not support type: ~a" nts)))))
 
 
 (defgeneric add-nt (obj &key nt 5end)
-  (:documentation "Returns (values strand nt) after adding DNA-NT nt to the 3' end of strand. If 5end=t adds it to the 5' end of strand")
+  (:documentation "returns (values nt strand) after adding dna-nt nt to the 3' end of strand. if 5end=t adds it to the 5' end of strand")
   (:method ((obj dna-strand) &key nt 5end)
-    (with-accessors ((5nt 5nt) (3nt 3nt)) obj      
-      (typecase nt
-	(dna-nt (if 5end
-		    (nt->5end obj nt)
-		    (nt->3end obj nt)))
-	(t (error "(add-nt strand) not supported for type: ~A" nt))))
-    nt))
+    (with-accessors ((5nt 5nt) (3nt 3nt)) obj
+      (let* ((nt (cond ((null nt) (nt->end
+				   obj
+				   (next-nt obj :5end 5end)
+				   :5end 5end))
+		       ((typep nt 'dna-nt) (nt->end obj nt :5end 5end)))
+		       (t (error "(add-nt) cant add nt of type ~a" (type-of nt))))))
+	(values nt obj))))
 
+(defgeneric nt->end (obj nt &key 5end)  
+  (:documentation "returns (values obj nt) after adding a dna-nt to 3end of strand")
+  (:method ((obj dna-strand) (nt dna-nt)  &key 5end)
+    (if 5end
+	(nt->5end obj nt)
+	(nt->3end obj nt)
+    )))
+		 
+
+(defgeneric next-nt (obj &key 5end)
+  (:documentation "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type")
+  (:method (obj &key 5end)
+    (error "(next-nt (obj ~A ) &key 5end) has not been implemented" (type-of obj))))
+
+  
+
+  
 (defgeneric nt->3end (obj nt)  
   (:documentation "Returns (VALUES obj nt) after adding a DNA-NT to 3end of strand")
   (:method ((obj dna-strand) (nt dna-nt))

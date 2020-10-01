@@ -35,7 +35,7 @@
   ;; TODO check 3end and length are preserved
   )
 
-(remove-test "(add-nt dna-strand)")
+;(remove-test "(add-nt dna-strand)")
 (define-test "(add-nt dna-strand)" 
   (let* ((s (make-dna-strand))
 	 (nt1 (make-dna-nt))
