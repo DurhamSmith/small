@@ -123,7 +123,7 @@
     (multiple-value-bind (lines header)
 	(oxdna-topology-from-seq seq :start 10 :prev 0 :next 99 :inc-headers nil)
       (is equal ans2 lines)
-      (is equal ans-header header))n
+      (is equal ans-header header))
     (multiple-value-bind (lines header)
 	(oxdna-topology-from-seq seq :prev 0 :start 10 :next 99 :strand-num 2 :inc-headers nil)
       (is equal "6 2" header)
