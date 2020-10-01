@@ -37,7 +37,10 @@
 			      (connected-nts obj)
 			      :initial-value "")
 		      (base obj))))
-      (oxdna-topology-from-seq bases :start start :prev prev :inc-headers inc-headers))))
+      (oxdna-topology-from-seq bases :start start
+				     :prev prev
+				     :next next
+				     :inc-headers inc-headers))))
 
 
 (defgeneric oxdna-config (obj &key all inc-headers)
@@ -62,12 +65,12 @@ If inc-headers=nil retuns a LIST")
 		    
 		     
 (defun oxdna-config-header (nt &key
-			  (all t)
-			  (time 0)
-			  b
-			  (U 0d0)
-			  (K 0d0)
-			  box-padding)
+				 (all t)
+				 (time 0)
+				 b
+				 (U 0d0)
+				 (K 0d0)
+				 box-padding)
   "Returns a LIST containing the 3 oxDNA header strings.
 nt: DNA-NT
 all: Bool
@@ -86,9 +89,9 @@ box-padding: If b is not supplied the differecnec between the max and min x, y a
 		  (.+ box box-padding)
 		  box))
 	 (bline (if b
-	       (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
-	       (format nil "b = ~f ~f ~f" (x box) (y box) (z box))))
-	(eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
+		    (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
+		    (format nil "b = ~f ~f ~f" (x box) (y box) (z box))))
+	 (eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
     (list tline bline eline)))
 
 ;; (defun oxdna-box-size (nt &key
