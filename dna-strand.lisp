@@ -69,9 +69,7 @@ If nt=nil the next DNA-NT is calculated via (next-nt s)")
     (with-accessors ((5nt 5nt) (3nt 3nt)) obj      
       (typecase nt
 	(dna-nt (if 5end
-		    (if 5nt
-			(connect-nts nt (connected-nts 5nt))
-			(connect-nts (nts obj) nt))
+		    (nt->5end obj nt)
 		    (nt->3end obj nt)))
 	(t (error "(add-nt strand) not supported for type: ~A" nt))))
     nt))
@@ -90,6 +88,27 @@ If nt=nil the next DNA-NT is calculated via (next-nt s)")
 	  (progn 
 	    (connect-nts 3nt nt)
 	    (setf 3nt nt)
+	    (incf len))
+	  (progn 
+	    (setf 3nt nt)
+	    (setf 5nt nt)
+	    (incf len)))
+      (values obj nt))))
+
+(defgeneric nt->5end (obj nt)  
+  (:documentation "Returns (VALUES obj nt) after adding a DNA-NT to 5end of strand")
+  (:method ((obj dna-strand) (nt dna-nt))
+    (with-accessors ((5nt 5nt) (3nt 3nt) (len len)) obj
+      (when 5nt
+	(unless 3nt
+	  (error "Either both or neither of 5nt & 3nt of strand should be set")))
+      (when 3nt
+	(unless 5nt
+	  (error "Either both or neither of 5nt & 3nt of strand should be set")))
+      (if 5nt
+	  (progn 
+	    (connect-nts nt 5nt)
+	    (setf 5nt nt)
 	    (incf len))
 	  (progn 
 	    (setf 3nt nt)
