@@ -10,6 +10,7 @@
 	   #:on-v3-axis
 	   #:bounds
 	   #:write-list ; MISC
+	   #:+ht ;hash table stuff
 	   #:oxdna->file
 	   #:chem-obj ; CHEM-OBJ related
 	   #:set-parent
