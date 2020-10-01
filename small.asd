@@ -3,7 +3,7 @@
   :version "0.0.1"
   :author "Durham Smith"
   :licence "Contact author"
-  :depends-on (#:magicl #:defclass-std)
+  :depends-on (#:alexandria #:magicl #:defclass-std)
   :serial t
   :components ((:file "packages")
 	       (:file "linear-algebra")

@@ -12,9 +12,9 @@
 (defgeneric add-chem-obj (obj val &opt key)
   (:documentation "Adds val to (chem-objs obj) under key or default key = (concatenate (type-of obj) (occurances of objs type in (chem-objs obj)))"))
 
-(defgeneric connect (o1 o2 &key &allow-other-keys)
+(defgeneric connect (o1 o2 &rest rest)
   (:documentation "Connects two chem-objs. Rules for these should be written for each type of connections that should be written as generic functions that specialize on them. Examples of connects are joining of nucleotides to form DNA strands or connecting nanoparticles to DNA strands")
-  (:method ((o1 chem-obj) (o2 chem-obj) &key &allow-other-keys)
+  (:method ((o1 chem-obj) (o2 chem-obj) &rest rest)
     (error "There is no valid connection type between ~A and ~A" (class-of o1) (class-of o2))
     ))
 
@@ -25,3 +25,14 @@
 
 ;; (type-of (make-instance 'chem-obj))
 ;; (class-of (make-instance 'chem-obj))
+
+(defgeneric set-parent (child parent &key ckey pkey)
+  ;; (:method ((child chem-obj) (parent chem-obj))
+  ;;   (setf (
+  )
+
+(defgeneric set-child (parent child &key pkey ckey)
+  ;; (:method ((child chem-obj) (parent chem-obj))
+  ;;   (setf (
+)
+

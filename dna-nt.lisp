@@ -217,11 +217,17 @@ If inc-headers = true the header strings are prepended to the list of topology s
 
 
 
-(defmethod connect ((o1 dna-nt) (o2 dna-nt) &key &allow-other-keys)
+(defmethod connect ((o1 dna-nt) (o2 dna-nt) &rest rest)
   "Sets (next o1) = o2 and (prev o2) = o1"
+  (dna-connect o1 o2))
+
+
+(defmethod dna-connect ((o1 dna) (o2 dna))
+  ;;untested
   (setf (next o1) o2)
   (setf (prev o2) o1)
   o1)
+  
 
 
 

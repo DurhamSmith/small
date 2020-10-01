@@ -1,5 +1,5 @@
 (defpackage :small
-  (:use #:cl #:asdf #:magicl #:defclass-std)
+  (:use #:cl #:alexandria #:asdf #:magicl #:defclass-std)
   (:export #:v3       ; vector related 
 	   #:v3l
 	   #:x
@@ -11,10 +11,13 @@
 	   #:bounds
 	   #:write-list ; MISC
 	   #:oxdna->file
-	   #:chem-obj ; CHEM-OBJ related 
+	   #:chem-obj ; CHEM-OBJ related
+	   #:set-parent
+	   #:set-child
 	   #:connect
 	   #:dna      ; DNA CHEM-OBJ related
-	   #:prev
+	   #:dna-connect
+      	   #:prev
 	   #:next
 	   #:dna-nt   ; DNA-NT CHEM-OBJ related
 	   #:base
