@@ -19,3 +19,6 @@
   (setf (next o1) o2)
   (setf (prev o2) o1)
   (values o1 o2))
+
+(defgeneric nts (dna &key all)
+  (:documentation "Gets DNA-NTs from dna CHEM-OBJ. If all = t all connected nts are returned if all all = nil then only the DNA-NTs in the strand are returned"))

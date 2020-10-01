@@ -48,4 +48,3 @@ If nt=nil the next DNA-NT is calculated via (next-nt s)")
 
   
  
-(typep 'null nil)
