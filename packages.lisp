@@ -11,6 +11,7 @@
 	   #:bounds
 	   #:write-list ; MISC
 	   #:+ht ;hash table stuff
+	   #:numtype-in-ht
 	   #:oxdna->file
 	   #:chem-obj ; CHEM-OBJ related
 	   #:set-parent

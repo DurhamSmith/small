@@ -10,5 +10,12 @@
 
       (is equal ans (alexandria:hash-table-keys ht)))))
 
+(define-test "numtype-in-ht (typ ht)"
+  (let* ((ht (make-hash-table)))
+    (loop for i from 2 to 11 do
+      (setf (gethash i ht) i))
+    (is eq 10 (numtype-in-ht (type-of 2) ht))))
+
+  
 		       
 
