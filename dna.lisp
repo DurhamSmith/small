@@ -20,5 +20,19 @@
   (setf (prev o2) o1)
   (values o1 o2))
 
-(defgeneric nts (dna &key all)
+(defgeneric nts (obj &key all)
   (:documentation "Gets DNA-NTs from dna CHEM-OBJ. If all = t all connected nts are returned if all all = nil then only the DNA-NTs in the strand are returned"))
+
+
+(defgeneric 5end (obj &key all)
+  (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
+
+(defgeneric 3end (obj &key all)
+  (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
+
+
+
+
+  
+		  
+		  

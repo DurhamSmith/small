@@ -7,9 +7,32 @@
    (vstart :doc "The coordinates of the starting point of the axis (strands 5' end)")
    (vend :doc "The coordinates of the starting point of the axis (strands 3' end)")
    (len :doc "The number of nucleotides in the strand")
-   (seq :doc "The sequence of the strand (length must be equal to len)"))
+   (seq :doc "The sequence of the strand (length must be equal to len)")
+   (5nt :doc "The DNA-NT at the 5'end of the DNA-STRAND")
+   (3nt :doc "The DNA-NT at the 3'end of the DNA-STRAND"))
   (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a parent for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
 
+(defmethod 5end ((obj dna-strand) &key all)
+  (with-accessors ((5nt 5nt)) obj
+    (unless 5nt
+      (error "(5end dna-strand) has no 5 end DNA-NT"))
+    (let* ((5nt (if all
+		    (first (connected-nts 5nt))
+		    5nt))
+	   (coords (cm 5nt)))
+      (values 5nt coords))))
+
+(defmethod 3end ((obj dna-strand) &key all)
+  (with-accessors ((3nt 3nt)) obj
+    (unless 3nt
+      (error "(3end dna-strand) has no 3 end DNA-NT"))
+    (let* ((3nt (if all
+		    (first (connected-nts 3nt))
+		    3nt))
+	   (coords (cm 3nt)))
+      (values 3nt coords))))
+  
+  
 (defmethod connect ((o1 dna-strand) (o2 dna-strand) &rest rest)
   
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"  

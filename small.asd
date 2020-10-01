@@ -35,6 +35,7 @@
                (:file "chem-obj-tests")
 	       (:file "dna-tests")
 	       (:file "dna-nt-tests")
+	       (:file "dna-strand-tests")
 	       ;; (:file "dna-tile-tests")
 	       ))
 

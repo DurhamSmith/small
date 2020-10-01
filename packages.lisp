@@ -21,6 +21,8 @@
 	   #:dna-connect
       	   #:prev
 	   #:next
+	   #:5end
+	   #:3end
 	   #:dna-nt   ; DNA-NT CHEM-OBJ related
 	   #:base
 	   #:make-dna-nt
@@ -33,7 +35,7 @@
 	   #:oxdna-topology
 	   #:oxdna-topology-from-seq
 	   #:write-oxdna
-	   #:make-dna-strand
+	   #:make-dna-strand   ;dna-strand
 	   ))
 
 (in-package :small)
