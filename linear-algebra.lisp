@@ -88,3 +88,23 @@ by: The list mapping function
 
 
 
+;;;; Rotating Vectors
+(defun rotation-matrix (axis theta)
+  "Returns a rotation matrix which rotates by theta (rad) around axis
+axis: 3D magicl vector
+theta: angle in radians
+See: https://computergraphics.stackexchange.com/questions/2399/3d-rotation-matrix-around-vector"
+  (let* ((x (x axis))
+	 (y (y axis))
+	 (z (z axis))
+	 (C (from-list
+	     `(  0d0 ,(- z) ,y
+		,z 0d0 ,(- x)
+		,(- y) ,x 0d0)
+	     '(3 3))))
+    (.+ (eye '(3 3))
+	(scale C (sin theta))
+	(scale (@ C C) (- 1 (cos theta))))))
+
+
+

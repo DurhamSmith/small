@@ -9,6 +9,7 @@
 	   #:print-v3
 	   #:on-v3-axis
 	   #:bounds
+	   #:rotation-matrix
 	   #:write-list ; MISC
 	   #:+ht ;hash table stuff
 	   #:numtype-in-ht
