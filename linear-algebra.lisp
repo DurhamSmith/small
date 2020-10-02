@@ -5,7 +5,7 @@
   (let* ((x (coerce x type-spec))
 	 (y (coerce y type-spec))
 	 (z (coerce z type-spec))
-	 (v (from-list `(,x ,y ,z) '(3))))
+	 (v (from-list `(,x ,y ,z) '(3 1))))
     v))
 
 (defun v3l (l  &key (type-spec '(double-float)))
@@ -19,7 +19,7 @@
 
 (defun v3-elem (v3 idx)
   "Returns v3[idx] and make sure 0 is always returned as 0 (not -0)"
-  (let* ((elem (tref v3 idx))
+  (let* ((elem (tref v3 idx 0))
 	 (elem (if (zerop elem)
 		   (coerce 0 (type-of elem))
 		   elem)))
@@ -93,18 +93,31 @@ by: The list mapping function
   "Returns a rotation matrix which rotates by theta (rad) around axis
 axis: 3D magicl vector
 theta: angle in radians
-See: https://computergraphics.stackexchange.com/questions/2399/3d-rotation-matrix-around-vector"
+See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle"
   (let* ((x (x axis))
 	 (y (y axis))
 	 (z (z axis))
 	 (C (from-list
 	     `(  0d0 ,(- z) ,y
-		,z 0d0 ,(- x)
-		,(- y) ,x 0d0)
-	     '(3 3))))
-    (.+ (eye '(3 3))
-	(scale C (sin theta))
-	(scale (@ C C) (- 1 (cos theta))))))
+		 ,z 0d0 ,(- x)
+		 ,(- y) ,x 0d0)
+	     '(3 3)))
+	 ;; (one (scale (eye '(3 3)) (cos theta)))
+	 ;; (two (scale C (sin theta)))
+	 ;; (three (scale (@ axis (transpose axis)) (- 1 (cos theta))))
+	 ;; (a (.+ one two))
+	 ;; (b (.+ a three))
+	 (res (.+ (scale (eye '(3 3)) (cos theta))
+		  (scale C (sin theta))))
+	 (res (.+ res (scale (@ axis (transpose axis)) (- 1 (cos theta))))))
+    res))
+	 
+    ;; (.+ (scale (eye '(3 3)) (cos theta))
+    ;; 	(.+ (scale C (sin theta))
+    ;; 	   (scale (@ C C) (- 1 (cos theta)))))))
+    ;; (.+ (scale (eye '(3 3)) (cos theta))
+    ;; 	(scale (@ a (sin theta))
+    ;; 	(scale (@ C  (transpose C)) (- 1 (cos theta))))))
 
 
 

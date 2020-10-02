@@ -11,7 +11,7 @@
     (of-type 'SMALL::DNA-NT nt)
     (is #'magicl:= (small::cm nt) cm)
     (setf cm nil)
-    (of-type 'MAGICL::VECTOR/DOUBLE-FLOAT (small::cm nt)) 
+    (of-type 'MAGICL::MATRIX/DOUBLE-FLOAT (small::cm nt)) 
     )
   )
 

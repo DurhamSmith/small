@@ -12,7 +12,7 @@
     (is = vx (coerce x type-spec))
     (is = vy (coerce y type-spec))
     (is = vz (coerce z type-spec))
-    (is equal '(3) (magicl:shape v))))
+    (is equal '(3 1) (magicl:shape v))))
 
 
 (define-test "Test v3 accessor fns: x, y z"
@@ -55,3 +55,29 @@
 (define-test "print-v3 outputs correctly"
   (is equal "1.0 2.0 3.0" (print-v3 (v3 1 2 3) :stream nil))
   (is equal "pre1.0 2.0 3.0app" (print-v3 (v3 1 2 3) :stream nil :prepend "pre" :append "app")))
+
+
+(define-test "(rotation-matrix (axis theta))"
+  (let* ((theta (/ pi 2))
+	 (x (v3 1 0 0))
+	 (y (v3 0 1 0))
+	 (z (v3 0 0 1))
+	 (xrot (magicl:from-list
+		`( 1d0 0d0 0d0
+		   0d0 ,(cos theta) ,(- (sin theta))
+		   0d0 ,(sin theta) ,(cos theta))
+			'(3 3)))
+	 (yrot (magicl:from-list
+			`(,(cos theta) 0d0 ,(sin theta)
+			   0d0 1d0 0d0
+			  ,(- (sin theta)) 0d0 ,(cos theta) )
+			'(3 3)))
+	 (zrot (magicl:from-list
+			`(,(cos theta) ,(- (sin theta)) 0d0
+			  ,(sin theta) ,(cos theta) 0d0
+			  0d0 0d0 1d0)
+			'(3 3))))
+    (is #'magicl:= xrot (rotation-matrix x theta))
+    (is #'magicl:= yrot (rotation-matrix y theta))
+    (is #'magicl:= zrot (rotation-matrix z theta))))
+  
