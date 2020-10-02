@@ -1,5 +1,21 @@
 (in-package :small)
 
+
+
+(defparameter *helix-spacing* 1d0 "Spacing between parallel double helices in this design")
+
+(defparameter *helix-diameter* 2d0 "Diameter of DNA double helix in nm")
+
+(defparameter *inter-helix-spacing* 1d0 "Spacing between two helices in an origmi design")
+
+(defparameter *helix-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")
+
+(defparameter *bp/turn* 10.44d0 "Length of each base pair in a double helix in nm")
+
+(defparameter *rad/bp* (/ (* pi 2) *bp/turn*) "The delta theta between backbone vectors when viewed down the axis in the 5'->3' direction (- theta-nt1 theta-nt0)")
+
+
+
 (defclass/std dna (chem-obj)
   ((prev :doc "The previous DNA CHEM-OBJ in dna sequence. Together with (next dna) form a doubly linked list of DNA CHEM-OBJS used to represent a grouped sequence of these DNA CHEM-OBJs, which themselves could be at various levels of abstraction (e.g strand composed of nucleotides, or origami scaffolds composed of single and helical strands). These sequences are on the same molecule, i.e. partner strands are not included")
    (next :doc "The next DNA CHEM-OBJ in dna sequence. Together with (next dna) form a doubly linked list of DNA CHEM-OBJS used to represent a grouped sequence of these DNA CHEM-OBJs, which themselves could be at various levels of abstraction (e.g strand composed of nucleotides, or origami scaffolds composed of single and helical strands). These sequences are on the same molecule, i.e. partner strands are not included"))

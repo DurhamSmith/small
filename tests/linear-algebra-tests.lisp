@@ -92,3 +92,5 @@
     (is #'magicl:= y (rotate-vec z x (/ pi -2)))
     (is #'magicl:= z (rotate-vec x y (/ pi -2)))
     (is #'magicl:= z (rotate-vec y x (/ pi 2)))))
+
+
