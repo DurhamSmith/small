@@ -58,7 +58,7 @@
 
 
 (define-test "(rotation-matrix (axis theta))"
-  (let* ((theta (/ pi 2))
+  (let* ((theta (/ pi 4))
 	 (x (v3 1 0 0))
 	 (y (v3 0 1 0))
 	 (z (v3 0 0 1))
@@ -80,4 +80,15 @@
     (is #'magicl:= xrot (rotation-matrix x theta))
     (is #'magicl:= yrot (rotation-matrix y theta))
     (is #'magicl:= zrot (rotation-matrix z theta))))
-  
+
+(define-test "(rotate-vec v axis theta)"
+  (let* ((theta (/ pi 2))
+	 (x (v3 1 0 0))
+	 (y (v3 0 1 0))
+	 (z (v3 0 0 1)))
+    (is #'magicl:= x (rotate-vec y z (/ pi -2)))
+    (is #'magicl:= x (rotate-vec z y (/ pi 2)))
+    (is #'magicl:= y (rotate-vec x z (/ pi 2)))
+    (is #'magicl:= y (rotate-vec z x (/ pi -2)))
+    (is #'magicl:= z (rotate-vec x y (/ pi -2)))
+    (is #'magicl:= z (rotate-vec y x (/ pi 2)))))

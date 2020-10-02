@@ -10,6 +10,7 @@
 	   #:on-v3-axis
 	   #:bounds
 	   #:rotation-matrix
+	   #:rotate-vec
 	   #:write-list ; MISC
 	   #:+ht ;hash table stuff
 	   #:numtype-in-ht
