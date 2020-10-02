@@ -12,7 +12,12 @@
   (v3 (nth 0 l) (nth 1 l) (nth 2 l)))
 
 (defun as-unit-vec (v)
-  (scale v (/ 1 (norm v))))
+  (let* ((v (if (typep v 'MAGICL::MATRIX/DOUBLE-FLOAT)
+		(from-list (list (x v) (y v) (z v)) '(3))
+		v))
+	 (v (scale v (/ 1 (norm v))))
+	 (v (v3 (tref v 0) (tref v 1) (tref v 2))))
+    v))
     
 
 ;;; Accessor functions for 3D Vecs. We have the zero check so we can print 0 instead of -0 when we magicl:scale (todo create PR to fix this)

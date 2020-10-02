@@ -28,6 +28,8 @@
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
 
+
+
 (defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;TODO check param list (maybe use &rest &allow-other-keys)
   (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1) (inc-headers t))
@@ -231,6 +233,14 @@ If inc-headers = true the header strings are prepended to the list of topology s
 
 
 
+(defmethod next-vbb ((obj dna-nt) &key 5end kind)
+  "Returns a vector that would be vbb for the next DNA-NT given strand type :kind"
+  (with-accessors ((5nt 5nt) (3nt 3nt)) obj
+    (typecase kind
+      (dna-helix (next-helix-vbb obj :end 5end))
+      (dna-strand (next-strand-vbb obj :end 5end))
+      (t (error "(next-nt dna-nt :kind ~A) is not of valid DNA-NT kind" kind)))))
+    
 (defmethod next-nt ((obj dna-nt) &key 5end kind)
   "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type"
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
