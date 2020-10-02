@@ -24,6 +24,13 @@
   (:documentation "Gets DNA-NTs from dna CHEM-OBJ. If all = t all connected nts are returned if all all = nil then only the DNA-NTs in the strand are returned"))
 
 
+
+(defgeneric next-nt (obj &key 5end kind)
+  (:documentation "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type")
+  (:method (obj &key 5end kind)
+    (error "(next-nt (obj ~A ) &key 5end) has not been implemented" (type-of obj))))
+
+
 (defgeneric 5end (obj &key all)
   (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
 
