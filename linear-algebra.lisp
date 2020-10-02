@@ -102,22 +102,7 @@ See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and
 		 ,z 0d0 ,(- x)
 		 ,(- y) ,x 0d0)
 	     '(3 3)))
-	 ;; (one (scale (eye '(3 3)) (cos theta)))
-	 ;; (two (scale C (sin theta)))
-	 ;; (three (scale (@ axis (transpose axis)) (- 1 (cos theta))))
-	 ;; (a (.+ one two))
-	 ;; (b (.+ a three))
 	 (res (.+ (scale (eye '(3 3)) (cos theta))
 		  (scale C (sin theta))))
-	 (res (.+ res (scale (@ axis (transpose axis)) (- 1 (cos theta))))))
+	 (res (.+ res (scale (@ axis (transpose axis)) (- 1 (cos theta)))))) ; Note we need this since .+ is not the same as + 
     res))
-	 
-    ;; (.+ (scale (eye '(3 3)) (cos theta))
-    ;; 	(.+ (scale C (sin theta))
-    ;; 	   (scale (@ C C) (- 1 (cos theta)))))))
-    ;; (.+ (scale (eye '(3 3)) (cos theta))
-    ;; 	(scale (@ a (sin theta))
-    ;; 	(scale (@ C  (transpose C)) (- 1 (cos theta))))))
-
-
-
