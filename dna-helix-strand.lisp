@@ -29,7 +29,7 @@
 				 (- *helix-nt-spacing*)
 				 *helix-nt-spacing*))))
 	 (vbb+1 (next-helix-vbb vbb vn :5end 5end))
-	 (cm+1 (.+ ax+1 vbb+1)))
+	 (cm+1 (.+ ax+1 (scale vbb+1 *helix-cm-offset*))))
     cm+1))
 	
 ;    (let* ((axis-coords (.+ cm (scale vbb -0.6))) ;vbb points from axis->backbone and vbb
