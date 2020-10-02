@@ -41,6 +41,15 @@ VALUES cm vn vbb"
 	 (vn+1 (as-unit-vec vn)))
     (values cm+1 vbb+1 vn+1)))
 
+(defun next-helix-nt (nt &key 5end)
+  "Returns the next DNA-NT extending in the 3' direction (or 5' if 5end = t)"
+  (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt
+    (unless (and cm vbb vn)
+      (error "cm vbb and vn need to be set for nt"))
+    (multiple-value-bind (cm+1 vbb+1 vn+1)
+	(next-helix-nt-coords cm vbb vn :5end 5end)
+      (make-dna-nt :cm cm+1 :vbb vbb+1 :vn vn+1))))
+      
 
 
 

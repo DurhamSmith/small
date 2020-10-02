@@ -72,7 +72,7 @@ If inc-headers=nil retuns a LIST")
 				 b
 				 (U 0d0)
 				 (K 0d0)
-				 box-padding)
+				 (box-padding (v3 1 1 1)))
   "Returns a LIST containing the 3 oxDNA header strings.
 nt: DNA-NT
 all: Bool
