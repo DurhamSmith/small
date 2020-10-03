@@ -58,4 +58,85 @@
   ;;; (staple tri ((:start :end) (:connect-by :strand) (:start :end) (:connect-by :strand) (:start :end)))
   )
 
+(defparameter *i1*  11.3d0
+  "The length of the shortest double helix in the square")
+
      
+(defparameter *r*  11
+  "the total number of rows with increasing length in each of the four isosceles right triangles composing the square")
+
+(defparameter *g* 1.42d0 "Distance between the center of the square to the central vertex of each of the four triangles")
+
+
+(defparameter *w* (+ (* 2 (+ *i1* *g*))
+		     (* (+ *helix-diameter* *helix-spacing*)
+			(- (* 2 *r*)
+			   1))))
+
+(defun ai (i)
+  (let ((2r (* 2 *r*)))
+    (if (or (> i 2r) (< i 0))
+	(error "~a is an invalid index for ai calculation. valid indices: [1, ~a]" i 2r)
+	(if (<= i *r*)
+	    (round (/ (+ **i1**
+			 (* (+ *helix-diameter* *helix-spacing*)
+			    (- i 1)))
+		      *helix-nt-spacing*))
+	    (ai (+ 2r 1 (- i)))))))
+
+
+
+
+(defun helix-axis-x-coord-1 (i)
+  "Calculate the x coordinate (left-right) of the helix axis in the two-dimensional plane of the  bases pair in the i-th row in the 'top' triangle [0-3] going clockwise with 0 at top
+Returns: float (x with)
+Note: The geometric model in https://www.nature.com/articles/nnano.2016.256 defines the coordinate system"
+  (float (+ (- (/ *w* 2))
+	    *i1*
+	    *g*
+	    (* (+ *helix-diameter* *helix-spacing*)
+	       (- i 1)))))
+
+(helix-axis-x-coord-1 1)
+
+(defun helix-axis-y-coord-1 ()
+  "Calculate the y coordinate (in/out) in the 'top' triangle [0-3] going clockwise with 0 at top
+Returns: float (y)
+Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defines the coordinate system and y is constant at 0 for the helix axis"
+  0d0)
+
+(defun helix-axis-z-coord-1 (j)
+  "Calculate the z coordinate (up/down) of the helix axis in the two-dimensional plane of the  
+j-th base pair in a row of the 'top' triangle triangle [0-3] going clockwise with 0 at top
+Returns: float (y)
+Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defines the coordinate system"
+    (float (+ (- (/ *w* 2))
+	      (* *helix-nt-spacing* j))))
+  
+
+
+(helix-axis-coords-1 1 1)
+(defun helix-axis-coords-1 (i j)
+  "The coordinate location of the helix axis in the two-dimensional plane of the j th base pair in the i th row in the first triangle: C1,i,j =(cx, cy, cz)"
+  (v3
+   (helix-axis-x-coord-1 i)
+   (helix-axis-y-coord-1)
+   (helix-axis-z-coord-1 j)))
+
+
+(defun helix-axis-coords-1 (i j)
+  "The coordinate location of the helix axis in the two-dimensional plane of the j th base pair in the i th row in the first triangle: C1,i,j =(cx, cy, cz)"
+  (v3
+   (helix-axis-x-coord-1 i)
+   (helix-axis-y-coord-1)
+   (helix-axis-z-coord-1 j)))
+
+
+
+(defmethod helix-axis-coords (k i j)
+  "Returns the coords for the staple in triangle. tile: a DNA tile object k: triangle index [1-4] clockwise starting at the top j: j-th base pair i: i th row Returns: VECTOR/DOUBLE-FLOAT (magicl) of the staple coordinates"
+  (if (eql k 1)
+      (helix-axis-coords-1 i j)
+      (rotate-vec (helix-axis-coords (- k 1) i j)   ;reccursive rotate around xz axis
+		  (v3 0 1 0)
+		  (/ pi 2))))
