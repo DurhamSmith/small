@@ -55,9 +55,5 @@
 (defgeneric 3end (obj &key all)
   (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
 
-
-
-
-  
-		  
-		  
+(defgeneric partner (obj)
+  (:documentation "Returns a partner of the DNA CHEM-OBJ"))

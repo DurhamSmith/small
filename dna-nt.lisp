@@ -30,8 +30,8 @@
 
 
 
-(defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;TODO check param list (maybe use &rest &allow-other-keys)
-  (:documentation "Returns the oxdna topolog of the object as a list of strings. DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
+(defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;todo check param list (maybe use &rest &allow-other-keys)
+  (:documentation "returns the oxdna topolog of the object as a list of strings. dna/rna nucleotides will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1) (inc-headers t))
     (let* ((bases (if all
 		      (reduce #'(lambda (nts nt)
@@ -46,10 +46,10 @@
 
 
 (defgeneric oxdna-config (obj &key all inc-headers)
-  (:documentation "Returns the oxdna configuration of the object as a (TODO datatype). DNA/RNA NUCLEOTIDEs will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config
+  (:documentation "returns the oxdna configuration of the object as a (todo datatype). dna/rna nucleotides will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config
 
-If inc-headers=t returns a LIST
-If inc-headers=nil retuns a LIST")
+if inc-headers=t returns a list
+if inc-headers=nil retuns a list")
   (:method ((obj dna-nt) &key (all nil) (inc-headers t))
     (let* ((conf (if all
 		     (mapcar #'(lambda (x)
@@ -57,7 +57,7 @@ If inc-headers=nil retuns a LIST")
 			     (connected-nts obj))
 		     (oxdna-config-string obj)))
 	   (header (oxdna-config-header obj :all all))
-	   (conf (if (typep conf 'STRING) ;make list if only 1 elem, since downstream fn need lists
+	   (conf (if (typep conf 'string) ;make list if only 1 elem, since downstream fn need lists
 		     (list conf)
 		     conf))
 	   (conf (if inc-headers
@@ -70,30 +70,30 @@ If inc-headers=nil retuns a LIST")
 				 (all t)
 				 (time 0)
 				 b
-				 (U 0d0)
-				 (K 0d0)
+				 (u 0d0)
+				 (k 0d0)
 				 (box-padding (v3 1 1 1)))
-  "Returns a LIST containing the 3 oxDNA header strings.
-nt: DNA-NT
-all: Bool
-time: the timestep T at which the configuration has been printed
-b: the length of the box sides in MAGICL:VECTOR (Lx Ly Lz) Tip: (small:v3 x y z) creates these
-U: Potential Energy
-K: Kinetic Energy
-box-padding: If b is not supplied the differecnec between the max and min x, y and z coord are added to box-padding and are used in place of b
+  "returns a list containing the 3 oxdna header strings.
+nt: dna-nt
+all: bool
+time: the timestep t at which the configuration has been printed
+b: the length of the box sides in magicl:vector (lx ly lz) tip: (small:v3 x y z) creates these
+u: potential energy
+k: kinetic energy
+box-padding: if b is not supplied the differecnec between the max and min x, y and z coord are added to box-padding and are used in place of b
 "
-  ;;TODO allow to take both v3 and strings
-  (let* ((tline (format nil "t = ~f" time))  ;TODO check if this should be an int or real
+  ;;todo allow to take both v3 and strings
+  (let* ((tline (format nil "t = ~f" time))  ;todo check if this should be an int or real
 	 (box (if all
 		  (bounds (mapcar #'cm (connected-nts nt))) ; bounds returns vec of vmaxs - vmins
-		  (v3 1 1 1))) ; Default box size for a single nucleotide (1nm^3) TODO choose better and defparameter
+		  (v3 1 1 1))) ; default box size for a single nucleotide (1nm^3) todo choose better and defparameter
 	 (box (if box-padding
 		  (.+ box box-padding)
 		  box))
 	 (bline (if b
 		    (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
 		    (format nil "b = ~f ~f ~f" (x box) (y box) (z box))))
-	 (eline (format nil "E = ~f ~f ~f" (+ U K) U K)))
+	 (eline (format nil "e = ~f ~f ~f" (+ u k) u k)))
     (list tline bline eline)))
 
 ;; (defun oxdna-box-size (nt &key
@@ -112,23 +112,23 @@ box-padding: If b is not supplied the differecnec between the max and min x, y a
 
 
 (defun oxdna-config-string (nt)
-  "Returns a STRING with the oxdna config for nt.
-nt:  DNA-NT
-Returns: String
-Notes: For oxdna config spec see https://dna.physics.ox.ac.uk/index.php/Documentation#Configuration_and_topology_files"
-  (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (L L)) nt
-    (let* ((oxbb (scale vbb -1)) ;oxDNA needs these vecs in the opposite direction of how we store them
+  "returns a string with the oxdna config for nt.
+nt:  dna-nt
+returns: string
+notes: for oxdna config spec see https://dna.physics.ox.ac.uk/index.php/documentation#configuration_and_topology_files"
+  (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (l l)) nt
+    (let* ((oxbb (scale vbb -1)) ;oxdna needs these vecs in the opposite direction of how we store them
 	   (oxn (scale vn -1)))
       (concatenate 'string 
 		   (print-v3 cm)
 		   (print-v3 oxbb :prepend " ")
 		   (print-v3 oxn :prepend " ")
 		   (print-v3 v :prepend " ")
-		   (print-v3 L :prepend " ")))))
+		   (print-v3 l :prepend " ")))))
 
 
 (defun oxdna->file (file conf top)
-  "Writes a LIST of STRINGS containing conf to [file].oxdna and LIST of STRINGS containing conf to file.conf"
+  "writes a list of strings containing conf to [file].oxdna and list of strings containing conf to file.conf"
   (let* ((conf-f (concatenate 'string file ".oxdna"))
 	 (top-f (concatenate 'string file ".top")))
     (write-list conf-f conf)
@@ -136,14 +136,14 @@ Notes: For oxdna config spec see https://dna.physics.ox.ac.uk/index.php/Document
 
 
 (defgeneric write-oxdna  (obj &key filename all start prev next strand)
-  (:documentation "Writes a DNA CHEM-OBJ's oxDNA config and topology file to [filename].oxdna and [filename].top respectively
-obj: A 'DNA 'CHEM-OBJ
-filename: name that should be used for the config and top file ('STRING)
-all: if t will give the topology and config for all the DNA-NTs connected to obj ('BOOLEAN)
-start: (for topology) the starting index to be used for the .top file's first DNA-NT ('INTEGER) SEE: https://dna.physics.ox.ac.uk/index.php/Documentation#Configuration_and_topology_files
-prev: (for topology) the index to be used for DNA-NT before the first DNA-NT in the .top file. -1 means not connected to another nt ('INTEGER)
-next: (for topology) the index to be used for DNA-NT after the last DNA-NT in the .top file. -1 means not connected to another nt('INTEGER)
-strand: (for topology) the strand number to be used for the .top file ('INTEGER)")
+  (:documentation "writes a dna chem-obj's oxdna config and topology file to [filename].oxdna and [filename].top respectively
+obj: a 'dna 'chem-obj
+filename: name that should be used for the config and top file ('string)
+all: if t will give the topology and config for all the dna-nts connected to obj ('boolean)
+start: (for topology) the starting index to be used for the .top file's first dna-nt ('integer) see: https://dna.physics.ox.ac.uk/index.php/documentation#configuration_and_topology_files
+prev: (for topology) the index to be used for dna-nt before the first dna-nt in the .top file. -1 means not connected to another nt ('integer)
+next: (for topology) the index to be used for dna-nt after the last dna-nt in the .top file. -1 means not connected to another nt('integer)
+strand: (for topology) the strand number to be used for the .top file ('integer)")
   (:method ((obj dna-nt) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
     (let* ((conf (oxdna-config obj :inc-headers t :all all))
 	   (top (oxdna-topology obj :inc-headers t
@@ -157,16 +157,16 @@ strand: (for topology) the strand number to be used for the .top file ('INTEGER)
 
 
 (defun oxdna-topology-from-seq (seq &key (strand-num 1) (start 0) (prev -1) (next -1) (inc-headers t))
-  "Returns VALUES 0: (list 'string) of topologly lines 1: topology-header 'string
-If inc-headers = true the header strings are prepended to the list of topology strings"
+  "returns values 0: (list 'string) of topologly lines 1: topology-header 'string
+if inc-headers = true the header strings are prepended to the list of topology strings"
   (when (< (length seq) 1)
-    (error "oxdna-topology-from-seq seq cannot be empty. It is: ~A" seq))
-  (unless (typep seq 'STRING)
-    (error "oxdna-topology-from-seq must be of type STRING. It is ~A" (type-of seq)))
+    (error "oxdna-topology-from-seq seq cannot be empty. it is: ~a" seq))
+  (unless (typep seq 'string)
+    (error "oxdna-topology-from-seq must be of type string. it is ~a" (type-of seq)))
   (let* ((len (length seq))
 	 (end (+ start (- len 1)))
-	 (top-header (format nil "~A ~A" len strand-num))
-	 (top-lines (loop for i from start upto end collect ;TODO better use of step forms
+	 (top-header (format nil "~a ~a" len strand-num))
+	 (top-lines (loop for i from start upto end collect ;todo better use of step forms
 						    (let* ((i+1 (+ i 1))
 							   (i-1 (- i 1))
 							   (pnt (if (= i start)
@@ -178,13 +178,13 @@ If inc-headers = true the header strings are prepended to the list of topology s
 							   (base (subseq seq
 									 (- i start)
 									 (- i+1 start)))
-							   (nt-top (format nil "~A ~A ~A ~A"
+							   (nt-top (format nil "~a ~a ~a ~a"
 									   strand-num base pnt nnt)))
 						      nt-top)))
 	 (top-lines (if inc-headers
 			(append (list top-header) top-lines)
 			top-lines)))
-;    (break "~A inc ~A ~A" top-lines inc-headers (null inc-headers))
+;    (break "~a inc ~a ~a" top-lines inc-headers (null inc-headers))
     (values top-lines top-header)))
 
 
@@ -193,7 +193,7 @@ If inc-headers = true the header strings are prepended to the list of topology s
 
 
 (defun connected-nts (nt)
-  "Returns a LIST of DNA-NT, ordered 5'->3"
+  "returns a list of dna-nt, ordered 5'->3"
   (let* ((orig nt)
 	 (prev-nts (reverse (loop while (prev nt) 
 				  do (setf nt (prev nt))
@@ -209,14 +209,14 @@ If inc-headers = true the header strings are prepended to the list of topology s
 
 
 
-;;; Implementation of CHEM-OBJs required methods
+;;; implementation of chem-objs required methods
 
 (defun connect-nts (&rest nts)
-  "DNA-NT:CONNECTs all DNA-NTs in nts in the order they are provided"
-  ;; TODO: Errors: not provided DNA-NTs, this prob done by the fact connoct errors if no valid specilizations
+  "dna-nt:connects all dna-nts in nts in the order they are provided"
+  ;; todo: errors: not provided dna-nts, this prob done by the fact connoct errors if no valid specilizations
  ; (break "~a~%" nts)
   (let ((nts (alexandria:flatten nts)))
-;    (break "~A~%" nts)
+;    (break "~a~%" nts)
     (append (mapcar #'connect nts (cdr nts)) (last nts))))
 
 
@@ -226,33 +226,48 @@ If inc-headers = true the header strings are prepended to the list of topology s
 
 
 (defmethod connect ((o1 dna-nt) (o2 dna-nt) &rest rest)
-  "Sets (next o1) = o2 and (prev o2) = o1"
-;  (break "DNA nt CONNECT")
+  "sets (next o1) = o2 and (prev o2) = o1"
+;  (break "dna nt connect")
   (dna-connect o1 o2))
 
 
 
 
 (defmethod next-vbb ((obj dna-nt) &key 5end kind)
-  "Returns a vector that would be vbb for the next DNA-NT given strand type :kind"
+  "returns a vector that would be vbb for the next dna-nt given strand type :kind"
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
     (typecase kind
       (dna-helix (next-helix-vbb obj :end 5end))
       (dna-strand (next-strand-vbb obj :end 5end))
-      (t (error "(next-nt dna-nt :kind ~A) is not of valid DNA-NT kind" kind)))))
+      (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
     
 (defmethod next-nt ((obj dna-nt) &key 5end kind)
-  "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type"
+  "returns a dna-nt that would be the next nucleotide in the sequence for a given strand type"
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
     (typecase kind
       (dna-helix (next-helix-nt obj :end 5end))
       (dna-single-strand (next-single-strand-nt obj :end 5end))
-      (t (error "(next-nt dna-nt :kind ~A) is not of valid DNA-NT kind" kind)))))
+      (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
 
 
 
 
 (defun containing-strand (nt)
-  "Returns an ordered list of all the DNA-NT connected to nt. The car of the list is the most (prev nt) of all DNA-NTs connected to nt"
+  "returns an ordered list of all the dna-nt connected to nt. the car of the list is the most (prev nt) of all dna-nts connected to nt"
   nt
   )
+
+
+(defun partner-coords (nt)
+  (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt
+      (let* ((pbb (scale vbb -1d0)) ;partner nt faces the other way
+	     (pcm (.+ (scale pbb (* 2 *helix-cm-offset*)) cm))
+					; partner is same distance from axis (axis->cm "*helix-cm-offset*
+	     (pn (scale vn -1d0)))
+	(values pcm pbb pn))))
+
+(defmethod partner ((obj dna-nt))
+  (multiple-value-bind (cm vbb vn)
+      (partner-coords obj)
+    (make-dna-nt :cm cm :vbb vbb :vn vn :base "!")))
+    
