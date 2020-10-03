@@ -140,3 +140,27 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
       (rotate-vec (helix-axis-coords (- k 1) i j)   ;reccursive rotate around xz axis
 		  (v3 0 1 0)
 		  (/ pi 2))))
+
+
+(theta-1ij 1 3 )
+(defmethod theta-1ij (i j &key (odd-offset 0) (even-offset 0))
+  (let* ((rotation (mod (* (- j 1)
+			   *rad/bp*)
+			(* 2 pi)))
+	 (theta (if (oddp i)
+		    (mod (+ odd-offset rotation) (* 2 pi))
+		    (mod (+ even-offset rotation) (* 2 pi)))))
+    theta))
+
+
+(defmethod theta-1ij-scaffold (i j)
+  (theta-1ij i j
+	     :odd-offset 0
+	     :even-offset (/ pi 2)))
+
+(defmethod theta-1ij-staple (i j)
+  (theta-1ij i j
+	     :odd-offset (- (* 150 (/ 1 pi)))  ;150deg=>rad
+	     :even-offset (+ 180 (* 150 (/ 1 pi)))))
+
+
