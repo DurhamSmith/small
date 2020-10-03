@@ -120,3 +120,19 @@ See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and
 ;    (break "MAT: ~A ~% v: ~A~%~%" mat vnew)
     (values vnew mat)))
     
+
+
+(defun cylindrical->cartesian-matrix (phi)
+  "Matrix that defines the trasform from cylindrical to cartesian coordinate  
+https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindrical_to_Cartesian_Coordinate.aspx"
+  (format t "~& MATRIX PHI:~A ~%" phi)
+
+  (from-list
+   `(,(cos phi) 0  0
+     ,(sin phi) 0  0
+     0 0 1)
+   '(3 3)))
+
+(defun cylindrical->cartesian (cyl-vec phi)
+  "Converts a vector in a cylindrical coords to cartesian"
+  (@ (cylindrical->cartesian-matrix phi) cyl-vec))

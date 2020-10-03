@@ -11,6 +11,8 @@
 	   #:bounds
 	   #:rotation-matrix
 	   #:rotate-vec
+	   #:cylindrical->cartesian-matrix
+	   #:cylindrical->cartesian
 	   #:write-list ; MISC
 	   #:+ht ;hash table stuff
 	   #:numtype-in-ht
