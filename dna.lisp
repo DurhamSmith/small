@@ -10,6 +10,8 @@
 
 (defparameter *helix-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")
 
+(defparameter *single-strand-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")
+
 (defparameter *bp/turn* 10.44d0 "Length of each base pair in a double helix in nm")
 
 (defparameter *rad/bp* (/ (* pi 2) *bp/turn*) "The delta theta between backbone vectors when viewed down the axis in the 5'->3' direction (- theta-nt1 theta-nt0)")

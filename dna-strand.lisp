@@ -85,15 +85,11 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 		 
 
 (defmethod next-nt ((obj dna-strand) &key 5end kind)
-  "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type, defined by kind"
+  "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type, defined by k"
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
     (if 5end
 	(next-nt 5nt :kind (type-of obj))
 	(next-nt 3nt))))
-
-(type-of (dna
-
-    
 
   
 (defgeneric nt->3end (obj nt)  
