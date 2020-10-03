@@ -13,7 +13,7 @@
 	       (:file "dna-strand" :depends-on ("dna-nt"))
 	       (:file "dna-single-strand" :depends-on ("dna-strand"))
 	       (:file "dna-helix-strand" :depends-on ("dna-strand"))
-	       ;; (:file "dna-tile" :depends-on ("dna-single-strand" "dna-helix-strand"))
+	       (:file "dna-tile" :depends-on ("dna-single-strand" "dna-helix-strand"))
 	       )
   :in-order-to ((asdf:test-op (asdf:test-op #:small-tests))))
 

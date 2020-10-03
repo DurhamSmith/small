@@ -1,4 +1,4 @@
-3(in-package :small)
+(in-package :small)
 
 
 (defclass/std dna-tile (dna)
@@ -133,7 +133,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 		  (/ pi 2))))
 
 
-(theta-1ij 1 3 )
+
 (defun theta-1ij (i j &key (odd-offset 0) (even-offset 0))
   (let* ((rotation (mod (* (- j 1)
 			   *rad/bp*)
@@ -178,3 +178,17 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	 (cart-cyl (cylindrical->cartesian cyl-vec theta))
 	 (coords (.+ helix-axis cart-cyl)))
     coords))
+
+
+(defun staple-coords (k i j  &key cm)
+  "Returns the coords for the staple in triangle. tile: a DNA tile object k: triangle index [1-4] clockwise starting at the top j: j-th base pair i: i th row Returns: VECTOR/DOUBLE-FLOAT (magicl) of the staple coordinates"
+  (if (eql k 1)
+      (staple-coords-1  i j :cm cm)
+      (rotate-vec (staple-coords (- k 1) i j) (v3 0 1 0) (/ pi 2))))
+
+
+(defun scaffold-coords (k i j &key cm)
+  "Returns the coords for the scaffold in triangle. tile: a DNA tile object k: triangle index [1-4] clockwise starting at the top j: j-th base pair i: i th row Returns: VECTOR/DOUBLE-FLOAT (magicl) of the scaffold coordinates"
+  (if (eql k 1)
+      (scaffold-coords-1 i j :cm cm)
+      (rotate-vec (scaffold-coords (- k 1) i j) (v3 0 1 0) (/ pi 2))))

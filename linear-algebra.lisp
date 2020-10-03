@@ -125,8 +125,6 @@ See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and
 (defun cylindrical->cartesian-matrix (phi)
   "Matrix that defines the trasform from cylindrical to cartesian coordinate  
 https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindrical_to_Cartesian_Coordinate.aspx"
-  (format t "~& MATRIX PHI:~A ~%" phi)
-
   (from-list
    `(,(cos phi) 0  0
      ,(sin phi) 0  0
