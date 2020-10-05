@@ -1,6 +1,20 @@
 (in-package :small-tests)
 
 
+(define-test "(bridging-single-strand p1 p2)"
+  (skip "bridge testing not ready"
+   (let* ((p1 (v3 2 0 0))
+	    (p2 (v3 4.20 0 0)) ;; should need 5nts of 0, .4nt and have 0.1nm spacing
+	    (answer nil)
+	    res )
+       (multiple-value-bind (strand len)
+	   (small::bridging-single-strand p1 p2)
+	 (of-type small::dna-single-strand strand)
+	 (is = 5 len)))))
+;	 (is = 5 (length (strand-nts strand)))
+;	 (of-type small::dna-single-strand (first (strand-nts strand))))))))
+	 
+
 ;;;; This seems to pass but I need a better way of testing it
 
 (let* ((sc0 (v3l '(-30.5 0. -43.879999999999995)))

@@ -26,8 +26,8 @@
 	'("1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0")
 	(oxdna-config nt :inc-headers nil))
     (is equal
-	'("t = 0.0" "b = 1.0 1.0 1.0" "E = 0.0 0.0 0.0" "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0")
-	(oxdna-config nt :inc-headers t))))
+	'("t = 0.0" "b = 2.0 2.0 2.0" "E = 0.0 0.0 0.0" "1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0") ;; This includes the box padding of 1s
+	(oxdna-config nt :inc-headers t)))) 
 
 
 
@@ -157,8 +157,8 @@
 	 (nt4 (make-dna-nt :cm v4 :vbb v4 :vn v4 :base "T"))
 	 (nt5 (make-dna-nt :cm v5 :vbb v5 :vn v5 :base "T"))
 	 (nt6 (make-dna-nt :cm v6 :vbb v6 :vn v6 :base "G"))
-	 (ans-all (list "t = 0.0" "b = 5.0 5.0 5.0" "E = 0.0 0.0 0.0"))
-	 (ans-single (list "t = 0.0" "b = 1.0 1.0 1.0" "E = 0.0 0.0 0.0")) ; single nts get a box on 1nm^3 TODO choose good size
+	 (ans-all (list "t = 0.0" "b = 6.0 6.0 6.0" "E = 0.0 0.0 0.0")) ;; incs box padding
+	 (ans-single (list "t = 0.0" "b = 2.0 2.0 2.0" "E = 0.0 0.0 0.0")) ; single nts get a box on 1nm^3 TODO choose good size
 	 (ans-b (list "t = 0.0" "b = 7.0 7.0 7.0" "E = 0.0 0.0 0.0")))
     (connect-nts nt1 nt2 nt3 nt4 nt5 nt6)
     (define-test "(oxdna-config-header nt :all t)"

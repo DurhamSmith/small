@@ -45,3 +45,8 @@ VALUES cm vn vbb"
     (multiple-value-bind (cm+1 vbb+1 vn+1)
 	(next-single-strand-nt-coords cm vbb vn :5end 5end)
       (make-dna-nt :cm cm+1 :vbb vbb+1 :vn vn+1))))
+
+
+(defun bridging-single-strand (p1 p2 &key 5end)
+  "Returns a VALUES DNA-SINGLE-STRAND strand length that bridges the distance with its 3 end starting at p1 + (midpoint p1 p2) - strand-len/2"
+)

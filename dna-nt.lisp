@@ -93,7 +93,7 @@ box-padding: if b is not supplied the differecnec between the max and min x, y a
 	 (bline (if b
 		    (format nil "b = ~f ~f ~f" (x b) (y b) (z b))
 		    (format nil "b = ~f ~f ~f" (x box) (y box) (z box))))
-	 (eline (format nil "e = ~f ~f ~f" (+ u k) u k)))
+	 (eline (format nil "E = ~f ~f ~f" (+ u k) u k)))
     (list tline bline eline)))
 
 ;; (defun oxdna-box-size (nt &key
