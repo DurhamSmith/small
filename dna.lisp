@@ -46,7 +46,7 @@
 (defgeneric next-nt (obj &key 5end kind)
   (:documentation "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type")
   (:method (obj &key 5end kind)
-    (error "(next-nt (obj ~A ) &key 5end) has not been implemented" (type-of obj))))
+    (error "(next-nt (obj ~A ) &key 5end) has not been implemented ~A" (type-of obj) obj)))
 
 
 (defgeneric 5end (obj &key all)

@@ -244,18 +244,19 @@ if inc-headers = true the header strings are prepended to the list of topology s
 (defmethod next-nt ((obj dna-nt) &key 5end kind)
   "returns a dna-nt that would be the next nucleotide in the sequence for a given strand type"
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
-    (typecase kind
-      (dna-helix (next-helix-nt obj :end 5end))
-      (dna-single-strand (next-single-strand-nt obj :end 5end))
+    (case kind
+      (dna-helix-strand (next-helix-nt obj :5end 5end))
+      (dna-single-strand (next-single-strand-nt obj :5end end))
       (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
 
-
-
-
-(defun containing-strand (nt)
-  "returns an ordered list of all the dna-nt connected to nt. the car of the list is the most (prev nt) of all dna-nts connected to nt"
-  nt
-  )
+(defun next-n-nts (nt n &key 5end kind)
+  (let* ((tmp-nt (next-nt nt :5end 5end :kind kind))
+	 (nts (list tmp-nt)))
+    (loop for i from 2 to n do
+      (progn
+	(setf tmp-nt (next-nt tmp-nt :5end 5end :kind kind))
+	(push tmp-nt nts)))
+    (reverse nts)))
 
 
 (defun partner-coords (nt)

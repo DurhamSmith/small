@@ -12,7 +12,10 @@
     (multiple-value-bind (strand len)
 	(small::bridging-single-strand p1 p2 (v3 1 0 0))
       (is = 4 len)
-      (of-type 'SMALL::DNA-SINGLE-STRAND strand))))
+      (of-type 'SMALL::DNA-SINGLE-STRAND strand)
+      (write-oxdna (small::5nt strand) :filename "sss_tmp")
+      ))
+  )
 ;	 (is = 5 (length (strand-nts strand)))
 ;	 (of-type small::dna-single-strand (first (strand-nts strand))))))))
 	 
