@@ -41,6 +41,8 @@
 	   #:write-oxdna
 	   #:make-dna-strand   ;dna-strand
 	   #:add-nt
+	   #:dna-single-strand
+	   #:dna-helix-strand
 	   ))
 
 (in-package :small)

@@ -7,6 +7,7 @@
   :serial t
   :components ((:file "packages")
 	       (:file "linear-algebra")
+	       (:file "ht-helpers")
 	       (:file "chem-obj")
 	       (:file "dna" :depends-on ("chem-obj"))
 	       (:file "dna-nt" :depends-on ("dna"))

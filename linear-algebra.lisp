@@ -18,7 +18,14 @@
 	 (v (scale v (/ 1 (norm v))))
 	 (v (v3 (tref v 0) (tref v 1) (tref v 2))))
     v))
-    
+
+(defun euclidean-distance (v1 v2)
+  (norm (.- (as-vec v1) (as-vec v2))))
+
+(defun as-vec (v)
+  (if (typep v 'MAGICL::MATRIX/DOUBLE-FLOAT)
+		(from-list (list (x v) (y v) (z v)) '(3))
+		v))
 
 ;;; Accessor functions for 3D Vecs. We have the zero check so we can print 0 instead of -0 when we magicl:scale (todo create PR to fix this)
 

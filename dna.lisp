@@ -10,7 +10,7 @@
 
 (defparameter *helix-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")
 
-(defparameter *single-strand-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")
+(defparameter *single-strand-nt-spacing* 0.4d0 "Length of each base pair in a single in nm")
 
 (defparameter *bp/turn* 10.44d0 "Length of each base pair in a double helix in nm")
 
