@@ -129,7 +129,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   (if (eql k 1)
       (helix-axis-coords-1 i j)
       (rotate-vec (helix-axis-coords (- k 1) i j)   ;reccursive rotate around xz axis
-		  (v3 0 -1 0)
+		  (v3 0 -1 0) ;;use -1 for z axis since they define axis this way in paper
 		  (/ pi 2))))
 
 
