@@ -129,7 +129,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   (if (eql k 1)
       (helix-axis-coords-1 i j)
       (rotate-vec (helix-axis-coords (- k 1) i j)   ;reccursive rotate around xz axis
-		  (v3 0 1 0)
+		  (v3 0 -1 0)
 		  (/ pi 2))))
 
 
@@ -191,10 +191,11 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   "Returns the coords for the scaffold in triangle. tile: a DNA tile object k: triangle index [1-4] clockwise starting at the top j: j-th base pair i: i th row Returns: VECTOR/DOUBLE-FLOAT (magicl) of the scaffold coordinates"
   (if (eql k 1)
       (scaffold-coords-1 i j :cm cm)
-      (rotate-vec (scaffold-coords (- k 1) i j :cm cm) (v3 0 -1 0) (/ pi 2))))
+      (rotate-vec (scaffold-coords (- k 1) i j :cm cm) (v3 0 -1 0) (/ pi 2)))) ;; use -1 for z axis since they define axis this way in paper
 
-
-(scaffold-coords 2 1 1 :cm nil)
+(scaffold-coords 1 1 33 :cm nil)
+(scaffold-coords 1 22 33 :cm nil)
+(scaffold-coords 2 1 33 :cm nil)
 
 (defun scaffold-helix (k i)
   (let* ((j (if (oddp i)
