@@ -120,7 +120,7 @@ See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and
     res))
 
 
-(defun rotate-vec (v axis theta)
+(defun rotate-vec (v axis theta)	;
   "Returns v rotated around axis by theta"
   (let* ((mat (rotation-matrix axis theta))
 	 (vnew (@ mat v)))

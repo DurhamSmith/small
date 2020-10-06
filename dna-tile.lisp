@@ -191,4 +191,23 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   "Returns the coords for the scaffold in triangle. tile: a DNA tile object k: triangle index [1-4] clockwise starting at the top j: j-th base pair i: i th row Returns: VECTOR/DOUBLE-FLOAT (magicl) of the scaffold coordinates"
   (if (eql k 1)
       (scaffold-coords-1 i j :cm cm)
-      (rotate-vec (scaffold-coords (- k 1) i j) (v3 0 1 0) (/ pi 2))))
+      (rotate-vec (scaffold-coords (- k 1) i j :cm cm) (v3 0 -1 0) (/ pi 2))))
+
+
+(scaffold-coords 2 1 1 :cm nil)
+
+(defun scaffold-helix (k i)
+  (let* ((j (if (oddp i)
+		(ai i)
+		1))
+	 (5axis (if (oddp i)
+		    (helix-axis-coords k i j)
+		    (helix-axis-coords k i 1)))
+	 (3axis (if (oddp i)		    
+		    (helix-axis-coords k i 1)
+		    (helix-axis-coords k i (ai i))))
+	 (vn (as-unit-vec (.- 3axis 5axis)))
+	 (cm (scaffold-coords k i j :cm t))
+	 (vbb0 (as-unit-vec (.- cm 5axis))))
+ ;   (break "CM: ~A" cm)
+    (helix-strand 5axis vn vbb0 (ai i))))

@@ -40,8 +40,9 @@
   
 (defmethod connect ((o1 dna-strand) (o2 dna-strand) &rest rest)
   
-  "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"  
-  (dna-connect o1 o2))
+  "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
+  (dna-connect o1 o2)
+  (dna-connect (3nt o1) (5nt o2)))
 ;TODO implemment full logic  (connect-nts (connected-nts o1) (connected o2)))
 
 (defun make-dna-strand (&rest rest)
