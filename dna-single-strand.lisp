@@ -63,8 +63,9 @@ t"))
   "returns a dna-single-strand containing nts.
 nts: string ordered from 5'->3'"
   ;;todo type/error checking
-  (let* ((first-nt (first nts))
-	 (last-nt (last nts))
+
+   (let* ((first-nt (first nts))
+	 (last-nt (car (last nts)))
 	 (ss (make-instance 'dna-single-strand
 			    :5nt first-nt
 			    :3nt last-nt)))
@@ -72,6 +73,7 @@ nts: string ordered from 5'->3'"
     (mapcar #'(lambda (nt)
 		(add-child ss nt))
 	    nts)
+    
     ss))
 	 
 
@@ -86,17 +88,21 @@ nts: string ordered from 5'->3'"
 			    (scale vaxis (/ extra-dist
 					    2)))) ;; offsets since we might not have integer multiples of ss-nt-spacing
 	   (cm (.+ start-coord
-		    (scale vbb *ss-cm-offset*)))
-	   (start-nt (make-dna-nt :cm cm
-				  :vbb vbb
-				  :vn vaxis))
-	   (nts (append (list start-nt)
-			(loop for x from 2 to num-nts collect
-						      (next-single-strand-nt start-nt :5end 5end))))
-	   (last-nt (last nts))
-	   (ss (ss-from-nts nts)))
-;      (break "~a ~a" nts ss)
-      (values ss num-nts))))
+		   (scale vbb *ss-cm-offset*)))
+	   (tmp-nt (make-dna-nt :cm cm
+				:vbb vbb
+				:vn vaxis))
+	   (nts (list tmp-nt))
+
+	   (ss ))
+      (loop for x from 2 to num-nts do
+	(progn
+	  (setf tmp-nt (next-single-strand-nt tmp-nt :5end 5end))
+	  (push tmp-nt nts)))
+      (setf nts (reverse nts))
+;      (break "nts:~A" nts)
+      (values (ss-from-nts nts)
+	      num-nts))))
 	   
 							  
       ;; (break "~A ~A" nts extra-dist)))

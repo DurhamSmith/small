@@ -212,3 +212,10 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	 (vbb0 (as-unit-vec (.- cm 5axis))))
  ;   (break "CM: ~A" cm)
     (helix-strand 5axis vn vbb0 (ai i))))
+
+(defun scaffold-loop (k i)
+  (let* ((c1 (scaffold-coords k i (ai i)))
+	 (c2 (if (= i (* 2 *r*))
+		 (scaffold-coords (+ k 1) 1 (ai 1))
+		 (scaffold-coords k (+ i 1) (ai (+ i 1))))))
+    (bridging-single-strand c1 c2 (v3 0 1 0))))
