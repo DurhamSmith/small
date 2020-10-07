@@ -125,5 +125,5 @@
 
 
 (defparameter *tile-axes* (make-tile-axis *tile*))
-(defparameter *tile-scaffolds* (make-tile-scaffold *tile*))
+(defparameter *tile-scaffold* (make-tile-scaffold *tile*))
 (defparameter *tile-staples* (make-tile-staple *tile*))

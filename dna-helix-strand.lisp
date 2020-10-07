@@ -57,7 +57,9 @@ VALUES cm vn vbb"
 (defun cm->axis (cm vbb)
   (.- cm (scale (as-unit-vec vbb) 0.6d0)))
 
-
+(defun cm->bb (cm vbb)
+  (.+  (cm->axis cm vbb)
+       (scale (as-unit-vec vbb) 1d0)))
 
 (defun helix-strand-from-nts (nts)
   "returns a dna-single-strand containing nts.

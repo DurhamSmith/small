@@ -100,7 +100,7 @@ nts: string ordered from 5'->3'"
 	  (setf tmp-nt (next-single-strand-nt tmp-nt :5end 5end))
 	  (push tmp-nt nts)))
       (setf nts (reverse nts))
-      (break "nts:~A" (length nts))
+;      (break "nts:~A" (length nts))
       (values (ss-from-nts nts)
 	      num-nts))))
 	   
