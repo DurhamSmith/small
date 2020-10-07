@@ -121,11 +121,18 @@
 ;; 		(small::scaffold-coords-1 i j)))))
 
 
-;; (define-test "staple-coords-1 (i j &key cm)"
-;;   (loop for i from 1 to 1 do
-;;     (loop for j from 1 to (SMALL::ai i) do
-;;       (is-close (v3l (DI *tile-staples* 1 i j))
-;; 		(small::staple-coords-1 i j)))))
+
+(define-test "staple-coords-1 (i j &key cm)"
+  (loop for i from 1 to 22 do
+    (loop for j from 1 to (SMALL::ai i) do
+      (is-close (v3l (DI *tile-staples* 1 i j))
+		(small::staple-coords-1 i j)))))
+
+
+(define-test "staple-coords (k i j &key cm)"
+  (loop for k from 1 to 4 do
+    (loop for i from 1 to 22 do
+      (loop for j from 1 to (SMALL::ai i) do
+	(is-close (v3l (DI *tile-staples* k i j))
+		  (small::staple-coords k i j))))))
   
-;; (DI *tile-staples* 1 1 1)
-;; (small::staple-coords-1 1 1)

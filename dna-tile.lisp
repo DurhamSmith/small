@@ -149,10 +149,15 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	     :odd-offset 0
 	     :even-offset pi))
 
+(defun deg->rad (deg)
+  (* (/ pi 180) deg))
+
+
+
 (defun theta-1ij-staple (i j)
   (theta-1ij i j
-	     :odd-offset (- (* 150 (/ 1 pi)))  ;150deg=>rad
-	     :even-offset (+ 180 (* 150 (/ 1 pi)))))
+	     :odd-offset (deg->rad -150)
+	     :even-offset (deg->rad (+ 180 150))))
 
 
 (defun scaffold-coords-1 (i j &key cm)
@@ -164,7 +169,6 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 		      (v3 1 theta 0)))     ; helix rad/bb cord = 1nm
 	 (cart-cyl (cylindrical->cartesian cyl-vec))
 	 (coords (.+ helix-axis cart-cyl)))
-;    (break "t ~A   c ~A   Cy ~A" theta coords cart-cyl)
     coords))
 
 (cylindrical->cartesian (v3 1 pi 0))
@@ -176,8 +180,9 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	 (cyl-vec (if cm
 		      (v3 *helix-cm-offset* theta 0) ;; adjustment helix cm.
 		      (v3 1 theta 0)))     ; helix rad/bb cord = 1nm
-	 (cart-cyl (cylindrical->cartesian cyl-vec theta))
+	 (cart-cyl (cylindrical->cartesian cyl-vec))
 	 (coords (.+ helix-axis cart-cyl)))
+;    (break "t ~A   c ~A   Cy ~A" theta coords cart-cyl)
     coords))
 
 
@@ -185,7 +190,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   "Returns the coords for the staple in triangle. tile: a DNA tile object k: triangle index [1-4] clockwise starting at the top j: j-th base pair i: i th row Returns: VECTOR/DOUBLE-FLOAT (magicl) of the staple coordinates"
   (if (eql k 1)
       (staple-coords-1  i j :cm cm)
-      (rotate-vec (staple-coords (- k 1) i j) (v3 0 1 0) (/ pi 2))))
+      (rotate-vec (staple-coords (- k 1) i j) (v3 0 -1 0) (/ pi 2))))
 
 
 (defun scaffold-coords (k i j &key cm)
