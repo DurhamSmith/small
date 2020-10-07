@@ -124,6 +124,6 @@
 	  (second (nth j (nth i (nth k tile))))))))
 
 
-(defparameter *tile-axises* (make-tile-axis *tile*))
+(defparameter *tile-axes* (make-tile-axis *tile*))
 (defparameter *tile-scaffolds* (make-tile-scaffold *tile*))
 (defparameter *tile-staples* (make-tile-staple *tile*))
