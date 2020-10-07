@@ -31,7 +31,7 @@
   :pathname "tests/"
   :serial t
   :components ((:file "package")
-	       (:file "data")
+	       (:file "tile-data")
 	       (:file "linear-algebra-tests")
 	       (:file "ht-helpers-tests")
                (:file "chem-obj-tests")

@@ -94,3 +94,6 @@
       
 
 	 
+(define-test "scaffold-coords-1 (i j &key cm)"
+  
+    
