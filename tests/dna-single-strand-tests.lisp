@@ -33,3 +33,17 @@
 						  (progn
 						    (setf nt (small::next-single-strand-nt nt)))))))
   (write-oxdna nt :filename "strand_tmp"))
+
+
+
+
+
+
+(let* ((p1 (v3 2 0 0))
+	 (p2 (v3 4.20 0 0))) ;; should need 4nts of 0, .4nt spacing and have 0.1nm spacing and there is an offset of -1 nt
+    (multiple-value-bind (strand nts)
+	(small::single-strand  (v3 0 0 0) (v3 1 0 0) (v3 0 0 1) 10)
+      strand
+      nts
+      (write-oxdna (first nts) :filename "pfl")
+      ))

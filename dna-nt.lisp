@@ -246,7 +246,7 @@ if inc-headers = true the header strings are prepended to the list of topology s
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
     (case kind
       (dna-helix-strand (next-helix-nt obj :5end 5end))
-      (dna-single-strand (next-single-strand-nt obj :5end end))
+      (dna-single-strand (next-single-strand-nt obj :5end 5end))
       (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
 
 (defun next-n-nts (nt n &key 5end kind)
