@@ -147,7 +147,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 (defun theta-1ij-scaffold (i j)
   (theta-1ij i j
 	     :odd-offset 0
-	     :even-offset (/ pi 2)))
+	     :even-offset pi))
 
 (defun theta-1ij-staple (i j)
   (theta-1ij i j
@@ -162,11 +162,12 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	 (cyl-vec (if cm
 		      (v3 *helix-cm-offset* theta 0) ;; adjustment helix cm.
 		      (v3 1 theta 0)))     ; helix rad/bb cord = 1nm
-	 (cart-cyl (cylindrical->cartesian cyl-vec theta))
+	 (cart-cyl (cylindrical->cartesian cyl-vec))
 	 (coords (.+ helix-axis cart-cyl)))
+;    (break "t ~A   c ~A   Cy ~A" theta coords cart-cyl)
     coords))
 
-
+(cylindrical->cartesian (v3 1 pi 0))
 
 (defun staple-coords-1 (i j &key cm)
   "The coordinate location of where the scaffold base joins the backbone in the two-dimensional plane of the j th base pair in the i th row in the first triangle"

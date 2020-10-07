@@ -1,7 +1,5 @@
 (in-package :small-tests)
 
-(defun is-close (v1 v2 &key (e 1e-4))
-  (is eq T (small::vec-close v1 v2 :e e)))
 
 (define-test "(next-helix-vbb nt)"
   (let* ((sc0 (v3l '(-30.5 0. -43.879999999999995)))

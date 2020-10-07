@@ -143,6 +143,9 @@ https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindr
      0 0 1)
    '(3 3)))
 
-(defun cylindrical->cartesian (cyl-vec phi)
+(cos 1.5707963267948966d0)
+(cos (/ pi 2))
+
+(defun cylindrical->cartesian (cyl-vec)
   "Converts a vector in a cylindrical coords to cartesian"
-  (@ (cylindrical->cartesian-matrix phi) cyl-vec))
+  (@ (cylindrical->cartesian-matrix (y cyl-vec)) cyl-vec))
