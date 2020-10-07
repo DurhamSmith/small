@@ -30,20 +30,22 @@
 
 
 (define-test "helix-strand (coords0 vaxis vbb0 len)"
-  (let* ((ax0 (DI *tile-axes* 1 1 1))
-       (ax1 (DI *tile-axes* 1 1 2))
-       (bb0 (DI *tile-scaffold* 1 1 1))
-       (vaxis (as-unit-vec
-	       (MAGICL:.- ax1 ax0)))
-       (vbb0 (as-unit-vec
-	      (MAGICL:.- bb0 ax0))))
-  (multiple-value-bind (strand nts)
-      (SMALL::helix-strand ax0 vaxis vbb0 33)
-    (mapcar #'(lambda (x y)
-		(is-close (v3l y) (small::cm->bb (small::cm x) (SMALL::vbb x))))
-	    nts
-	    (first (first *tile-scaffold*))))))
-
+  (loop for k from 1 to 4 do
+    (loop for i from 1 to 22 do
+      (let*  ((ax0 (DI *tile-axes* k i 1))
+	      (ax1 (DI *tile-axes* k i 2))
+	      (vaxis (as-unit-vec
+		      (MAGICL:.- ax1 ax0)))
+	      (bb0 (DI *tile-scaffold* k i 1))
+	      (vbb0 (as-unit-vec
+		     (MAGICL:.- bb0 ax0))))
+	(multiple-value-bind (strand nts)
+	    (SMALL::helix-strand ax0 vaxis vbb0 33)
+	  (mapcar #'(lambda (x y)
+		      (is-close (v3l y) (small::cm->bb (small::cm x) (SMALL::vbb x))))
+		  nts
+		  (nth (- i 1) (nth (- k 1) *tile-scaffold*))))))
+	))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
