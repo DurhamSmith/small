@@ -22,6 +22,11 @@
 (defun euclidean-distance (v1 v2)
   (norm (.- (as-vec v1) (as-vec v2))))
 
+(defun vec-close (v1 v2 &key (e 1e-6))
+  (> e (SMALL::euclidean-distance v1 v2)))
+
+
+
 (defun as-vec (v)
   (if (typep v 'MAGICL::MATRIX/DOUBLE-FLOAT)
 		(from-list (list (x v) (y v) (z v)) '(3))

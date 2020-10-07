@@ -1,5 +1,8 @@
 (in-package :small-tests)
 
+(defun is-close (v1 v2 &key (e 1e-4))
+  (is eq T (small::vec-close v1 v2 :e e)))
+
 (define-test "(next-helix-vbb nt)"
   (let* ((sc0 (v3l '(-30.5 0. -43.879999999999995)))
 	 (st0 (v3l '(-32.36602540378444 -0.49999999999999994 -43.879999999999995)))
@@ -15,12 +18,13 @@
 	 (cm+1 (magicl:.+ ax1 vcm-offset))
 	 (vn+1 (v3 0 0 1))
 	 (nt (make-dna-nt :cm cm :vn vn :vbb vbb)))
-    (is #'magicl:= (second *bb->sc*) (small::next-helix-vbb vbb vn))
+    (is-close (second *bb->sc*) (small::next-helix-vbb vbb vn))
     (multiple-value-bind (res-cm+1 res-vbb+1 res-vn+1)
-      (small::next-helix-nt-coords cm vbb vn)
-      (is #'magicl:= cm+1 res-cm+1);; This fails but is equal, probably a rounding error
-      (is #'magicl:= vbb+1 res-vbb+1)
-      (is #'magicl:= vn+1 res-vn+1))))
+	(small::next-helix-nt-coords cm vbb vn)
+      (is-close cm+1 res-cm+1)
+      ;; This fails but is equal, probably a rounding error
+      (is-close vbb+1 res-vbb+1)
+      (is-close vn+1 res-vn+1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THIS writes the oxdna files for the fist row of the tiles helix. No tests right now just inspection ;

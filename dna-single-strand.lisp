@@ -84,9 +84,9 @@ nts: string ordered from 5'->3'"
       (nucleotides-needed p1 p2)
     (let* ((vaxis (as-unit-vec (.- p2 p1)))
 	   (vbb (as-unit-vec vbb))
-	   (start-coord (.+ p1
-			    (scale vaxis (/ extra-dist
-					    2)))) ;; offsets since we might not have integer multiples of ss-nt-spacing
+	   (start-coord  (.+ p1
+			     (scale vaxis (/ extra-dist
+					     2)))) ;; offsets since we might not have integer multiples of ss-nt-spacing
 	   (cm (.+ start-coord
 		   (scale vbb *ss-cm-offset*)))
 	   (tmp-nt (make-dna-nt :cm cm
@@ -100,7 +100,7 @@ nts: string ordered from 5'->3'"
 	  (setf tmp-nt (next-single-strand-nt tmp-nt :5end 5end))
 	  (push tmp-nt nts)))
       (setf nts (reverse nts))
-;      (break "nts:~A" nts)
+      (break "nts:~A" (length nts))
       (values (ss-from-nts nts)
 	      num-nts))))
 	   
