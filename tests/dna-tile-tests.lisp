@@ -3,6 +3,8 @@
 
 
 
+
+
 ;; (defun make-tile-scaffold ()
 ;;   )
 
@@ -117,15 +119,6 @@
 
 	  (is-close (DI *tile-scaffolds* k i j)
 		    (small::scaffold-coords k i j)))))))
-
-
-;; (define-test "scaffold-coords (k i j &key cm)"
-;; ;  (loop for k from 1 to 3
-;;   (loop for i from 1 to 22 do
-;;     (loop for j from 1 to (SMALL::ai i) do
-;;       (is-close (DI *tile-scaffolds* 1 i j))
-;; 		(small::scaffold-coords-1 i j)))))
-
 
 
 (define-test "staple-coords-1 (i j &key cm)"
