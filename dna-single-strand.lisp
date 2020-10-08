@@ -52,11 +52,20 @@ t"))
 
 
 (defun nucleotides-needed (v1 v2)
-  (round
-   (- (/ (euclidean-distance v1 v2)
-	 *single-strand-nt-spacing*)
-      1)))
+  (let* ((num-nts
+	   (round
+	    (- (/ (euclidean-distance v1 v2)
+		  *single-strand-nt-spacing*)
+	       1)))
+	 (uncovered-dist (uncovered-dist v1 v2 num-nts)))
+    (values num-nts uncovered-dist)))
 
+(defun uncovered-dist (v1 v2 num-nts)
+  "Returns dist that wont be covered by len single nts when spanning from p1 to 2 p2"
+  (- (euclidean-distance v1 v2)
+			    (*
+			     num-nts
+			     *single-strand-nt-spacing*)))
 
 
 (defun ss-from-nts (nts)
@@ -97,28 +106,44 @@ nts: string ordered from 5'->3'"
     (values strand nts)))
 
 
-(defun bridging-single-strand (p1 p2 vbb &key 5end)
-  "returns a values dna-single-strand strand length that bridges the distance with its 3 end starting at p1 + (midpoint p1 p2) - strand-len/2"
-  (multiple-value-bind (num-nts extra-dist)
-      (nucleotides-needed p1 p2)
-    (let* ((vaxis (as-unit-vec (.- p2 p1)))
-	   (vbb (as-unit-vec vbb))
-	   (start-coord  (.+ p1
-			     (scale vaxis (/ extra-dist
-					     2)))) ;; offsets since we might not have integer multiples of ss-nt-spacing
-	   (cm (.+ start-coord
-		   (scale vbb *ss-cm-offset*)))
-	   (tmp-nt (make-dna-nt :cm cm
-				:vbb vbb
-				:vn vaxis))
-	   (nts (list tmp-nt))
 
-	   (ss ))
-      (loop for x from 2 to num-nts do
-	(progn
-	  (setf tmp-nt (next-single-strand-nt tmp-nt :5end 5end))
-	  (push tmp-nt nts)))
-      (setf nts (reverse nts))
-;      (break "nts:~A" (length nts))
-      (values (ss-from-nts nts)
-	      num-nts))))
+(defun bridging-single-strand (p1 p2 vbb &key len 5end)
+  "returns a values dna-single-strand strand length that bridges the distance with its 3 end starting at p1 + (midpoint p1 p2) - strand-len/2"
+  (let* ((num-nts (if len
+		      len
+		      (nucleotides-needed p1 p2)))
+	 (extra-dist (uncovered-dist p1 p2 num-nts))
+	 (vaxis (as-unit-vec (.- p2 p1)))
+	 (vbb (as-unit-vec vbb))
+	 (start-coord  (.+ p1
+			   (scale vaxis (/ extra-dist
+					   2))))) ;; offsets since we might not have integer multiples of ss-nt-spacing
+    (single-strand start-coord vaxis vbb num-nts)))
+	
+	   
+;; (defun bridging-single-strand (p1 p2 vbb &key 5end)
+;;   "returns a values dna-single-strand strand length that bridges the distance with its 3 end starting at p1 + (midpoint p1 p2) - strand-len/2"
+;;   (multiple-value-bind (num-nts extra-dist)
+;;       (nucleotides-needed p1 p2)
+;; ;    (break "#nt ~A dist: ~A" num-nts extra-dist)
+;;     (let* ((vaxis (as-unit-vec (.- p2 p1)))
+;; 	   (vbb (as-unit-vec vbb))
+;; 	   (start-coord  (.+ p1
+;; 			     (scale vaxis (/ extra-dist
+;; 					     2)))) ;; offsets since we might not have integer multiples of ss-nt-spacing
+;; 	   (cm (.+ start-coord
+;; 		   (scale vbb *ss-cm-offset*)))
+;; 	   (tmp-nt (make-dna-nt :cm cm
+;; 				:vbb vbb
+;; 				:vn vaxis))
+;; 	   (nts (list tmp-nt))
+
+;; 	   (ss ))
+;;       (loop for x from 2 to num-nts do
+;; 	(progn
+;; 	  (setf tmp-nt (next-single-strand-nt tmp-nt :5end 5end))
+;; 	  (push tmp-nt nts)))
+;;       (setf nts (reverse nts))
+;; ;      (break "nts:~A" (length nts))
+;;       (values (ss-from-nts nts)
+;; 	      nts))))

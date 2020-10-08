@@ -102,7 +102,7 @@
 )
 ))
 
-(defparameter *tile* (mapcar #'small::process-rows  *pp*))
+(defparameter *tile* (mapcar #'SMALL-TESTS::process-rows  *pp*))
 
 (defun make-tile-axis (tile)
     (loop for k from 0 to 3 collect

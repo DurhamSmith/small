@@ -13,3 +13,17 @@
 	(v3l data)
 	data)))
 
+
+(defun process-rows (triangle &key (reduce nil))
+  "Returns (triangle (row (nt)))"
+					;(break "ROWS: ~A"  triangle)
+  (let* ((rows (loop for i from 1 to 22 collect
+					(let* ((start (* (- i 1) 121))
+					       (end (+ start (SMALL::ai i))))
+					  (subseq triangle start end))))
+	 ;; (rows (if reduce
+	 ;; 	   (reduce #'append rows)
+	 ;; 	   rows))
+	 )
+;    (break "~A"rows) 
+    rows))

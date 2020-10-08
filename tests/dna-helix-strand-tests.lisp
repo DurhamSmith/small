@@ -3,7 +3,7 @@
 
 
 
-
+;(test "(next-helix-vbb nt)")
 
 (define-test "(next-helix-vbb nt)"
   (let* ((sc0 (v3l '(-30.5 0. -43.879999999999995)))
@@ -20,7 +20,8 @@
 	 (cm+1 (magicl:.+ ax1 vcm-offset))
 	 (vn+1 (v3 0 0 1))
 	 (nt (make-dna-nt :cm cm :vn vn :vbb vbb)))
-    (is-close (second *bb->sc*) (small::next-helix-vbb vbb vn))
+    ;;    (is-close (second *bb->sc*) (small::next-helix-vbb vbb vn))
+    (is-close (as-unit-vec (MAGICL::.- sc1 ax1)) (small::next-helix-vbb vbb vn))
     (multiple-value-bind (res-cm+1 res-vbb+1 res-vn+1)
 	(small::next-helix-nt-coords cm vbb vn)
       (is-close cm+1 res-cm+1)

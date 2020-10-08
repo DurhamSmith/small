@@ -1,5 +1,8 @@
 (in-package :small-tests)
 
+
+
+;(test "(dna-connect o1 o2)")
 (define-test "(dna-connect o1 o2)"
   (let* ((s1 (make-dna-strand))
 	 (s2 (make-dna-strand))

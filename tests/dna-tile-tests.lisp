@@ -25,7 +25,7 @@
 ;; 					   :vbb (small:as-unit-vec
 ;; 						 (magicl:.- (small::scaffold-coords k i j :cm nil)
 ;; 							    (small::helix-axis-coords k i j)))
-					   
+
 ;; 					   :vn (small:as-unit-vec (if (oddp i)
 ;; 								      (magicl:.- (small::helix-axis-coords k i 1)
 ;; 										 (small::helix-axis-coords k i 2))
@@ -67,34 +67,34 @@
       (multiple-value-bind (hel nts)
 	  (SMALL::scaffold-helix k i)
 	(unless  (> 1 (length strands))
-;	  (break "x ~A y ~A" (first strands) strands);(small::3nt (car (last strands))) hel)
+					;	  (break "x ~A y ~A" (first strands) strands);(small::3nt (car (last strands))) hel)
 	  (connect (first strands) hel))
 	(push hel strands)
 	(push nts scaff-nts))
       (when (evenp i) ;; add scaffold-loops
 	(multiple-value-bind (scaff-loop nts)
 	    (SMALL::scaffold-loop k i)
-;	      (break "scloop ~A fs ~A" (small::5nt scaff-loop) (first strands))
+					;	      (break "scloop ~A fs ~A" (small::5nt scaff-loop) (first strands))
 	  (connect (first strands) scaff-loop)
 	  (push scaff-loop strands)
 	  (push nts scaff-nts)))))
-;	(small::write-oxdna (small::5nt hel) :filename (format nil "helix-~A-~A" k i)))))
+					;	(small::write-oxdna (small::5nt hel) :filename (format nil "helix-~A-~A" k i)))))
   (setf strands (reverse strands))
   (format t "~A" strands)
   (small::write-oxdna (SMALL::5nt (first strands)) :filename "fulltile"))
-  ;; (mapcar #'(lambda (strand)	      
-  ;; 	      (small::write-oxdna (small::5nt strand) :filename (format nil "helix-~A-~A" k i)))
-  ;; 	  strands))
-	      
-  ;;(setf scaff-nts (connect-nts (reverse scaff-nts)))
-  ;;(small::write-oxdna (first scaff-nts) :filename "scaff-2"))
-  
+;; (mapcar #'(lambda (strand)	      
+;; 	      (small::write-oxdna (small::5nt strand) :filename (format nil "helix-~A-~A" k i)))
+;; 	  strands))
+
+;;(setf scaff-nts (connect-nts (reverse scaff-nts)))
+;;(small::write-oxdna (first scaff-nts) :filename "scaff-2"))
 
 
 
 
 
-      
+
+
 
 
 
@@ -102,17 +102,21 @@
 (small::scaffold-coords-1 2 1)
 
 (define-test "scaffold-coords-1 (i j &key cm)"
+      (skip "Takes long"
   (loop for i from 1 to 22 do
     (loop for j from 1 to (SMALL::ai i) do
-      (is-close (DI *tile-scaffolds* 1 i j)
-		(small::scaffold-coords-1 i j)))))
+
+	(is-close (DI *tile-scaffolds* 1 i j)
+		  (small::scaffold-coords-1 i j))))))
 
 (define-test "scaffold-coords (k i j &key cm)"
-(loop for k from 1 to 4 do
-  (loop for i from 1 to 22 do
-    (loop for j from 1 to (SMALL::ai i) do
-      (is-close (DI *tile-scaffolds* k i j)
-		(small::scaffold-coords k i j))))))
+        (skip "Takes long"
+  (loop for k from 1 to 4 do
+    (loop for i from 1 to 22 do
+      (loop for j from 1 to (SMALL::ai i) do
+
+	  (is-close (DI *tile-scaffolds* k i j)
+		    (small::scaffold-coords k i j)))))))
 
 
 ;; (define-test "scaffold-coords (k i j &key cm)"
@@ -125,30 +129,36 @@
 
 
 (define-test "staple-coords-1 (i j &key cm)"
-  (loop for i from 1 to 22 do
+  (skip "Takes long"
+    (loop for i from 1 to 22 do
     (loop for j from 1 to (SMALL::ai i) do
-      (is-close (DI *tile-staples* 1 i j)
-		(small::staple-coords-1 i j)))))
+	(is-close (DI *tile-staples* 1 i j)
+		  (small::staple-coords-1 i j))
+	))))
 
 
 (define-test "staple-coords (k i j &key cm)"
+    (skip "Takes long"
   (loop for k from 1 to 4 do
     (loop for i from 1 to 22 do
       (loop for j from 1 to (SMALL::ai i) do
-	(is-close (DI *tile-staples* k i j)
-		  (small::staple-coords k i j))))))
-  
+
+	  (is-close (DI *tile-staples* k i j)
+		    (small::staple-coords k i j)))))))
+
 (define-test "helix-axis-coords-1 (i j &key cm)"
-  (loop for i from 1 to 22 do
-    (loop for j from 1 to (SMALL::ai i) do
-      (is-close (DI *tile-axes* 1 i j)
-		(small::helix-axis-coords-1 i j)))))
+  (skip "Takes long"
+    (loop for i from 1 to 22 do
+    (loop for j from 1 to (SMALL::ai i) do    
+	(is-close (DI *tile-axes* 1 i j)
+		  (small::helix-axis-coords-1 i j))))))
 
 
 (define-test "helix-axis-coords (k i j &key cm)"
+    (skip "Takes long"
   (loop for k from 1 to 4 do
     (loop for i from 1 to 22 do
       (loop for j from 1 to (SMALL::ai i) do
-	(is-close (DI *tile-axes* k i j)
-		  (small::helix-axis-coords k i j))))))
-  
+	  (is-close (DI *tile-axes* k i j)
+		    (small::helix-axis-coords k i j)))))))
+
