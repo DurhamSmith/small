@@ -137,15 +137,7 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
       
 
 
-(defmethod make-partner ((obj dna-strand))
-  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the correct direction
-	 (nts (mapcar #'make-partner rnts))
-	 (nts (connect-nts nts))
-	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
-			    :5nt (first nts)
-			    :3nt (car (last nts)))))
-					;    (break "~A ~A" nts ps)
-    ps))
+
 
 
       
@@ -164,20 +156,23 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 		     (if from-3end
 			 (push 3nt nts)
 			 (reverse (push 3nt nts))))
-			 
-;		  (break "5: ~A~% 3: ~A~% tmp ~A~% nts ~A" 5nt 3nt tmp-nt nts)
 		  (push tmp-nt nts))))
-;      (break "5: ~A~% 3: ~A~%~A" 5nt 3nt nts)
       (if start
 	  (if end
 	      (subseq nts start end)
 	      (subseq nts start))
 	  nts))))
 
-
-
-   
-
-(do ((i 0 (1+ i)))
-    ((>= i 4))
-  (print i))
+(defmethod make-partner ((obj dna-strand) &key start end from-3end)
+  ;;  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the correct direction
+  (let* ((rnts (reverse (strand-nts obj
+				    :start start
+				    :end end
+				    :from-3end from-3end))) ; Reverse strand so our new strand 
+	 (nts (mapcar #'make-partner rnts))
+	 (nts (connect-nts nts))
+	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
+			    :5nt (first nts)
+			    :3nt (car (last nts)))))
+					;    (break "~A ~A" nts ps)
+    ps))

@@ -28,8 +28,6 @@
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
 
-
-
 (defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;todo check param list (maybe use &rest &allow-other-keys)
   (:documentation "returns the oxdna topolog of the object as a list of strings. dna/rna nucleotides will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1) (inc-headers t))
@@ -190,7 +188,6 @@ if inc-headers = true the header strings are prepended to the list of topology s
 	 (top-lines (if inc-headers
 			(append (list top-header) top-lines)
 			top-lines)))
-;    (break "~a inc ~a ~a" top-lines inc-headers (null inc-headers))
     (values top-lines top-header)))
 
 
@@ -220,9 +217,7 @@ if inc-headers = true the header strings are prepended to the list of topology s
 (defun connect-nts (&rest nts)
   "dna-nt:connects all dna-nts in nts in the order they are provided"
   ;; todo: errors: not provided dna-nts, this prob done by the fact connoct errors if no valid specilizations
- ; (break "~a~%" nts)
   (let ((nts (alexandria:flatten nts)))
-;    (break "~a~%" nts)
     (append (mapcar #'connect nts (cdr nts)) (last nts))))
 
 
@@ -233,7 +228,6 @@ if inc-headers = true the header strings are prepended to the list of topology s
 
 (defmethod connect ((o1 dna-nt) (o2 dna-nt) &rest rest)
   "sets (next o1) = o2 and (prev o2) = o1"
-;  (break "dna nt connect")
   (dna-connect o1 o2))
 
 
@@ -273,8 +267,19 @@ if inc-headers = true the header strings are prepended to the list of topology s
 	     (pn (scale vn -1d0)))
 	(values pcm pbb pn))))
 
-(defmethod make-partner ((obj dna-nt))
+(defmethod make-partner ((obj dna-nt) &key start end from-3end)
   (multiple-value-bind (cm vbb vn)
       (partner-coords obj)
-    (make-dna-nt :cm cm :vbb vbb :vn vn :base "!")))
+    (make-dna-nt :cm cm :vbb vbb :vn vn :base (base-partner (base obj)))))
     
+
+(defun base-partner (base)
+  (cond ((consp base) (base-partner (car base)))
+	((string-equal "A" base) "T")
+	((string-equal "T" base) "A")
+	((string-equal "G" base) "C")
+	((string-equal "C" base) "G")
+	(t "!")))
+
+
+

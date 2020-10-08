@@ -96,16 +96,13 @@
 	       (MAGICL:.- bb0 ax0)))
 	(st (SMALL::helix-strand ax0 vaxis vbb0 33))
 	(pst (SMALL::make-partner st)))
-;  (break "st ~A~% st5 ~A~% st3 ~A~% st5t ~A~% st3t ~A"
-	 (small::connected-nts (SMALL::5nt st))
-	 (SMALL::strand-nts st)
-	 (SMALL::strand-nts st :start 30 :end 33)
-	 (SMALL::strand-nts st :from-3end t)
-	 (SMALL::strand-nts st :from-3end t :start 0 :end 5 )
-
-	 )
+					;  (break "st ~A~% st5 ~A~% st3 ~A~% st5t ~A~% st3t ~A"
+  (small::connected-nts (SMALL::5nt st))
   (SMALL::strand-nts st)
-  )
+  (SMALL::strand-nts st :start 30 :end 33)
+  (SMALL::strand-nts st :from-3end t)
+  (SMALL::strand-nts st :from-3end t :start 0 :end 5 ))
+  
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

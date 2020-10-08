@@ -26,9 +26,9 @@
 ;(describe 'dna)
 
 
-(defgeneric make-partner (obj)
+(defgeneric make-partner (obj &key start end from-3end)
   (:documentation "Return a complementary DNA CHEM-OBJ for the given DNA CHEM-OBJ")
-  (:method ((obj dna))
+  (:method ((obj dna)  &key start end from-3end)
     (error "generic function #'make-partner not implemented for ~A" (class-of obj))))
 
 
@@ -63,7 +63,8 @@
 
 (defun wmdna (filename &rest dna-objs)
   "Write oxdna of multiple dna objs"
-  (let* ((nt-num 0)
+  (let* ((dna-objs (alexandria:flatten dna-objs)) ;TODO? Need this for handling nested lists
+	 (nt-num 0)
 	 (strand-num 1)
 	 (configs '())
 	 (tops '())
@@ -79,7 +80,6 @@
 				       :inc-headers nil
 				       :all t)
 			 configs)
-;		   (break "TOP:~A" (oxdna-topology nt :strand strand-num :start nt-num :all t))
 		   (push (oxdna-topology nt
 					 :inc-headers nil
 					 :strand strand-num
@@ -96,12 +96,8 @@
 	     dna-objs)
     (setf configs (reverse configs))
     (setf tops (reverse tops))
-					;        (break "CONF: ~A ~% TOP:~A"  configs tops)
-;    (break "CONF: ~A ~% TOP:~A" (length (first configs)) (length tops))
-					;   (break "TOP:~A"  (compound-topology-header tops))
     (setf tops (append (compound-topology-header tops) tops))
     (setf configs (append (compound-config-header configs) configs))
-    (break "CONF: ~A ~% TOP:~A"  configs tops)
     (oxdna->file filename configs tops)
     ))
 
@@ -112,8 +108,6 @@
     (mapcar #'(lambda (top)
 		(incf num-nts (length top)))
 	    tops)
-
-    (break "cthTOP:~A" (length tops))
     (list (format nil "~A ~A" num-nts num-strands))))
 
 (defun compound-config-header (configs)

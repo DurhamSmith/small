@@ -6,15 +6,22 @@
  ())
 
 
-;; (defun staple-partner (scaff-obj)
-;;   (typecase scaff-obj
-;;     (DNA (partner
 
-;; (defun create-staple (&rest scaff-objs)
-;;   "Creates a partner for each scaff-obj"
-;;   (mapcar #'staple-partner scaff-objs)
-  
+(defmethod staple-partner ((scaff-obj dna)  &key start end from-3end)
+  (make-partner scaff-obj :start start :end end :from-3end from-3end))
 
+
+
+(defun create-staple (scaff-spec)
+  "Creates a partner for each scaff-obj"
+  (mapcar #'(lambda (obj-spec)
+	      (staple-partner
+	       (getf obj-spec :obj)
+	       :start (getf obj-spec :start)
+	       :end (getf obj-spec :end)
+	       :from-3end (getf obj-spec :from-3end)
+	       ))
+	  scaff-spec))
 
 
 (defclass/std dna-origami (dna)

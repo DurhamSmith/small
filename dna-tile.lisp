@@ -187,7 +187,6 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 		      (v3 1 theta 0)))     ; helix rad/bb cord = 1nm
 	 (cart-cyl (cylindrical->cartesian cyl-vec))
 	 (coords (.+ helix-axis cart-cyl)))
-;    (break "t ~A   c ~A   Cy ~A" theta coords cart-cyl)
     coords))
 
 
@@ -221,7 +220,6 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	 (vn (as-unit-vec (.- 3axis 5axis)))
 	 (cm (scaffold-coords k i j :cm t))
 	 (vbb0 (as-unit-vec (.- cm 5axis))))
- ;   (break "CM: ~A" cm)
     (helix-strand 5axis vn vbb0 (ai i))))
 
 (defun scaffold-loop (k i)
@@ -243,11 +241,12 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  (unless (and (= 4 k) (= 22 i))
 	    (add-to-scaffold ori (SMALL::scaffold-loop k i)))))))
 
-;;  (break "~& M13 Len:~A   ScaffLen:~A~%" (length *m13mp18*) (length (connected-nts (5nt (first (scaffold ori))))))
+  (scaffold ori))))))
   (mapcar #'(lambda (nt base)
 	      (setf (base nt) base))
 	  (connected-nts (5nt (first (scaffold ori))))
-	  (map 'list #'list *m13mp18*))
+					;	  (map 'list #'(lambda (x) x)  *m13mp18*)
+	  (map 'list #'list  *m13mp18*))
   (small::write-oxdna (5nt (first (scaffold ori))) :filename "full-tile")
   )
 
