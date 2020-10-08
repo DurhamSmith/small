@@ -154,3 +154,30 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 (defmethod oxdna-config ((obj dna-strand) &key (all nil) (inc-headers t))
   (oxdna-config (5nt obj) :inc-headers inc-headers))
 
+
+
+(defmethod strand-nts ((strand dna-strand) &key start end from-3end)
+  (with-accessors ((5nt 5nt) (3nt 3nt)) strand
+    (let* ((nts ())
+	   (nts (do ((tmp-nt 5nt (next tmp-nt)))
+		    ((eq tmp-nt 3nt)
+		     (if from-3end
+			 (push 3nt nts)
+			 (reverse (push 3nt nts))))
+			 
+;		  (break "5: ~A~% 3: ~A~% tmp ~A~% nts ~A" 5nt 3nt tmp-nt nts)
+		  (push tmp-nt nts))))
+;      (break "5: ~A~% 3: ~A~%~A" 5nt 3nt nts)
+      (if start
+	  (if end
+	      (subseq nts start end)
+	      (subseq nts start))
+	  nts))))
+
+
+
+   
+
+(do ((i 0 (1+ i)))
+    ((>= i 4))
+  (print i))

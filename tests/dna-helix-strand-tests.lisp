@@ -82,8 +82,30 @@
 ;  (break "pst ~A~% st ~A" (small::connected-nts (SMALL::5nt pst))
 	 (small::connected-nts (SMALL::5nt st))
   (small::wmdna "mul" st pst))
-    
-    
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;           Test strand-nts           ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(let*  ((ax0 (DI *tile-axes* 1 1 1))
+	(ax1 (DI *tile-axes* 1 1 2))
+	(vaxis (as-unit-vec
+		(MAGICL:.- ax1 ax0)))
+	(bb0 (DI *tile-scaffold* 1 1 1))
+	(vbb0 (as-unit-vec
+	       (MAGICL:.- bb0 ax0)))
+	(st (SMALL::helix-strand ax0 vaxis vbb0 33))
+	(pst (SMALL::make-partner st)))
+;  (break "st ~A~% st5 ~A~% st3 ~A~% st5t ~A~% st3t ~A"
+	 (small::connected-nts (SMALL::5nt st))
+	 (SMALL::strand-nts st)
+	 (SMALL::strand-nts st :start 30 :end 33)
+	 (SMALL::strand-nts st :from-3end t)
+	 (SMALL::strand-nts st :from-3end t :start 0 :end 5 )
+
+	 )
+  (SMALL::strand-nts st)
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
