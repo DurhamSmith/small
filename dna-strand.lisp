@@ -140,15 +140,17 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 (defmethod make-partner ((obj dna-strand))
   (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the correct direction
 	 (nts (mapcar #'make-partner rnts))
+	 (nts (connect-nts nts))
 	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
 			    :5nt (first nts)
 			    :3nt (car (last nts)))))
-;    (break "~A ~A" nts ps)
+					;    (break "~A ~A" nts ps)
     ps))
 
 
       
       
 
-      
-      
+(defmethod oxdna-config ((obj dna-strand) &key (all nil) (inc-headers t))
+  (oxdna-config (5nt obj) :inc-headers inc-headers))
+

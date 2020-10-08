@@ -57,3 +57,74 @@
 
 (defgeneric partner (obj)
   (:documentation "Returns a partner of the DNA CHEM-OBJ"))
+
+
+
+
+(defun wmdna (filename &rest dna-objs)
+  "Write oxdna of multiple dna objs"
+  (let* ((nt-num 0)
+	 (strand-num 1)
+	 (configs '())
+	 (tops '())
+	 (top-header '())
+	 (config-header '()))
+    (mapcar  #'(lambda (dna-obj)
+		 (let* ((nt (5nt dna-obj))
+			(len (length (connected-nts nt))))
+		   ;; (setf configs (append configs (oxdna-config nt
+		   ;; 					       :inc-headers nil
+		   ;; 					       :all t)))
+		   (push (oxdna-config nt
+				       :inc-headers nil
+				       :all t)
+			 configs)
+;		   (break "TOP:~A" (oxdna-topology nt :strand strand-num :start nt-num :all t))
+		   (push (oxdna-topology nt
+					 :inc-headers nil
+					 :strand strand-num
+					 :start nt-num
+					 :all t)
+			 tops)
+		   ;; (setf tops (append tops (oxdna-topology nt
+		   ;; 					   :strand strand-num
+		   ;; 					   :start nt-num
+		   ;; 					   :all t)))
+		   
+		   (incf nt-num len)
+		   (incf strand-num)))
+	     dna-objs)
+    (setf configs (reverse configs))
+    (setf tops (reverse tops))
+					;        (break "CONF: ~A ~% TOP:~A"  configs tops)
+;    (break "CONF: ~A ~% TOP:~A" (length (first configs)) (length tops))
+					;   (break "TOP:~A"  (compound-topology-header tops))
+    (setf tops (append (compound-topology-header tops) tops))
+    (setf configs (append (compound-config-header configs) configs))
+    (break "CONF: ~A ~% TOP:~A"  configs tops)
+    (oxdna->file filename configs tops)
+    ))
+
+(defun compound-topology-header (tops)
+  "Takes a list of oxdna topologies and returns a compound header for them" 
+  (let* ((num-strands(length tops))
+	 (num-nts 0))
+    (mapcar #'(lambda (top)
+		(incf num-nts (length top)))
+	    tops)
+
+    (break "cthTOP:~A" (length tops))
+    (list (format nil "~A ~A" num-nts num-strands))))
+
+(defun compound-config-header (configs)
+;;;TODO implement this better
+  '("t = 0"
+    "b = 100.0000 100.0000 100.0000"  
+    "E = 0.000000 0.000000 0.000000"))
+
+    
+    
+		   
+  
+
+    

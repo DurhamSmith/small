@@ -6,13 +6,13 @@
  ())
 
 
-(defun staple-partner (scaff-obj)
-  (typecase scaff-obj
-    (DNA (partner
+;; (defun staple-partner (scaff-obj)
+;;   (typecase scaff-obj
+;;     (DNA (partner
 
-(defun create-staple (&rest scaff-objs)
-  "Creates a partner for each scaff-obj"
-  (mapcar #'staple-partner scaff-objs)
+;; (defun create-staple (&rest scaff-objs)
+;;   "Creates a partner for each scaff-obj"
+;;   (mapcar #'staple-partner scaff-objs)
   
 
 
@@ -34,7 +34,7 @@
 	(setf scaffold (list scaff-obj))
 	(progn
 	  (connect (car (last scaffold)) scaff-obj)
-	  (setf scaffold (append scaffold(list scaff-obj)))))))
+	  (setf scaffold (append scaffold (list scaff-obj)))))))
 
 
 	

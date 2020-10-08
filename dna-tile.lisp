@@ -233,7 +233,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 (make-dna-tile)
-(defmethod initialize-instance :after ((ori dna-origami) &key)
+(defmethod initialize-instance :after ((ori dna-tile) &key)
   "Create the dna-origami chem-objs that represent the scaffold strand (scaff helixes = 2r = 22, scaff loops = 21, scaff bridges not included) and staple strands (TODO NUMBER, this excludes staples that also form staple bridges)"
   (loop for k from 1 to 4 do
     (loop for i from 1 to 22 do

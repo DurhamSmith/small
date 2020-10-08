@@ -49,19 +49,43 @@
 	))
 
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					; For testing partners for strand, janky ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (let*  ((ax0 (DI *tile-axes* 1 1 1))
 	(ax1 (DI *tile-axes* 1 1 2))
 	(vaxis (as-unit-vec
 		(MAGICL:.- ax1 ax0)))
 	(bb0 (DI *tile-scaffold* 1 1 1))
 	(vbb0 (as-unit-vec
-	       (MAGICL:.- bb0 ax0))))
-  (multiple-value-bind (strand nts)
-      (SMALL::helix-strand ax0 vaxis vbb0 33)
-    (SMALL::make-partner strand)
-    ))
-    ))
+	       (MAGICL:.- bb0 ax0)))
+	(st (SMALL::helix-strand ax0 vaxis vbb0 33))
+	(pst (SMALL::make-partner st)))
+  (oxdna-config st)
+  (oxdna-config pst :inc-headers nil)
+    
+    )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;  Testing writing multiple strandss  ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(let*  ((ax0 (DI *tile-axes* 1 1 1))
+	(ax1 (DI *tile-axes* 1 1 2))
+	(vaxis (as-unit-vec
+		(MAGICL:.- ax1 ax0)))
+	(bb0 (DI *tile-scaffold* 1 1 1))
+	(vbb0 (as-unit-vec
+	       (MAGICL:.- bb0 ax0)))
+	(st (SMALL::helix-strand ax0 vaxis vbb0 33))
+	(pst (SMALL::make-partner st)))
+;  (break "pst ~A~% st ~A" (small::connected-nts (SMALL::5nt pst))
+	 (small::connected-nts (SMALL::5nt st))
+  (small::wmdna "mul" st pst))
+    
+    
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THIS writes the oxdna files for the fist row of the tiles helix. No tests right now just inspection ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

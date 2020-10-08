@@ -39,7 +39,8 @@
 			      (connected-nts obj)
 			      :initial-value "")
 		      (base obj))))
-      (oxdna-topology-from-seq bases :start start
+      (oxdna-topology-from-seq bases :strand-num strand 
+				     :start start
 				     :prev prev
 				     :next next
 				     :inc-headers inc-headers))))
@@ -64,6 +65,7 @@ if inc-headers=nil retuns a list")
 		     (append header conf)
 		     conf)))
       (values conf header))))
+
 		    
 		     
 (defun oxdna-config-header (nt &key
@@ -130,9 +132,13 @@ notes: for oxdna config spec see https://dna.physics.ox.ac.uk/index.php/document
 (defun oxdna->file (file conf top)
   "writes a list of strings containing conf to [file].oxdna and list of strings containing conf to file.conf"
   (let* ((conf-f (concatenate 'string file ".oxdna"))
-	 (top-f (concatenate 'string file ".top")))
+	 (top-f (concatenate 'string file ".top"))
+	 (conf (alexandria:flatten conf))  ;;flatten to handle multiple config in an list
+	 (top (alexandria:flatten top)))
     (write-list conf-f conf)
     (write-list top-f top)))
+
+
 
 
 (defgeneric write-oxdna  (obj &key filename all start prev next strand)
