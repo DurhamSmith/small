@@ -1,5 +1,22 @@
 (in-package :small)
 
+
+
+(defclass/std dna-staple-strand (dna-strand)
+ ())
+
+
+(defun staple-partner (scaff-obj)
+  (typecase scaff-obj
+    (DNA (partner
+
+(defun create-staple (&rest scaff-objs)
+  "Creates a partner for each scaff-obj"
+  (mapcar #'staple-partner scaff-objs)
+  
+
+
+
 (defclass/std dna-origami (dna)
   ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")))
 ;; )

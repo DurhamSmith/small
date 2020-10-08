@@ -267,7 +267,7 @@ if inc-headers = true the header strings are prepended to the list of topology s
 	     (pn (scale vn -1d0)))
 	(values pcm pbb pn))))
 
-(defmethod partner ((obj dna-nt))
+(defmethod make-partner ((obj dna-nt))
   (multiple-value-bind (cm vbb vn)
       (partner-coords obj)
     (make-dna-nt :cm cm :vbb vbb :vn vn :base "!")))

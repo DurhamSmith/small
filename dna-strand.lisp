@@ -114,7 +114,7 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 	    (incf len)))
       (values obj nt))))
 
-(defgeneric nt->5end (obj nt)  
+(defgeneric nt->5end (obj nt)  		;
   (:documentation "Returns (VALUES obj nt) after adding a DNA-NT to 5end of strand")
   (:method ((obj dna-strand) (nt dna-nt))
     (with-accessors ((5nt 5nt) (3nt 3nt) (len len)) obj
@@ -137,7 +137,16 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
       
 
 
-      
+(defmethod make-partner ((obj dna-strand))
+  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the correct direction
+	 (nts (mapcar #'make-partner rnts))
+	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
+			    :5nt (first nts)
+			    :3nt (car (last nts)))))
+;    (break "~A ~A" nts ps)
+    ps))
+
+
       
       
 
