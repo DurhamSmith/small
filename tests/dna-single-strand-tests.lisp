@@ -39,11 +39,33 @@
 
 
 
-(let* ((p1 (v3 2 0 0))
-	 (p2 (v3 4.20 0 0))) ;; should need 4nts of 0, .4nt spacing and have 0.1nm spacing and there is an offset of -1 nt
+(define-test "single-strand (coords0 vaxis vbb0 len)"
+  (let* ((p1 (v3 2 0 0))
+	 (p2 (v3 4.20 0 0)) ;; should need 4nts of 0, .4nt spacing and have 0.1nm spacing and there is an offset of -1 nt
+	 (answer-cms (list
+		      (v3 2d0 0d0 0.6d0) 
+		      (v3 2.4d0 0d0 0.6d0)
+		      (v3 2.8d0 0d0 0.6d0)
+		      (v3 3.2d0 0d0 0.6d0)
+		      (v3 4.0d0 0d0 0.6d0)))
+	 (answer-vbb (v3 0 0 1))
+	 (answer-vn (v3 1 0 0)))
     (multiple-value-bind (strand nts)
-	(small::single-strand  (v3 0 0 0) (v3 1 0 0) (v3 0 0 1) 10)
-      strand
-      nts
-      (write-oxdna (first nts) :filename "pfl")
-      ))
+	(small::single-strand  (v3 2 0 0) (v3 1 0 0) (v3 0 0 1) 4)
+      (of-type SMALL:DNA-SINGLE-STRAND strand)
+;      (break "~A " (SMALL::cm (first nts)))
+      (mapcar #'(lambda (cm nt)
+		  (is-close cm (SMALL::cm nt))
+		  (is-close answer-vbb (SMALL::vbb nt))
+		  (is-close answer-vn (SMALL::vn nt)))
+	      answer-cms nts)))
+  )
+      ;; strand
+      ;; nts
+      ;; (write-oxdna (first nts) :filename "pfl")
+      ;; ))
+
+
+;(let* 
+
+
