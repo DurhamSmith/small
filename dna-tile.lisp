@@ -241,7 +241,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  (unless (and (= 4 k) (= 22 i))
 	    (add-to-scaffold ori (SMALL::scaffold-loop k i)))))))
 
-  (scaffold ori))))))
+;  (scaffold ori))))))
   (mapcar #'(lambda (nt base)
 	      (setf (base nt) base))
 	  (connected-nts (5nt (first (scaffold ori))))

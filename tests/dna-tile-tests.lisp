@@ -4,6 +4,7 @@
 
 (getf '('obj 1  :start 0 :end 16  ) :obj)
  
+
 (let* ((tile (SMALL::scaffold (SMALL::make-dna-tile)))
        (h1 (first tile))
        (h2 (second tile))
@@ -11,7 +12,7 @@
        p1 p2 strands)
   (setf strands (SMALL::create-staple `((:obj ,h1  :start 0 :end 16  :from-3end t)
 					(:obj ,h2  :start 0 :end 16  :from-3end nil)
-					(:obj ,h3  :start 0 :end 16  :from-3end t)
+					 (:obj ,h3  :start 0 :end 16  :from-3end t)
 					)))
   (setf p1 (first strands))
   (setf p2 (second strands))
@@ -21,13 +22,44 @@
 		 h1
 		 p1
 		 p2
+		  p3
+		 )))
+
+
+
+
+(let* ((tile (SMALL::make-dna-tile))
+       (scaf-hels (filter #'(lambda (x)
+			      (when (typep x 'dna-helix-strand)
+				x))			      
+			  (SMALL::scaffold tile))))
+  scaf-hels)
+
+
+  )  scaf-hels)
+       staples)
+  (b
+  (setf strands (SMALL::create-staple `((:obj ,h1  :start 0 :end 16  :from-3end t)
+					(:obj ,h2  :start 0 :end 16  :from-3end nil)
+					(:obj ,h3  :start 0 :end 16  :from-3end t)
+					)))
+  (small::wmdna "stapit"
+		(list
+		 h1
+		 p1
+		 p2
 		 p3
-		 ))
-  )
+		 ))))
 
-
+;;ali jabi
+;;
 	
-
+  (defun filter (fn 1st)
+    (let ((ace nil))
+      (dolist (x 1st)
+	(let ((val (funcall fn x)))
+	  (if val (push val ace))))
+      (nreverse ace)))
 
 
 
