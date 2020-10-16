@@ -252,6 +252,8 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 
+
+
   ;; 1: Create scaff helix
   ;;; Get starting positions of the bases on the 5' and 3' end of helix i
   ;;; Get vec for 5-3 dir of helix axis

@@ -14,14 +14,22 @@
 
 (defun create-staple (scaff-spec)
   "Creates a partner for each scaff-obj"
-  (mapcar #'(lambda (obj-spec)
-	      (staple-partner
-	       (getf obj-spec :obj)
-	       :start (getf obj-spec :start)
-	       :end (getf obj-spec :end)
-	       :from-3end (getf obj-spec :from-3end)
-	       ))
-	  scaff-spec))
+  (let* ((stap-hels
+	   (mapcar #'(lambda (obj-spec)
+		       (staple-partner
+			(getf obj-spec :obj)
+			:start (getf obj-spec :start)
+			:end (getf obj-spec :end)
+			:from-3end (getf obj-spec :from-3end)
+			))
+		   scaff-spec)))
+    (reduce #'(lambda (h1 h2)
+		(break "~A ~A ~A" h1  h2 stap-hels)
+		(when h2
+		  (connect (5nt h1) (5nt h2))
+		  h2)
+		) stap-hels)
+    (values stap-hels (connected-nts (5nt (first stap-hels))))))
 
 
 (defclass/std dna-origami (dna)
