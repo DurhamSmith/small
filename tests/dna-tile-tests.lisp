@@ -4,13 +4,14 @@
 
 
 (let* ((tile  (SMALL::make-dna-tile)))
-  (format t "~A" (append
-		 (SMALL::edge-staples tile)
-		 (list (first (SMALL::scaffold tile)))))
+;  (break (SMALL::edge-staples tile))
 
- (small::wmdna "tt" (append
-		 (SMALL::edge-staples tile)
-		 (list (first (SMALL::scaffold tile))))))
+
+;(break h)
+
+       (small::wmdna "xgongivittoya" (append
+		 (list (first (SMALL::scaffold tile)))
+		 (SMALL::edge-staples tile))))
   ;; (small::wmdna "tt"
   ;; 		(list
   ;; 		 (scaffold tile)

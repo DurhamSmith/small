@@ -154,7 +154,6 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 
 
 (defmethod strand-nts ((strand dna-strand) &key start end from-3end)
-;  (break)
   (with-accessors ((5nt 5nt) (3nt 3nt)) strand
     (let* ((nts ())
 	   (nts (do ((tmp-nt 5nt (next tmp-nt)))
@@ -173,6 +172,7 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
    ;   (break "strand nts ~A" (mapcar #'base nts))
 ;      (break "strand nts ~A ~A" (first nts)  (car (last nts)))
 ;     (break "strand nts ~A ~%connected ~A" nts (connected-nts 5nt))
+;      (break "strand nts l ~A" (length nts))
       nts 
       )))
 
@@ -190,10 +190,12 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 		  (reverse nts))) ; Reverse since we travese 5->3 on scaff and we need our dna to be antiparallel
 	 (nts (progn
 	;	(break "partner nts ~A" (mapcar #'base nts))
-		(connect-nts nts)))
+		(connect-nts nts)
+		nts))
        	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
 			    :5nt (first nts)
 			    :3nt (car (last nts))
+			    :len (length nts)
 			    ;; :5nt (if from-3end
 			    ;; 	     (car (last nts))
 			    ;; 	     (first nts))

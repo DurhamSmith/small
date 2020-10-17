@@ -35,22 +35,30 @@
 
 
 (defun connect-staples (staps scaff-spec)
-  (mapcar #'(lambda (h1 h2 spec1 spec2)
-	      (cond ((and (getf spec1 :from-3end)
-			  (not (getf spec2 :from-3end)))
-;		     (connect (3nt h1) (5nt h2))
-		     (progn
-		       ;;(break "b4 ~A ~A"  h1 h2);(strand-nts h1)  (strand-nts h2))
-		       (connect h1  h2)
-		       ;;(break "aft ~A ~A" (strand-nts  h1) (strand-nts h2))
-		       
-		     ))
+;  (break "1 ~A" staps)
+  (connect (first staps) (second staps))
+ ; (break "2  ~A" staps)
+  staps)
+  
 
-		    ((and (not (getf spec1 :from-3end))
-			  (getf spec2 :from-3end))
-		     (connect  h1  h2))		  
-		    (t (error "Not supported"))))	  
-	  staps (cdr staps) scaff-spec (cdr scaff-spec)))
+;; (defun connect-staples (staps scaff-spec)
+;;   (break)
+;;   (mapcar #'(lambda (h1 h2 spec1 spec2)
+;; 	      (cond ((and (getf spec1 :from-3end)
+;; 			  (not (getf spec2 :from-3end)))
+;; ;		     (connect (3nt h1) (5nt h2))
+;; 		     (progn
+;; 		       ;;(break "b4 ~A ~A"  h1 h2);(strand-nts h1)  (strand-nts h2))
+;; 		       (connect h1  h2)
+;; 		       ;;(break "aft ~A ~A" (strand-nts  h1) (strand-nts h2))
+		       
+;; 		     ))
+
+;; 		    ((and (not (getf spec1 :from-3end))
+;; 			  (getf spec2 :from-3end))
+;; 		     (connect  h1  h2))		  
+;; 		    (t (error "Not supported"))))	  
+;; 	  staps (cdr staps) scaff-spec (cdr scaff-spec)))
   
 
 (defclass/std dna-origami (dna)
@@ -66,6 +74,7 @@
 
 (defmethod add-to-scaffold ((ori dna-origami) (scaff-obj dna))
   "Returns VALUES ori (scaffold ori) after connecting last DNA CHEM-OBJ in scaffold to scaff-obj and appends scaff-obj to (scaffold ori)"
+
   (with-accessors ((scaffold scaffold)) ori
     (if (null scaffold)
 	(setf scaffold (list scaff-obj))
@@ -78,9 +87,7 @@
   (with-accessors ((edge-staples edge-staples)) ori
     (if (null edge-staples)
 	(setf edge-staples (list obj))
-	(progn
-	  (connect (car (last edge-staples)) obj)
-	  (setf edge-staples (append edge-staples (list obj)))))))
+	(setf edge-staples (append edge-staples (list obj))))))
 
 
 	

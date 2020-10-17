@@ -70,6 +70,9 @@
 (defparameter *r*  11
   "the total number of rows with increasing length in each of the four isosceles right triangles composing the square")
 
+(defparameter *2r*  (* 2 *r*)
+  "the total number of rows with increasing length in each of the four isosceles right triangles composing the square")
+
 (defparameter *g* 1.42d0 "Distance between the center of the square to the central vertex of each of the four triangles")
 
 
@@ -240,11 +243,24 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 
-(defmethod edge-staple (h1 h2)
-  "Creates the edge staples that hold helix h1 and h2 together"
+;; (defmethod edge-staple (h1 h2)
+;;   "Creates the edge staples that hold helix h1 and h2 together"
+;;   (let* ((staps (create-staple
+;; 		 `((:obj ,h1  :start 0 :end 16  :from-3end t)
+;; 		   (:obj ,h2  :start 0 :end 16  :from-3end nil))))
+;; 	 (staple-strand (staple-from-objs staps)))
+;;     staple-strand))
+
+
+
+(defmethod edge-staple ((tile dna-tile) k i sc-hel1 sc-hel2)
+  "Creates the edge staples that hold helix sc-hel1 and sc-hel2 together"
+  (when (or (= k *2r*) (oddp i))
+    (error "Index not supported k: ~A i: ~A"))
+  
   (let* ((staps (create-staple
-		 `((:obj ,h1  :start 0 :end 16  :from-3end t)
-		   (:obj ,h2  :start 0 :end 16  :from-3end nil))))
+		 `((:obj ,sc-hel1  :start 0 :end 16  :from-3end t)
+		   (:obj ,sc-hel2  :start 0 :end 16  :from-3end nil))))
 	 (staple-strand (staple-from-objs staps)))
     staple-strand))
 
@@ -260,9 +276,11 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  ;;(break "scaff ~A" (scaffold ori))
 	  (add-to-scaffold ori (scaffold-helix k i))
 	  (when (evenp i)
-	    (let ((edge-staple (edge-staple
-				  (nth (- (length scaff) 2) scaff)
-				  (nth (- (length scaff) 1) scaff))))
+	    (let ((edge-staple (edge-staple ori
+					    k
+					    i
+					    (nth (- (length scaff) 2) scaff)
+					    (nth (- (length scaff) 1) scaff))))
 	      (add-prop edge-staple :k k)
 	      (add-prop edge-staple :i i)
 	      (add-to-edge-staples ori edge-staple))
@@ -283,7 +301,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  (map 'list #'list  *m13mp18*))
 
   
-  (small::write-oxdna (5nt (first (scaffold ori))) :filename "full-tile")
+;  (small::write-oxdna (5nt (first (scaffold ori))) :filename "full-tile")
   )
 
 
