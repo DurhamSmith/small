@@ -14,7 +14,7 @@
 
 (defun create-staple (scaff-spec)
   "Creates a partner for each scaff-obj"
-  (let* ((stap-hels
+  (let* ((staps
 	   (mapcar #'(lambda (obj-spec)
 		       (staple-partner
 			(getf obj-spec :obj)
@@ -23,14 +23,28 @@
 			:from-3end (getf obj-spec :from-3end)
 			))
 		   scaff-spec)))
-    (reduce #'(lambda (h1 h2)
-		(break "~A ~A ~A" h1  h2 stap-hels)
-		(when h2
-		  (connect (5nt h1) (5nt h2))
-		  h2)
-		) stap-hels)
-    (values stap-hels (connected-nts (5nt (first stap-hels))))))
+    (connect-staples staps scaff-spec)
+    (values staps (connected-nts (5nt (first staps))))))
 
+
+(defun connect-staples (staps scaff-spec)
+  (mapcar #'(lambda (h1 h2 spec1 spec2)
+	      (cond ((and (getf spec1 :from-3end)
+			  (not (getf spec2 :from-3end)))
+;		     (connect (3nt h1) (5nt h2))
+		     (progn
+		       (break "b4 ~A ~A"  h1 h2);(strand-nts h1)  (strand-nts h2))
+		       (connect h1  h2)
+		       (break "aft ~A ~A" (strand-nts  h1) (strand-nts h2))
+		       
+		     ))
+
+		    ((and (not (getf spec1 :from-3end))
+			  (getf spec2 :from-3end))
+		     (connect  h1  h2))		  
+		    (t (error "Not supported"))))	  
+	  staps (cdr staps) scaff-spec (cdr scaff-spec)))
+  
 
 (defclass/std dna-origami (dna)
   ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")))

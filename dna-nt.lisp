@@ -1,3 +1,4 @@
+
 (in-package :small)
 ;;;; This a base class for DNA CHEM-OBJs.
 (defclass/std dna-nt (dna)

@@ -71,7 +71,9 @@
 	 (top-header '())
 	 (config-header '()))
     (mapcar  #'(lambda (dna-obj)
-		 (let* ((nt (5nt dna-obj))
+		 (let* ((nt (if (typep dna-obj 'DNA-NT)    ;;TODO Changed this to print single nts but need to fix more
+				dna-obj
+				(5nt dna-obj)))
 			(len (length (connected-nts nt))))
 		   ;; (setf configs (append configs (oxdna-config nt
 		   ;; 					       :inc-headers nil

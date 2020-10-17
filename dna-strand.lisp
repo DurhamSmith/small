@@ -165,41 +165,41 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 			 (reverse (push 3nt nts)))
 		     ) 
 		  (push tmp-nt nts)))
-	   ;; (nts (if from-3end
-	   ;; 	    (reverse nts)
-	   ;; 	    nts))
-	   ;; (nts (if from-3end
-	   ;; 	    (reverse nts)
-	   ;; 	    nts))
 	   (nts (if start
 		    (if end
 			(subseq nts start end)
 			(subseq nts start))
 		    nts)))
-      (break "strand nts ~A ~A" (base (first nts)) (base (car (last nts))))
-      (break "strand nts ~A ~A" (first nts)  (car (last nts)))
-      (break "strand nts ~A ~%connected ~A" nts (connected-nts 5nt))
+      (break "strand nts ~A" (mapcar #'base nts))
+;      (break "strand nts ~A ~A" (first nts)  (car (last nts)))
+;     (break "strand nts ~A ~%connected ~A" nts (connected-nts 5nt))
       nts 
       )))
 
 (defmethod make-partner ((obj dna-strand) &key start end from-3end)
-  ;;  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the correct direction
-  (let* ((rnts (strand-nts obj
+  ;;  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the 0correct direction
+  (let* ((scaff-nts (strand-nts obj
 			   :start start
 			   :end end
 			   :from-3end from-3end)) ; Reverse strand so our new strand 
 	 (nts (progn
 ;		(break "make-partner ~A ~A" (base (first rnts)) (base (car (last rnts))))
-		(mapcar #'make-partner rnts)))
+		(mapcar #'make-partner scaff-nts)))
+	 (nts (if from-3end
+		  nts
+		  (reverse nts))) ; Reverse since we travese 5->3 on scaff and we need our dna to be antiparallel
 	 (nts (progn
-;		(break "make-partner2 ~A ~A" (base (first nts)) (base (car (last nts))))
+		(break "partner nts ~A" (mapcar #'base nts))
 		(connect-nts nts)))
-	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
-			    :5nt (if from-3end
-				     (car (last nts))
-				     (first nts))
-			    :3nt (if from-3end
-				     (first nts)
-				     (car (last nts))))))
+       	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
+			    :5nt (first nts)
+			    :3nt (car (last nts))
+			    ;; :5nt (if from-3end
+			    ;; 	     (car (last nts))
+			    ;; 	     (first nts))
+			    ;; :3nt (if from-3end
+			    ;; 	     (first nts)
+			    ;; 	     (car (last nts)))
+			    )))
 					;    (break "~A ~A" nts ps)
     ps))
