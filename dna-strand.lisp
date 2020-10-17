@@ -41,8 +41,12 @@
 (defmethod connect ((o1 dna-strand) (o2 dna-strand) &rest rest)
   
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
-  (dna-connect o1 o2)
-  (dna-connect (3nt o1) (5nt o2)))
+
+					;  (break "~A ~A" o1 o2)
+;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
+  (dna-connect (3nt o1) (5nt o2))
+  (dna-connect o1 o2))
+;  (connect-nts (connected-nts o1) (connected-nts o2)))
 ;TODO implemment full logic  (connect-nts (connected-nts o1) (connected o2)))
 
 (defun make-dna-strand (&rest rest)
@@ -148,31 +152,54 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 
 
 
+
 (defmethod strand-nts ((strand dna-strand) &key start end from-3end)
+;  (break)
   (with-accessors ((5nt 5nt) (3nt 3nt)) strand
     (let* ((nts ())
 	   (nts (do ((tmp-nt 5nt (next tmp-nt)))
 		    ((eq tmp-nt 3nt)
+		     ;(push 3nt nts)
 		     (if from-3end
 			 (push 3nt nts)
-			 (reverse (push 3nt nts))))
-		  (push tmp-nt nts))))
-      (if start
-	  (if end
-	      (subseq nts start end)
-	      (subseq nts start))
-	  nts))))
+			 (reverse (push 3nt nts)))
+		     ) 
+		  (push tmp-nt nts)))
+	   ;; (nts (if from-3end
+	   ;; 	    (reverse nts)
+	   ;; 	    nts))
+	   ;; (nts (if from-3end
+	   ;; 	    (reverse nts)
+	   ;; 	    nts))
+	   (nts (if start
+		    (if end
+			(subseq nts start end)
+			(subseq nts start))
+		    nts)))
+      (break "strand nts ~A ~A" (base (first nts)) (base (car (last nts))))
+      (break "strand nts ~A ~A" (first nts)  (car (last nts)))
+      (break "strand nts ~A ~%connected ~A" nts (connected-nts 5nt))
+      nts 
+      )))
 
 (defmethod make-partner ((obj dna-strand) &key start end from-3end)
   ;;  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the correct direction
-  (let* ((rnts (reverse (strand-nts obj
-				    :start start
-				    :end end
-				    :from-3end from-3end))) ; Reverse strand so our new strand 
-	 (nts (mapcar #'make-partner rnts))
-	 (nts (connect-nts nts))
+  (let* ((rnts (strand-nts obj
+			   :start start
+			   :end end
+			   :from-3end from-3end)) ; Reverse strand so our new strand 
+	 (nts (progn
+;		(break "make-partner ~A ~A" (base (first rnts)) (base (car (last rnts))))
+		(mapcar #'make-partner rnts)))
+	 (nts (progn
+;		(break "make-partner2 ~A ~A" (base (first nts)) (base (car (last nts))))
+		(connect-nts nts)))
 	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
-			    :5nt (first nts)
-			    :3nt (car (last nts)))))
+			    :5nt (if from-3end
+				     (car (last nts))
+				     (first nts))
+			    :3nt (if from-3end
+				     (first nts)
+				     (car (last nts))))))
 					;    (break "~A ~A" nts ps)
     ps))
