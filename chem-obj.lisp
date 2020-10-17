@@ -5,6 +5,7 @@
   ((chem-objs :doc "Contains a hash-table of other CHEM-OBJs. Use  #'add-chem-obj to add to them")
    (parents :std (make-hash-table))
    (children :std (make-hash-table))
+   (props :std (make-hash-table) :doc "A hashtable for abitrary properties one would like to store")
    (tfms :doc "A list of transformations (translations and rotations) The order is the first applied opperation is first in the list"))
   (:documentation "The base class used for containing chemical objects and the rule for maniipulating them. They can be used to create atomic (in the lisp sense of evaluating to themselves) level detail chemical objects such as atoms or course grain nucleotide models, which have well defined coordinate descriptions. Or chem-obj children can define higher level structures composed of atomic chem-obj or other higher level structures themselves, for example small molecules composed from atoms, DNA helical strands from nucleotides and Double helices from DNA helical strands."))
 
@@ -30,13 +31,18 @@
 
 (defgeneric add-parent (child parent &key ckey pkey)
   (:method ((child chem-obj) (parent chem-obj)  &key pkey ckey)
-    (+ht (parents child) parent :k pkey)
-    (+ht (children parent) child :k ckey)))
+    (+ht (parents child) parent :key pkey)
+    (+ht (children parent) child :key ckey)))
 
 (defgeneric add-child (parent child &key pkey ckey)
   (:method ((parent chem-obj) (child chem-obj)  &key pkey ckey)
-    (+ht (parents child) parent :k pkey)
-    (+ht (children parent) child :k ckey)))
+    (+ht (parents child) parent :key pkey)
+    (+ht (children parent) child :key ckey)))
+
+
+(defgeneric add-prop (obj key val)
+  (:method ((obj chem-obj) key val)
+    (+ht (props obj) val :key key)))
 
 
 

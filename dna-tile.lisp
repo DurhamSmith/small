@@ -219,34 +219,70 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 		    (helix-axis-coords k i (ai i))))
 	 (vn (as-unit-vec (.- 3axis 5axis)))
 	 (cm (scaffold-coords k i j :cm t))
-	 (vbb0 (as-unit-vec (.- cm 5axis))))
-    (helix-strand 5axis vn vbb0 (ai i))))
+	 (vbb0 (as-unit-vec (.- cm 5axis)))
+	 (hel (helix-strand 5axis vn vbb0 (ai i))))
+    (add-prop hel :k k)
+    (add-prop hel :i i)
+;;    (break "~A" props)
+    hel))
 
 (defun scaffold-loop (k i)
   (let* ((c1 (scaffold-coords k i (ai i)))
 	 (c2 (if (= i (* 2 *r*))
 		 (scaffold-coords (+ k 1) 1 (ai 1))
-		 (scaffold-coords k (+ i 1) (ai (+ i 1))))))
-    (bridging-single-strand c1 c2 (v3 0 1 0))))
+		 (scaffold-coords k (+ i 1) (ai (+ i 1)))))
+	 (loop-strand (bridging-single-strand c1 c2 (v3 0 1 0))))
+    (add-prop loop-strand :k k)
+    (add-prop loop-strand :i i)
+    loop-strand))
+	 
 
 
-(make-dna-tile)
+
+
+(defmethod edge-staple (h1 h2)
+  "Creates the edge staples that hold helix h1 and h2 together"
+  (let* ((staps (create-staple
+		 `((:obj ,h1  :start 0 :end 16  :from-3end t)
+		   (:obj ,h2  :start 0 :end 16  :from-3end nil))))
+	 (staple-strand (staple-from-objs staps)))
+    staple-strand))
+
+
+
+;(break (make-dna-tile))
 (defmethod initialize-instance :after ((ori dna-tile) &key)
   "Create the dna-origami chem-objs that represent the scaffold strand (scaff helixes = 2r = 22, scaff loops = 21, scaff bridges not included) and staple strands (TODO NUMBER, this excludes staples that also form staple bridges)"
-  (loop for k from 1 to 4 do
-    (loop for i from 1 to 22 do
-      (progn
-	(add-to-scaffold ori (scaffold-helix k i))
-	(when (evenp i) ;; add scaffold-loops
-	  (unless (and (= 4 k) (= 22 i))
-	    (add-to-scaffold ori (SMALL::scaffold-loop k i)))))))
+  (with-accessors ((scaff scaffold)) ori
+    (loop for k from 1 to 4 do
+      (loop for i from 1 to 22 do
+	(progn
+	  ;;(break "scaff ~A" (scaffold ori))
+	  (add-to-scaffold ori (scaffold-helix k i))
+	  (when (evenp i)
+	    (let ((edge-staple (edge-staple
+				  (nth (- (length scaff) 2) scaff)
+				  (nth (- (length scaff) 1) scaff))))
+	      (add-prop edge-staple :k k)
+	      (add-prop edge-staple :i i)
+	      (add-to-edge-staples ori edge-staple))
+			  ;; add scaffold-loops
+	    (unless (and (= 4 k) (= 22 i))
+	      (add-to-scaffold ori (SMALL::scaffold-loop k i)))
+	    )))))
+	  
 
-;  (scaffold ori))))))
+
+;	(scaffold ori)))))
+
+  
   (mapcar #'(lambda (nt base)
 	      (setf (base nt) base))
 	  (connected-nts (5nt (first (scaffold ori))))
 					;	  (map 'list #'(lambda (x) x)  *m13mp18*)
 	  (map 'list #'list  *m13mp18*))
+
+  
   (small::write-oxdna (5nt (first (scaffold ori))) :filename "full-tile")
   )
 

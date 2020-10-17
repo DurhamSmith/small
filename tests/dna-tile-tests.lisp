@@ -1,10 +1,27 @@
+
 (in-package #:small-tests)
 
 
 
-(getf '('obj 1  :start 0 :end 16  ) :obj)
- 
+(let* ((tile  (SMALL::make-dna-tile)))
+  (format t "~A" (append
+		 (SMALL::edge-staples tile)
+		 (list (first (SMALL::scaffold tile)))))
 
+ (small::wmdna "tt" (append
+		 (SMALL::edge-staples tile)
+		 (list (first (SMALL::scaffold tile))))))
+  ;; (small::wmdna "tt"
+  ;; 		(list
+  ;; 		 (scaffold tile)
+  ;; 		 (edge-staples tile)))
+
+
+
+
+
+(getf '('obj 1  :start 0 :end 16  ) :obj)
+ ;; Tests creating staples kind of
 (let* ((tile (SMALL::scaffold (SMALL::make-dna-tile)))
        (h1 (first tile))
        (h2 (second tile))
@@ -17,13 +34,20 @@
   (setf p1 (first strands))
   (setf p2 (second strands))
   (setf p3 (third strands))
+  (format t "~A" (list
+		 h1
+		 p1
+		 p2
+		  p3
+		  ))
   (small::wmdna "stapit"
 		(list
 		 h1
 		 p1
 		 p2
 		  p3
-		 )))
+		  )))
+
 
 
 

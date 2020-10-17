@@ -115,7 +115,7 @@
 (defun compound-config-header (configs)
 ;;;TODO implement this better
   '("t = 0"
-    "b = 100.0000 100.0000 100.0000"  
+    "b = 1000.0000 1000.0000 1000.0000"  
     "E = 0.000000 0.000000 0.000000"))
 
     

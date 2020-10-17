@@ -10,7 +10,14 @@
 (defmethod staple-partner ((scaff-obj dna)  &key start end from-3end)
   (make-partner scaff-obj :start start :end end :from-3end from-3end))
 
+(defun staple-from-objs (&rest stap-objs)
+  "Creates a DNA-STAPLE-STRAND which contians stap-objs in the same order"
 
+  (setf stap-objs (alexandria:flatten stap-objs))
+  (make-instance 'dna-staple-strand
+		 :5nt (5nt (first stap-objs))
+		 :3nt (3nt (car (last stap-objs)))))
+		 
 
 (defun create-staple (scaff-spec)
   "Creates a partner for each scaff-obj"
@@ -33,9 +40,9 @@
 			  (not (getf spec2 :from-3end)))
 ;		     (connect (3nt h1) (5nt h2))
 		     (progn
-		       (break "b4 ~A ~A"  h1 h2);(strand-nts h1)  (strand-nts h2))
+		       ;;(break "b4 ~A ~A"  h1 h2);(strand-nts h1)  (strand-nts h2))
 		       (connect h1  h2)
-		       (break "aft ~A ~A" (strand-nts  h1) (strand-nts h2))
+		       ;;(break "aft ~A ~A" (strand-nts  h1) (strand-nts h2))
 		       
 		     ))
 
@@ -47,7 +54,8 @@
   
 
 (defclass/std dna-origami (dna)
-  ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")))
+  ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")
+   (edge-staples :doc "The sub chem-objs defining the DNA origamis edge-staples")))
 ;; )
 ;;   (:documentation "This class defines a DNA origami object. Its scaffold strand is defined as a list similar to subobjs. Its subobjs contain the other dna elements such as edge strands connectorn and staple strands/briges"))
 
@@ -64,6 +72,15 @@
 	(progn
 	  (connect (car (last scaffold)) scaff-obj)
 	  (setf scaffold (append scaffold (list scaff-obj)))))))
+
+(defmethod add-to-edge-staples ((ori dna-origami) (obj dna))
+  "Returns VALUES ori (scaffold ori) after connecting last DNA CHEM-OBJ in scaffold to obj and appends obj to (scaffold ori)"
+  (with-accessors ((edge-staples edge-staples)) ori
+    (if (null edge-staples)
+	(setf edge-staples (list obj))
+	(progn
+	  (connect (car (last edge-staples)) obj)
+	  (setf edge-staples (append edge-staples (list obj)))))))
 
 
 	

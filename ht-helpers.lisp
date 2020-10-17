@@ -1,15 +1,15 @@
 (in-package :small)
 
-(defun +ht (ht v &key k)
+(defun +ht (ht v &key key)
   "Adds v to ht under key k. If no k, k=(concatenate 'string (type-of v) #vs-in-ht)"
-  (let* ((k (if k
-		k
+  (let* ((k (if key
+		key
 		(concatenate 'string
 			 (clsnm-as-str v)
 			 " "
 			 (format nil "~A"
 				 (numtype-in-ht (type-of v) ht))))))
-    (setf (gethash k ht) v)))
+    (setf (gethash key ht) v)))
 
 (defun numtype-in-ht (typ ht)
   "Returns the number of objects of type typ in ht"
