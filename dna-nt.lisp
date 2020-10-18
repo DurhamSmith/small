@@ -1,4 +1,3 @@
-
 (in-package :small)
 ;;;; This a base class for DNA CHEM-OBJs.
 (defclass/std dna-nt (dna)
@@ -10,7 +9,8 @@
    (L :doc "The angular velocity"
       :std (v3 0 0 0))
    (base :doc "The Watson-Crick base of the DNA-NT"
-	 :std "?"))
+	 :std "?")
+   (partner :doc "A DNA-NT object that forms a Watson-Crick base pair"))
   (:documentation "A class for a DNA nucleotide CHEM-OBJ. NTs are defined similary to that of oxdna using a center of mass, a vector from base to backbone and a vector normal to the face of the base. Our vn and vbb are defined OPPOSITE to that of oxdna"))
 
 ;;;; Generic Functions specific to DNA CHEM-OBJs (only exist when specilized on DNA CHEM-OBJs
@@ -23,7 +23,7 @@
 
 
 ;;;; Creation Functions
-(defun make-dna-nt (&key cm vbb vn (base "?") tfms)
+(defun make-dna-nt (&key cm vbb vn (base "?") tfms )
   ; TODO Make the arg list better. Right now things will be overwritten
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
@@ -33,7 +33,7 @@
   (:documentation "returns the oxdna topolog of the object as a list of strings. dna/rna nucleotides will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1) (inc-headers t))
     (let* ((bases (if all
-		      (reduce #'(lambda (nts nt)
+		      (reduce #'(lambda (nts nt)				  
 				  (concatenate 'string nts (base nt)))
 			      (connected-nts obj)
 			      :initial-value "")
@@ -268,14 +268,31 @@ if inc-headers = true the header strings are prepended to the list of topology s
 	     (pn (scale vn -1d0)))
 	(values pcm pbb pn))))
 
+
 (defmethod make-partner ((obj dna-nt) &key start end from-3end)
   (multiple-value-bind (cm vbb vn)
       (partner-coords obj)
-    (make-dna-nt :cm cm :vbb vbb :vn vn :base (base-partner (base obj)))))
+    (let ((partner (make-instance 'dna-nt
+				  :cm cm
+				  :vbb vbb
+				  :vn vn
+				  :base (base-partner (base obj))
+				  :partner obj)))
+      (setf (partner obj) partner)
+      ;(break partner)
+      partner)))
+
+(defmethod update-base ((nt dna-nt) base)
+  (with-accessors ((b base) (p partner)) nt
+    (setf b base)
+    (when p   
+      (setf (base p) (base-partner base)))))
+    
+  
     
 
 (defun base-partner (base)
-  (cond ((consp base) (base-partner (car base)))
+   (cond ((consp base) (base-partner (car base)))
 	((string-equal "A" base) "T")
 	((string-equal "T" base) "A")
 	((string-equal "G" base) "C")
@@ -284,3 +301,4 @@ if inc-headers = true the header strings are prepended to the list of topology s
 
 
 
+(describe 'dna-nt)

@@ -270,6 +270,8 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 (defmethod initialize-instance :after ((ori dna-tile) &key)
   "Create the dna-origami chem-objs that represent the scaffold strand (scaff helixes = 2r = 22, scaff loops = 21, scaff bridges not included) and staple strands (TODO NUMBER, this excludes staples that also form staple bridges)"
   (with-accessors ((scaff scaffold)) ori
+    ;;Fist we loop over the scaffold so that we can set its sequence
+    ;;This way when we make partners they have the correct seq
     (loop for k from 1 to 4 do
       (loop for i from 1 to 22 do
 	(progn
@@ -287,22 +289,18 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 			  ;; add scaffold-loops
 	    (unless (and (= 4 k) (= 22 i))
 	      (add-to-scaffold ori (SMALL::scaffold-loop k i)))
-	    )))))
-	  
+	    ))))
+    
+    (mapcar #'(lambda (nt base)
+		(update-base nt  base))
+	    (connected-nts (5nt (first (scaffold ori))))					
+	    (map 'list #'string  *m13mp18*))))
 
 
-;	(scaffold ori)))))
+(type-of (car *m13mp18*))
 
-  
-  (mapcar #'(lambda (nt base)
-	      (setf (base nt) base))
-	  (connected-nts (5nt (first (scaffold ori))))
-					;	  (map 'list #'(lambda (x) x)  *m13mp18*)
-	  (map 'list #'list  *m13mp18*))
 
-  
-;  (small::write-oxdna (5nt (first (scaffold ori))) :filename "full-tile")
-  )
+(map 'list #'string  *m13mp18*)
 
 
 
