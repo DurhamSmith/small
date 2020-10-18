@@ -46,4 +46,41 @@
 
 
 
+(defmethod add-transformation ((obj chem-obj) tfm)
+  "Prepends tfm  tfms of obj
+Returns VALUES obj & list of transforms on obj"
+  ;; TODO: Typechecks
+   (values obj (push tfm (tfms obj))))
 
+(defun valid-transformation? (trans)
+  (if (find (car trans) '("translate" "rotate") :test #'string-equal)
+      t
+      (error "Not a valid transformation")))
+
+(defun apply-transformation (tfm vec)
+  "Applies a transform tfm to vector v"
+  ;(format t "~& ~A ~%" tfm)
+  (let ((tfm-type (car tfm))
+	(tfm-val (cdr tfm)))
+    (cond ((string=  "translate" tfm-type) (MAGICL::.+ tfm-val vec))
+	  ((string=  "rotate" tfm-type) (MAGICL::@ tfm-val vec))
+	  (t (error "Not a valid transform")))))
+
+(defmethod apply-transformations ((obj chem-obj) v)
+  "Does all the transformations that have been applied to the object in the order they were applied"
+  (let* ((tfms (transformations obj))
+	 (rl (reverse tfms))
+	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
+    res))
+
+
+(defmethod translate-obj ((obj chem-obj)  v)
+  "prepends translation to tfms obj
+Returns VALUES obj & list of transforms on obj"
+  (add-transformation obj (cons "translate" v)))
+
+(defmethod rotate-obj ((obj chem-obj) rot-mat)
+    "prepends translation to tfms obj
+Returns VALUES obj & list of transforms on obj"
+  (add-transformation obj (cons "rotate" rot-mat)))
+  

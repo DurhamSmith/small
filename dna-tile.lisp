@@ -297,11 +297,6 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	    (map 'list #'string  *m13mp18*))))
 
 
-(type-of (car *m13mp18*))
-
-
-(map 'list #'string  *m13mp18*)
-
 
 
 
