@@ -73,7 +73,6 @@ Returns VALUES obj & list of transforms on obj"
 	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
     res))
 
-
 (defmethod translate-obj ((obj chem-obj)  v)
   "prepends translation to tfms obj
 Returns VALUES obj & list of transforms on obj"
