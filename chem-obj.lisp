@@ -68,7 +68,7 @@ Returns VALUES obj & list of transforms on obj"
 
 (defmethod apply-transformations ((obj chem-obj) v)
   "Does all the transformations that have been applied to the object in the order they were applied"
-  (let* ((tfms (transformations obj))
+  (let* ((tfms (tfms obj))
 	 (rl (reverse tfms))
 	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
     res))

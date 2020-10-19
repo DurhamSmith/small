@@ -55,7 +55,7 @@
 	 (v (SMALL::v3 0 0 1))
 	 (mat (MAGICL:from-list  ;90deg rotation around xy axis
 	       `( 0d0 -1d0 0d0
-		  1d0 d0 0d0
+		  1d0 0d0 0d0
 		  0.0d0 0d0 0d0)
 	       '(3 3)))
 	 (res1 (list (cons "rotate" mat)))
@@ -69,7 +69,8 @@
 	(SMALL::translate-obj obj v)
       (is eq obj res-obj2)
       (is equal res2 res-tfms2))
-    ))
+    (is-close (v3 0 1 1)
+	      (SMALL::apply-transformations obj x))))
 
 
 
