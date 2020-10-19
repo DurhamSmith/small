@@ -73,8 +73,8 @@
 
 
 
-(test "(apply-transformation chem-obj tfm)" :report 'interactive)
-(define-test "(apply-transformation chem-obj tfm)"
+(test "(apply-transformation tfm v)" :report 'interactive)
+(define-test "(apply-transformation tfm v)"
   (let* ((obj (make-instance 'SMALL::chem-obj))       
 	 (x (SMALL::v3 1 0 0))
 	 (v (SMALL::v3 0 0 1))
