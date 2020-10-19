@@ -11,7 +11,7 @@
    (seq :doc "The sequence of the strand (length must be equal to len)")
    (5nt :doc "The DNA-NT at the 5'end of the DNA-STRAND")
    (3nt :doc "The DNA-NT at the 3'end of the DNA-STRAND"))
-  (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a parent for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
+  (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a base class for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
 
 (defmethod 5end ((obj dna-strand) &key all)
   (with-accessors ((5nt 5nt)) obj

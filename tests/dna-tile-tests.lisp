@@ -3,10 +3,17 @@
 
 
 
-(let* ((tile  (SMALL::make-dna-tile)))
-  (small::wmdna "xgongivittoya" (append
+(let* ((tile  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 0 1 0)))
+  (break (first (SMALL::scaffold tile))))
+  (small::wmdna "t1" (append
 		 (list (first (SMALL::scaffold tile)))
-		 (SMALL::edge-staples tile))))
+		 (SMALL::edge-staples tile)))
+  (SMALL::translate-obj tile trans-vec)
+  (small::wmdna "t2" (append
+		 (list (first (SMALL::scaffold tile)))
+		 (SMALL::edge-staples tile)))
+  )
 
 
   (break (SMALL::edge-staples tile)))

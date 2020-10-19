@@ -74,13 +74,15 @@
 
 (defmethod add-to-scaffold ((ori dna-origami) (scaff-obj dna))
   "Returns VALUES ori (scaffold ori) after connecting last DNA CHEM-OBJ in scaffold to scaff-obj and appends scaff-obj to (scaffold ori)"
-
   (with-accessors ((scaffold scaffold)) ori
     (if (null scaffold)
 	(setf scaffold (list scaff-obj))
 	(progn
 	  (connect (car (last scaffold)) scaff-obj)
-	  (setf scaffold (append scaffold (list scaff-obj)))))))
+	  (setf scaffold (append scaffold (list scaff-obj)))))
+    ;;We need to set origami as the parent to the scaff-obj
+    (add-parent scaff-obj ori)
+    )) 
 
 (defmethod add-to-edge-staples ((ori dna-origami) (obj dna))
   "Returns VALUES ori (scaffold ori) after connecting last DNA CHEM-OBJ in scaffold to obj and appends obj to (scaffold ori)"

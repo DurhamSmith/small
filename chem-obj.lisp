@@ -3,8 +3,11 @@
 
 (defclass/std chem-obj ()
   ((chem-objs :doc "Contains a hash-table of other CHEM-OBJs. Use  #'add-chem-obj to add to them")
-   (parents :std (make-hash-table))
-   (children :std (make-hash-table))
+   ;;(parents :std (make-hash-table))
+   (parent :doc "A (single) parent for the chem-obj")
+   (children :doc "A list of children of the chem-obj")
+   ;; (children :std (make-hash-table))
+
    (props :std (make-hash-table) :doc "A hashtable for abitrary properties one would like to store")
    (tfms :doc "A list of transformations (translations and rotations) The order is the first applied opperation is first in the list"))
   (:documentation "The base class used for containing chemical objects and the rule for maniipulating them. They can be used to create atomic (in the lisp sense of evaluating to themselves) level detail chemical objects such as atoms or course grain nucleotide models, which have well defined coordinate descriptions. Or chem-obj children can define higher level structures composed of atomic chem-obj or other higher level structures themselves, for example small molecules composed from atoms, DNA helical strands from nucleotides and Double helices from DNA helical strands."))
@@ -29,16 +32,30 @@
 ;; (type-of (make-instance 'chem-obj))
 ;; (class-of (make-instance 'chem-obj))
 
-(defgeneric add-parent (child parent &key ckey pkey)
-  (:method ((child chem-obj) (parent chem-obj)  &key pkey ckey)
-    (+ht (parents child) parent :key pkey)
-    (+ht (children parent) child :key ckey)))
 
-(defgeneric add-child (parent child &key pkey ckey)
-  (:method ((parent chem-obj) (child chem-obj)  &key pkey ckey)
-    (+ht (parents child) parent :key pkey)
-    (+ht (children parent) child :key ckey)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+       ; Old impl. Moving to single parent, children as list not ht ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (defgeneric add-parent (child parent &key ckey pkey)
+;;   (:method ((child chem-obj) (parent chem-obj)  &key pkey ckey)
+;;     (+ht (parents child) parent :key pkey)
+;;     (+ht (children parent) child :key ckey)))
 
+;; (defgeneric add-child (parent child &key pkey ckey)
+;;   (:method ((parent chem-obj) (child chem-obj)  &key pkey ckey)
+;;     (+ht (parents child) parent :key pkey)
+;;     (+ht (children parent) child :key ckey)))
+
+(defgeneric add-parent (child parent)
+  (:method ((child chem-obj) (parent chem-obj))
+    (setf (parent child) parent)
+    (push child (children parent))))
+
+(defgeneric add-child (parent child)
+  (:method ((parent chem-obj) (child chem-obj))
+    (setf (parent child) parent)
+    (push child (children parent))))
+    
 
 (defgeneric add-prop (obj key val)
   (:method ((obj chem-obj) key val)
@@ -66,6 +83,23 @@ Returns VALUES obj & list of transforms on obj"
 	  ((string=  "rotate" tfm-type) (MAGICL::@ tfm-val vec))
 	  (t (error "Not a valid transform")))))
 
+
+(defmethod get-all-tfms ((obj chem-obj))
+  "Returns all transformations that should be applied to the obj
+Parents transformations are applied AFTER child ones"
+  ;(break obj)
+  (let ((all-tfms (tfms obj)))
+    (do ((parent (parent obj) (parent parent)))
+	((null parent) all-tfms)
+      (when (tfms parent)
+	(setf all-tfms (append (tfms parent) all-tfms))
+	))))
+	   
+
+
+
+
+    
 (defmethod apply-transformations ((obj chem-obj) v)
   "Does all the transformations that have been applied to the object in the order they were applied"
   (let* ((tfms (tfms obj))

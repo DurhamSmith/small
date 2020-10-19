@@ -90,3 +90,20 @@
     (is-close (v3 0 1 0) (small::apply-transformation rot-tfm x))
     (is-close (v3 0 1 1) (small::apply-transformation trans-tfm ;; Rotate x to y then add +1z
 						      (small::apply-transformation rot-tfm x)))))
+
+
+(let ((parent (make-instance 'SMALL::chem-obj))
+      (child (make-instance 'SMALL::chem-obj))
+      (mat (MAGICL:from-list  ;90deg rotation around xy axis
+	       `( 0d0 -1d0 0d0
+		  1d0 0d0 0d0
+		  0.0d0 0d0 1d0)
+	       '(3 3)))
+      (x (SMALL::v3 1 0 0))
+      (v (SMALL::v3 0 0 1)))
+  (SMALL::add-parent child parent)
+  (SMALL::translate-obj parent v)
+  (SMALL::rotate-obj child mat)
+
+  (small::get-all-tfms child))
+  (small::apply-transformations child x)) 
