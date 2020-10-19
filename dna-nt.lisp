@@ -15,7 +15,15 @@
 
 ;;;; Generic Functions specific to DNA CHEM-OBJs (only exist when specilized on DNA CHEM-OBJs
 
+(defmethod vbb ((nt dna-nt))  
+  (apply-transformations nt (slot-value nt 'vbb )))
 
+(defmethod vn ((nt dna-nt))  
+  (apply-transformations nt (slot-value nt 'vn )))
+
+
+(defmethod cm ((nt dna-nt))  
+  (apply-transformations nt (slot-value nt 'cm )))
 
 ;;;; Generic Functions specialized on DNA CHEM-OBJs
 

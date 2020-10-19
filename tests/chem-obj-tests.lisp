@@ -56,7 +56,7 @@
 	 (mat (MAGICL:from-list  ;90deg rotation around xy axis
 	       `( 0d0 -1d0 0d0
 		  1d0 0d0 0d0
-		  0.0d0 0d0 0d0)
+		  0.0d0 0d0 1d0)
 	       '(3 3)))
 	 (res1 (list (cons "rotate" mat)))
 	 (res2 (list (cons "translate" v)
@@ -70,7 +70,7 @@
       (is eq obj res-obj2)
       (is equal res2 res-tfms2))
     (is-close (v3 0 1 1)
-	      (SMALL::apply-transformations obj x))))
+	      (SMALL::apply-transformations obj x))))  ;TODO: Add test label for this
 
 
 
@@ -82,7 +82,7 @@
 	 (mat (MAGICL:from-list  ;90deg rotation around xy axis
 	       `( 0d0 -1d0 0d0
 		  1d0 0d0 0d0
-		  0.0d0 0d0 0d0)
+		  0.0d0 0d0 1d0)
 	       '(3 3)))
 	 (rot-tfm (cons "rotate" mat))
 	 (trans-tfm (cons "translate" v))

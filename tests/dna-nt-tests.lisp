@@ -231,3 +231,27 @@
   )
   
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;					; A janky test for making sure we apply tfms on prop retrieval ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(test "nt coord accessors apply transformations" :report 'interactive)
+(define-test "nt coord accessors apply transformations"
+  (let ((nt (make-dna-nt :vbb (v3 1 0 0)
+			 :vn (v3 0 1 0)
+			 :cm (v3 0 0 1)))
+	(v (SMALL::v3 0 0 1))
+	(mat (MAGICL:from-list  ;90deg rotation around xy axis
+	      `( 0d0 -1d0 0d0
+		 1d0 0d0 0d0
+		 0.0d0 0d0 1d0)
+	      '(3 3))))
+    (SMALL::rotate-obj nt mat)
+    (SMALL::translate-obj nt v)
+    (is-close (v3 0 1 1)
+	      (SMALL::vbb nt))
+    (is-close (v3 -1 0 1)
+	      (SMALL::vn nt))
+    (is-close (v3 0 0 2)
+	      (SMALL::cm nt))))
