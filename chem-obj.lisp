@@ -105,6 +105,27 @@ Parents transformations are applied AFTER child ones
 	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
     res))
 
+(defun filter (fn 1st)
+  (let ((ace nil))
+    (dolist (x 1st)
+      (let ((val (funcall fn x)))
+	(if val (push val ace))))
+    (nreverse ace)))
+
+(remove-if 
+	   (list (cons "translate" 1)
+		 (cons "rotate" 2)))
+
+(defmethod apply-rotations ((obj chem-obj) v)
+  "Does all the transformations that have been applied to the object in the order they were applied"
+  (let* ((tfms (all-tfms obj))
+	 (tfms (remove-if #'(lambda (x)
+			     (string= "translate"
+				      (car x)))
+			 tfms))
+	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
+    res))
+
 (defmethod translate-obj ((obj chem-obj)  v)
   "prepends translation to tfms obj
 Returns VALUES obj & list of transforms on obj"
