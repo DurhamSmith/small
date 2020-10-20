@@ -1,6 +1,4 @@
-
 (in-package #:small-tests)
-
 
 
 (let* ((tile  (SMALL::make-dna-tile))
@@ -9,7 +7,8 @@
   (small::wmdna "t1" (append
 		 (list (first (SMALL::scaffold tile)))
 		 (SMALL::edge-staples tile)))
-  (SMALL::translate-obj tile trans-vec)
+(SMALL::translate-obj tile trans-vec)
+
   (small::wmdna "t2" (append
 		 (list (first (SMALL::scaffold tile)))
 		 (SMALL::edge-staples tile)))

@@ -84,9 +84,10 @@ Returns VALUES obj & list of transforms on obj"
 	  (t (error "Not a valid transform")))))
 
 
-(defmethod get-all-tfms ((obj chem-obj))
+(defmethod all-tfms ((obj chem-obj))
   "Returns all transformations that should be applied to the obj
-Parents transformations are applied AFTER child ones"
+Parents transformations are applied AFTER child ones
+;TODO: Add return as VALUES tfms list of parents & their tfms "
   ;(break obj)
   (let ((all-tfms (tfms obj)))
     (do ((parent (parent obj) (parent parent)))
@@ -96,13 +97,10 @@ Parents transformations are applied AFTER child ones"
 	))))
 	   
 
-
-
-
     
 (defmethod apply-transformations ((obj chem-obj) v)
   "Does all the transformations that have been applied to the object in the order they were applied"
-  (let* ((tfms (tfms obj))
+  (let* ((tfms (all-tfms obj))
 	 (rl (reverse tfms))
 	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
     res))
