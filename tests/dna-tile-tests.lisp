@@ -1,5 +1,26 @@
 (in-package #:small-tests)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;       testing connecting tiles      ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(let* ((t1  (SMALL::make-dna-tile))
+       (t2  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0))
+       (t-vec (SMALL::v3 0 0  (- SMALL::*w*)))
+       (rot-mat (small::rotation-matrix (v3 0 0 1) (/ pi 2)))
+       staps)
+  (SMALL::translate-obj t2 t-vec)
+  (setf staps (SMALL::connect-tiles t1 1 t2 3)) 
+  (small::wmdna "a60" (append
+		      (list (first (SMALL::scaffold t1)))		      
+		      (list (first (SMALL::scaffold t2)))
+		      staps
+		      ))
+staps
+  )
+
+
 
 (let* ((t1  (SMALL::make-dna-tile))
        (t2  (SMALL::make-dna-tile))

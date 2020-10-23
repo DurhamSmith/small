@@ -261,7 +261,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   (let* ((staps (create-staple
 		 `((:obj ,sc-hel1  :start 0 :end 16  :from-3end t)
 		   (:obj ,sc-hel2  :start 0 :end 16  :from-3end nil))))
-	 (staple-strand (staple-from-objs staps)))
+	 (staple-strand staps)) ;(staple-from-objs staps)))
     (mapcar #'(lambda (x)
 		(add-parent x staple-strand))
 	    staps)
@@ -281,13 +281,13 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  ;;(break "scaff ~A" (scaffold ori))
 	  (add-to-scaffold ori (scaffold-helix k i))
 	  (when (evenp i)
-	    (let ((es (edge-staple ori k i
-				   (nth (- (length scaff) 2) scaff)
-				   (nth (- (length scaff) 1) scaff))))
-	      (add-parent es ori)
-	      (add-prop es :k k)
-	      (add-prop es :i i)
-	      (add-to-edge-staples ori es))
+	    ;; (let ((es (edge-staple ori k i
+	    ;; 			   (nth (- (length scaff) 2) scaff)
+	    ;; 			   (nth (- (length scaff) 1) scaff))))
+	    ;;   (add-parent es ori)
+	    ;;   (add-prop es :k k)
+	    ;;   (add-prop es :i i)
+	    ;;   (add-to-edge-staples ori es))    ;TODO: Edge staple logic later
 	    ;; add scaffold-loops
 	    (unless (and (= 4 k) (= 22 i))
 	      (add-to-scaffold ori (SMALL::scaffold-loop k i)))
@@ -314,3 +314,46 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
   ;; 3: Create staple stands
   ;;; (staple tri ((:start :end) (:connect-by :strand) (:start :end) (:connect-by :strand) (:start :end)))
 
+
+
+(defun connect-tiles (t1 k1 t2 k2 &key overlap-len ss-connection-len) 
+  "connects tile t1's side k1 to tile t2's side k2"
+  (let* ((i1s '(1 5 9 13 17 21))
+	 (i2s (mapcar #'(lambda (x)
+			  (- (+ *2r* 1) x))
+		      i1s)))
+    (mapcar #'(lambda (i1 i2)
+		(tile-connection-staples t1 k1 i1 t2 k2 i2))
+	    i1s i2s)))
+
+
+
+
+(defun tile-connection-staples (t1 k1 i1  t2 k2 i2 &key (overlap-len 4) ss-connection-len)
+  (let* ((h1_k1_i1 (small::find-obj-with-props (SMALL::scaffold t1)
+					       `((:i . ,i1) (:k . ,k1))))
+	 (h1_k1_i1+1 (small::find-obj-with-props (SMALL::scaffold t1)
+						 `((:i . ,(+ i1 1)) (:k . ,k1))))
+	 (h2_k2_i2 (small::find-obj-with-props (SMALL::scaffold t2)
+					       `((:i . ,i2) (:k . ,k2))))
+	 (h2_k2_i2-1 (small::find-obj-with-props (SMALL::scaffold t2)
+						 `((:i . ,(- i2 1)) (:k . ,k2))))
+	 stap1 stap2)
+    (multiple-value-bind (stap nts)
+	(SMALL::create-staple `((:obj ,h2_k2_i2  :start 0 :end ,overlap-len  :from-3end nil)
+				(:obj ,h1_k1_i1  :start 0 :end 16  :from-3end t)
+				(:obj ,h1_k1_i1+1  :start 0 :end 16  :from-3end nil)))
+      (setf stap1 stap))
+    (multiple-value-bind (stap nts)
+	(SMALL::create-staple `((:obj ,h2_k2_i2-1  :start 0 :end 16  :from-3end t)
+				(:obj ,h2_k2_i2  :start ,overlap-len :end 16  :from-3end nil)))
+      (setf stap2 stap))
+    ;(break "~A"  (list stap1 stap2))
+    (list stap1 stap2)
+    ))
+  
+
+
+
+  
+  

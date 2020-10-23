@@ -30,11 +30,11 @@
 			:from-3end (getf obj-spec :from-3end)
 			))
 		   scaff-spec)))
-    (connect-staples staps scaff-spec)
-    (values staps (connected-nts (5nt (first staps))))))
+    (connect-staples staps)
+    (values (staple-from-objs staps) (connected-nts (5nt (first staps))))))
 
 
-(defun connect-staples (staps scaff-spec)
+(defun connect-staples (staps)
 ;  (break "1 ~A" staps)
   ;;(connect (first staps) (second staps))
  (mapcar #'connect staps (cdr staps))

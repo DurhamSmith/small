@@ -112,9 +112,7 @@ Parents transformations are applied AFTER child ones
 	(if val (push val ace))))
     (nreverse ace)))
 
-(remove-if 
-	   (list (cons "translate" 1)
-		 (cons "rotate" 2)))
+
 
 (defmethod apply-rotations ((obj chem-obj) v)
   "Does all the transformations that have been applied to the object in the order they were applied"
@@ -136,7 +134,6 @@ Returns VALUES obj & list of transforms on obj"
 Returns VALUES obj & list of transforms on obj"
   (add-transformation obj (cons "rotate" rot-mat)))
   
-(and 1 t )
 
 (defun has-props (chem-obj needed-props)
   "Returns t if chemobj contains keys and vals from props in its prop field
