@@ -96,15 +96,18 @@ nts: string ordered from 5'->3'"
 			    :cm cm
 			    :vbb (as-unit-vec vbb0)
 			    :vn (as-unit-vec vaxis)))
-	 (nts (next-n-nts nt1 (- len 1) :kind 'DNA-SINGLE-STRAND))
-	 (nts (connect-nts nt1 nts))	 
+	 (nts (when (> len 1)
+		  (next-n-nts nt1 (- len 1) :kind 'DNA-SINGLE-STRAND)))
+	 (nts (if (> len 1)
+		  (connect-nts nt1 nts)
+		  (list nt1)))
 	 (strand (ss-from-nts nts)))
     (values strand nts)))
 
 
 
 (defun bridging-single-strand (p1 p2 vbb &key len 5end)
-  "returns a values dna-single-strand strand length that bridges the distance with its 3 end starting at p1 + (midpoint p1 p2) - strand-len/2"
+  "returns a values dna-single-strand strand length that bridges the distance with its 5 (i think) end starting at p1 + (midpoint p1 p2) - strand-len/2"
   (let* ((num-nts (if len
 		      len
 		      (nucleotides-needed p1 p2)))
@@ -114,6 +117,7 @@ nts: string ordered from 5'->3'"
 	 (start-coord  (.+ p1
 			   (scale vaxis (/ extra-dist
 					   2))))) ;; offsets since we might not have integer multiples of ss-nt-spacing
+    ;(break "bss ~A" num-nts)
     (single-strand start-coord vaxis vbb num-nts)))
 	
 	   

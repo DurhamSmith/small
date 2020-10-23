@@ -17,21 +17,68 @@
   (make-instance 'dna-staple-strand
 		 :5nt (5nt (first stap-objs))
 		 :3nt (3nt (car (last stap-objs)))))
-		 
+
+
+(defun staple-from-spec (spec)
+  "Creates a staple strand from spec.
+spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
+(:single-strand t [opt] :num-nts INT/nil)  if nil num-nts calculated automatically)")
+
 
 (defun create-staple (scaff-spec)
   "Creates a partner for each scaff-obj"
-  (let* ((staps
+  (let* ((helix-staps
 	   (mapcar #'(lambda (obj-spec)
-		       (staple-partner
-			(getf obj-spec :obj)
-			:start (getf obj-spec :start)
-			:end (getf obj-spec :end)
-			:from-3end (getf obj-spec :from-3end)
-			))
-		   scaff-spec)))
+		       (when (getf obj-spec :obj)
+			 (staple-partner
+			  (getf obj-spec :obj)
+			  :start (getf obj-spec :start)
+			  :end (getf obj-spec :end)
+			  :from-3end (getf obj-spec :from-3end)
+			  )))
+		   scaff-spec))
+	 (single-strands
+	   (loop
+	     for i from 0 to (- (length scaff-spec) 1)
+	     collect
+	     (let* ((spec (nth i scaff-spec))
+		    (vbb (v3 0 1 1))
+		    prev-hel next-hel)
+	       (when (getf spec :single-strand)
+		 (let ((prev-nt (cm (3nt (nth (- i 1) helix-staps ))))
+		       (next-nt (cm (5nt (nth (+ i 1) helix-staps))))
+		       (num-nts (getf spec :num-nts)))
+		   (bridging-single-strand prev-nt next-nt vbb :len num-nts))))))
+	 (staps
+	   ))
+    (setf staps 
+	  (loop
+	    for i from 0 to (- (length scaff-spec) 1)
+	    collect
+	    (cond ((getf (nth i scaff-spec) :obj)
+		   (nth i helix-staps))
+		  ((getf (nth i scaff-spec) :single-strand)			  
+		   (nth i single-strands))
+		  (t (error "Not supported")))))
+	     
+    ;(break "~A ~% SS  ~A ~% ALL ~A" helix-staps single-strands staps)
     (connect-staples staps)
     (values (staple-from-objs staps) (connected-nts (5nt (first staps))))))
+
+
+;; (defun create-staple (scaff-spec)
+;;   "Creates a partner for each scaff-obj"
+;;   (let* ((staps
+;; 	   (mapcar #'(lambda (obj-spec)
+;; 		       (staple-partner
+;; 			(getf obj-spec :obj)
+;; 			:start (getf obj-spec :start)
+;; 			:end (getf obj-spec :end)
+;; 			:from-3end (getf obj-spec :from-3end)
+;; 			))
+;; 		   scaff-spec)))
+;;     (connect-staples staps)
+;;     (values (staple-from-objs staps) (connected-nts (5nt (first staps))))))
 
 
 (defun connect-staples (staps)
@@ -40,26 +87,6 @@
  (mapcar #'connect staps (cdr staps))
  ; (break "2  ~A" staps)
   staps)
-  
-
-;; (defun connect-staples (staps scaff-spec)
-;;   (break)
-;;   (mapcar #'(lambda (h1 h2 spec1 spec2)
-;; 	      (cond ((and (getf spec1 :from-3end)
-;; 			  (not (getf spec2 :from-3end)))
-;; ;		     (connect (3nt h1) (5nt h2))
-;; 		     (progn
-;; 		       ;;(break "b4 ~A ~A"  h1 h2);(strand-nts h1)  (strand-nts h2))
-;; 		       (connect h1  h2)
-;; 		       ;;(break "aft ~A ~A" (strand-nts  h1) (strand-nts h2))
-		       
-;; 		     ))
-
-;; 		    ((and (not (getf spec1 :from-3end))
-;; 			  (getf spec2 :from-3end))
-;; 		     (connect  h1  h2))		  
-;; 		    (t (error "Not supported"))))	  
-;; 	  staps (cdr staps) scaff-spec (cdr scaff-spec)))
   
 
 (defclass/std dna-origami (dna)

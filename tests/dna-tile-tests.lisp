@@ -4,20 +4,96 @@
 					;       testing connecting tiles      ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(let* ((t1  (SMALL::make-dna-tile))
+
+(let* ((overlap-len 4)
+       (bridging-ss-len nil)
+       (t1  (SMALL::make-dna-tile))
        (t2  (SMALL::make-dna-tile))
-       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0))
-       (t-vec (SMALL::v3 0 0  (- SMALL::*w*)))
-       (rot-mat (small::rotation-matrix (v3 0 0 1) (/ pi 2)))
-       staps)
-  (SMALL::translate-obj t2 t-vec)
-  (setf staps (SMALL::connect-tiles t1 1 t2 3)) 
+       (t3  (SMALL::make-dna-tile))
+       (t4  (SMALL::make-dna-tile))
+       (t5  (SMALL::make-dna-tile))
+       (t6  (SMALL::make-dna-tile))
+       (offset (+ (/ SMALL::*w* 2) small::*helix-radius*))
+       (t+z (SMALL::v3 0 offset offset))
+       (t-z (SMALL::v3 0 offset (- offset)))
+       (t-x (SMALL::v3 (- offset) offset 0))
+       (t+x (SMALL::v3 offset offset 0))
+       (t+x+y (SMALL::v3 offset offset 0))
+       (z+90 (small::rotation-matrix (v3 0 0 1) (/ pi 2)))
+       (z180 (small::rotation-matrix (v3 0 0 1) pi))
+       (z-90 (small::rotation-matrix (v3 0 0 1) (/ pi -2)))
+       (x90 (small::rotation-matrix (v3 1 0 0) (/ pi 2)))
+       (x180 (small::rotation-matrix (v3 1 0 0) pi))
+       (x-90 (small::rotation-matrix (v3 1 0 0) (/ pi -2)))       
+       staps1-2
+       staps1-3
+       staps4-1
+       staps5-1
+       staps2-5
+       staps3-5
+       staps4-3
+       staps4-2)
+  (SMALL::rotate-obj t2 x90)
+  (SMALL::translate-obj t2 t-z)
+  (setf staps1-2 (SMALL::connect-tiles t1 1 t2 3
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+
+  (SMALL::rotate-obj t3 x-90)
+  (SMALL::translate-obj t3 t+z)
+  (setf staps1-3 (SMALL::connect-tiles t3 1 t1 3 
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len)) 
+
+  (SMALL::rotate-obj t4 z-90)
+  (SMALL::translate-obj t4 t-x)
+  (setf staps4-1 (SMALL::connect-tiles t4 2 t1 4
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+
+
+  (SMALL::rotate-obj t5 z+90)
+  (SMALL::translate-obj t5 t+x)
+  (setf staps5-1 (SMALL::connect-tiles t1 2 t5 4
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+
+  (setf staps2-5 (SMALL::connect-tiles t2 2 t5 1
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+
+  (setf staps3-5 (SMALL::connect-tiles t3 2 t5 3
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+
+  (setf staps4-3 (SMALL::connect-tiles t4 3 t3 4
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+
+  (setf staps4-2 (SMALL::connect-tiles t4 1 t2 4
+				       :overlap-len overlap-len
+				       :bridging-ss-len bridging-ss-len))
+  
   (small::wmdna "a60" (append
 		      (list (first (SMALL::scaffold t1)))		      
 		      (list (first (SMALL::scaffold t2)))
-		      staps
+		      staps1-2
+		      (list (first (SMALL::scaffold t3)))
+		      staps1-3
+		      (list (first (SMALL::scaffold t4)))
+		      staps4-1
+		      (list (first (SMALL::scaffold t5)))
+		      staps5-1
+		      staps2-5
+		      staps3-5
+		      staps4-3
+		      staps4-2
 		      ))
-staps
+  (mapcar #'(lambda (x)
+	      (mapcar #'small::base
+		      (SMALL:connected-nts (SMALL::5nt x))))
+	      (first staps4-2)))
+;  staps3
   )
 
 

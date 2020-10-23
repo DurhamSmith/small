@@ -316,20 +316,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 
-(defun connect-tiles (t1 k1 t2 k2 &key overlap-len ss-connection-len) 
-  "connects tile t1's side k1 to tile t2's side k2"
-  (let* ((i1s '(1 5 9 13 17 21))
-	 (i2s (mapcar #'(lambda (x)
-			  (- (+ *2r* 1) x))
-		      i1s)))
-    (mapcar #'(lambda (i1 i2)
-		(tile-connection-staples t1 k1 i1 t2 k2 i2))
-	    i1s i2s)))
-
-
-
-
-(defun tile-connection-staples (t1 k1 i1  t2 k2 i2 &key (overlap-len 4) ss-connection-len)
+(defun tile-connection-staples (t1 k1 i1  t2 k2 i2 &key (overlap-len 4) (bridging-ss-len 1))
   (let* ((h1_k1_i1 (small::find-obj-with-props (SMALL::scaffold t1)
 					       `((:i . ,i1) (:k . ,k1))))
 	 (h1_k1_i1+1 (small::find-obj-with-props (SMALL::scaffold t1)
@@ -341,6 +328,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	 stap1 stap2)
     (multiple-value-bind (stap nts)
 	(SMALL::create-staple `((:obj ,h2_k2_i2  :start 0 :end ,overlap-len  :from-3end nil)
+				(:single-strand t :num-nts ,bridging-ss-len)
 				(:obj ,h1_k1_i1  :start 0 :end 16  :from-3end t)
 				(:obj ,h1_k1_i1+1  :start 0 :end 16  :from-3end nil)))
       (setf stap1 stap))
@@ -351,6 +339,21 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
     ;(break "~A"  (list stap1 stap2))
     (list stap1 stap2)
     ))
+
+
+
+
+(defun connect-tiles (t1 k1 t2 k2 &key (overlap-len 4) bridging-ss-len)
+  "connects tile t1's side k1 to tile t2's side k2"
+  (let* ((i1s '(1 5 9 13 17 21))
+	 (i2s (mapcar #'(lambda (x)
+			  (- (+ *2r* 1) x))
+		      i1s)))
+    (mapcar #'(lambda (i1 i2)
+		(tile-connection-staples t1 k1 i1 t2 k2 i2
+					 :overlap-len overlap-len
+					 :bridging-ss-len bridging-ss-len))
+	    i1s i2s)))
   
 
 
