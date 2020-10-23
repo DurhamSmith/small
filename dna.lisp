@@ -6,6 +6,8 @@
 
 (defparameter *helix-diameter* 2d0 "Diameter of DNA double helix in nm")
 
+(defparameter *helix-radius* (/ *helix-diameter* 2d0) "Radius of DNA double helix in nm")
+
 (defparameter *inter-helix-spacing* 1d0 "Spacing between two helices in an origmi design")
 
 (defparameter *helix-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")

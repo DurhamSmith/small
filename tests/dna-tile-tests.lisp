@@ -1,6 +1,43 @@
 (in-package #:small-tests)
 
 
+(let* ((t1  (SMALL::make-dna-tile))
+       (t2  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0)))
+  (SMALL::rotate-obj t2 rot-mat)
+  (SMALL::translate-obj t2 trans-vec)
+  (small::wmdna "all" (append
+		       (list (first (SMALL::scaffold t1)))
+		       (SMALL::edge-staples tile)
+		       (list (first (SMALL::scaffold t2)))
+		       (SMALL::edge-staples t2))))
+
+
+(let* ((t1  (SMALL::make-dna-tile))
+       (t2  (SMALL::make-dna-tile))
+       (t3  (SMALL::make-dna-tile))
+       (t4  (SMALL::make-dna-tile))
+       (t5  (SMALL::make-dna-tile))
+       (t6  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 (/ SMALL::*w* 2)
+			     (+ (/ SMALL::*w* 2)
+				SMALL::*helix-radius*)
+				0))
+       (z90 (small::rotation-matrix (v3 0 0 1) (/ pi 2)))
+       (z180 (small::rotation-matrix (v3 0 0 1) pi))
+       (z-90 (small::rotation-matrix (v3 0 0 1) (/ pi -2)))
+       (x90 (small::rotation-matrix (v3 1 0 0) (/ pi 2)))
+       (x180 (small::rotation-matrix (v3 1 0 0) pi))
+       (x-90 (small::rotation-matrix (v3 1 0 0) (/ pi -2))))
+  (SMALL::rotate-obj t2 z90)
+  (SMALL::translate-obj t2 trans-vec)
+  (small::wmdna "all" (append
+		       (list (first (SMALL::scaffold t1)))
+		       (SMALL::edge-staples t1)
+		       (list (first (SMALL::scaffold t2)))
+		       (SMALL::edge-staples t2))))
+  
+
 (let* ((tile  (SMALL::make-dna-tile))
        (t2  (SMALL::make-dna-tile))
        (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0))
@@ -38,9 +75,44 @@
   (small::has-props (first (SMALL::scaffold t2))
 		    '((:i . 1) (:k . 1))))
   (break t2)
-)
 
 
+
+(let* ((t1  (SMALL::make-dna-tile))
+       (t2  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0))
+       (t-vec (SMALL::v3 0 0  (- SMALL::*w*)))
+       (rot-mat (small::rotation-matrix (v3 0 0 1) (/ pi 2)))
+       (h2-3-22 (small::find-obj-with-props (SMALL::scaffold t2)
+					    '((:i . 22) (:k . 3))))
+       (h2-3-21 (small::find-obj-with-props (SMALL::scaffold t2)
+					    '((:i . 21) (:k . 3))))
+       (h1-1-1 (small::find-obj-with-props (SMALL::scaffold t1)
+					   '((:i . 1) (:k . 1))))
+       (h1-1-2 (small::find-obj-with-props (SMALL::scaffold t1)
+					   '((:i . 2) (:k . 1))))
+       staps1 staps2)
+  (SMALL::translate-obj t2 t-vec)
+  (multiple-value-bind (sstrands nts)
+      (SMALL::create-staple `((:obj ,h2-3-21  :start 0 :end 16  :from-3end t)
+			      (:obj ,h2-3-22  :start 4 :end 16  :from-3end nil)))
+    (setf staps2 nts))
+  (multiple-value-bind (sstrands nts)
+      (SMALL::create-staple `((:obj ,h2-3-22  :start 0 :end 4  :from-3end nil)
+			      (:obj ,h1-1-1  :start 0 :end 16  :from-3end t)
+			      (:obj ,h1-1-2  :start 0 :end 16  :from-3end nil)))
+    (setf staps1 nts))
+  (small::wmdna "2t" (append
+		      (list (first (SMALL::scaffold t1)))
+		      staps1
+		      (list (first (SMALL::scaffold t2)))
+		      staps2
+		      ))
+staps1
+  )
+
+
+  
 
   ;; (small::wmdna "2t" (append
   ;; 		      (list (first (SMALL::scaffold tile)))

@@ -36,7 +36,8 @@
 
 (defun connect-staples (staps scaff-spec)
 ;  (break "1 ~A" staps)
-  (connect (first staps) (second staps))
+  ;;(connect (first staps) (second staps))
+ (mapcar #'connect staps (cdr staps))
  ; (break "2  ~A" staps)
   staps)
   

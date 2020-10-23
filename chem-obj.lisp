@@ -148,3 +148,13 @@ e.g props is an alist "
 			       (cdr needed-prop))) ;TODO: Change to take a test fn in
 		    (alexandria::hash-table-alist props)
 		    needed-props))))
+
+(defun find-obj-with-props (objs-list props)
+  (if (listp objs-list)
+      (if (has-props (car objs-list) props)
+	  (car objs-list)
+	  (when (cdr objs-list)
+	    (find-obj-with-props (cdr objs-list) props)))
+      nil))
+        
+
