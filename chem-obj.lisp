@@ -136,3 +136,15 @@ Returns VALUES obj & list of transforms on obj"
 Returns VALUES obj & list of transforms on obj"
   (add-transformation obj (cons "rotate" rot-mat)))
   
+(and 1 t )
+
+(defun has-props (chem-obj needed-props)
+  "Returns t if chemobj contains keys and vals from props in its prop field
+e.g props is an alist "
+  (with-accessors ((props props)) chem-obj
+    (every #'identity
+	    (mapcar #'(lambda (obj-prop needed-prop)
+			(equal (gethash (car needed-prop) props)
+			       (cdr needed-prop))) ;TODO: Change to take a test fn in
+		    (alexandria::hash-table-alist props)
+		    needed-props))))

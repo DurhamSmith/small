@@ -254,7 +254,7 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 (defmethod edge-staple ((tile dna-tile) k i sc-hel1 sc-hel2)
-  "Creates the edge staples that hold helix sc-hel1 and sc-hel2 together"
+  "Creates the edge staples that hold helix sc-hel1 and sc-hel2 together Goes from 5-3 dir"
   (when (or (= k *2r*) (oddp i))
     (error "Index not supported k: ~A i: ~A"))
   
@@ -262,6 +262,9 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 		 `((:obj ,sc-hel1  :start 0 :end 16  :from-3end t)
 		   (:obj ,sc-hel2  :start 0 :end 16  :from-3end nil))))
 	 (staple-strand (staple-from-objs staps)))
+    (mapcar #'(lambda (x)
+		(add-parent x staple-strand))
+	    staps)
     staple-strand))
 
 
@@ -278,19 +281,17 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  ;;(break "scaff ~A" (scaffold ori))
 	  (add-to-scaffold ori (scaffold-helix k i))
 	  (when (evenp i)
-	    (let ((edge-staple (edge-staple ori
-					    k
-					    i
-					    (nth (- (length scaff) 2) scaff)
-					    (nth (- (length scaff) 1) scaff))))
-	      (add-prop edge-staple :k k)
-	      (add-prop edge-staple :i i)
-	      (add-to-edge-staples ori edge-staple))
-			  ;; add scaffold-loops
+	    (let ((es (edge-staple ori k i
+				   (nth (- (length scaff) 2) scaff)
+				   (nth (- (length scaff) 1) scaff))))
+	      (add-parent es ori)
+	      (add-prop es :k k)
+	      (add-prop es :i i)
+	      (add-to-edge-staples ori es))
+	    ;; add scaffold-loops
 	    (unless (and (= 4 k) (= 22 i))
 	      (add-to-scaffold ori (SMALL::scaffold-loop k i)))
-	    ))))
-    
+	    ))))    
     (mapcar #'(lambda (nt base)
 		(update-base nt  base))
 	    (connected-nts (5nt (first (scaffold ori))))					

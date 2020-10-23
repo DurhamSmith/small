@@ -2,19 +2,52 @@
 
 
 (let* ((tile  (SMALL::make-dna-tile))
-       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) 0 0)))
+       (t2  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0))
+       (rot-mat (small::rotation-matrix (v3 0 0 1) (/ pi 2))))
 					;(break (first (SMALL::scaffold tile)))
   ;; (SMALL::translate-obj tile trans-vec)
   ;; (break "~A" (small::all-tfms (SMALL::5nt (first (SMALL::scaffold tile)))))
   ;; (break "~A" (small::vbb (SMALL::5nt (first (SMALL::scaffold tile)))))
-  (small::wmdna "t1" (append
-		 (list (first (SMALL::scaffold tile)))
-		 (SMALL::edge-staples tile)))
-  (SMALL::translate-obj tile trans-vec)
+  ;; (small::wmdna "t1" (append
+  ;; 		 (list (first (SMALL::scaffold tile)))
+  ;; 		 (SMALL::edge-staples tile)))
+  (SMALL::rotate-obj t2 rot-mat)
+  (SMALL::translate-obj t2 trans-vec)
   ;(break "~A" (small::all-tfms (SMALL::5nt (first (SMALL::scaffold tile)))))
-  (small::wmdna "t2" (append
-		 (list (first (SMALL::scaffold tile)))
-		 (SMALL::edge-staples tile))))
+  (small::wmdna "2t" (append
+		      (list (first (SMALL::scaffold tile)))
+		      (SMALL::edge-staples tile)
+		      (list (first (SMALL::scaffold t2)))
+		      (SMALL::edge-staples t2)))
+  ;; (break (SMALL::edge-staples tile))
+ )
+
+
+
+
+(let* ((tile  (SMALL::make-dna-tile))
+       (t2  (SMALL::make-dna-tile))
+       (trans-vec (SMALL::v3 (/ SMALL::*w* 2) (/ SMALL::*w* 2) 0))
+       (rot-mat (small::rotation-matrix (v3 0 0 1) (/ pi 2))))
+  (SMALL::rotate-obj t2 rot-mat)
+  (SMALL::translate-obj t2 trans-vec)
+  (member (cons :i 1) (alexandria::hash-table-alist (SMALL::props (first (SMALL::scaffold t2)))))
+  (alexandria::hash-table-alist (SMALL::props (first (SMALL::scaffold t2))))
+  (gethash (car '(:i . 1)) (SMALL::props (first (SMALL::scaffold t2))))
+  (small::has-props (first (SMALL::scaffold t2))
+		    '((:i . 1) (:k . 1))))
+  (break t2)
+)
+
+
+
+  ;; (small::wmdna "2t" (append
+  ;; 		      (list (first (SMALL::scaffold tile)))
+  ;; 		      (SMALL::edge-staples tile)
+  ;; 		      (list (first (SMALL::scaffold t2)))
+  ;; 		      (SMALL::edge-staples t2)))
+  ;; (break (SMALL::edge-staples tile))
   )
 
 
