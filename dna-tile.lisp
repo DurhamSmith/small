@@ -293,8 +293,14 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	      (add-to-scaffold ori (SMALL::scaffold-loop k i)))
 	    ))))    
     (mapcar #'(lambda (nt base)
-		(update-base nt  base))
-	    (connected-nts (5nt (first (scaffold ori))))					
+		(with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
+		  (update-base nt  base) ;Set the bases to match the m13 seq
+		  ;; Update coords since we want regular carteisan
+		  ;;and the paper defines y in the opposite direction
+		  (setf (cm nt) (@ (from-diag '(1d0 -1d0 1d0)) cm)) 
+		  (setf (vbb nt) (@ (from-diag '(1d0 -1d0 1d0)) vbb))
+		  (setf (vn nt) (@ (from-diag '(1d0 -1d0 1d0)) vn))))
+	    (connected-nts (5nt (first (scaffold ori))))				
 	    (map 'list #'string  *m13mp18*))))
 
 
