@@ -363,12 +363,33 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 
-  
+(defun u-staple (tile k1 i1 s1 e1 f3e1 k2 i2 s2 e2 f3e2 )
+  "creates an s-shaped staple strand to hold tile helices i, i+1 together.
+Starts are taken from tile edges"
+  (let* ((h1 (SMALL::find-obj-with-props (scaffold tile)
+					 `((:i . ,i1) (:k . ,k1))))
+	 (h2 (small::find-obj-with-props (scaffold tile)
+					 `((:i . ,i2) (:k . ,k2)))))
+    (SMALL::create-staple `((:obj ,h1  :start ,s1 :end ,e1 :from-3end ,f3e1)
+			    (:obj ,h2  :start ,s2 :end ,e2 :from-3end ,f3e2)))))
+
+(defun u-staples (tile)
+  (let* ((u1s ;; Staple u in row 1
+	   (loop for k from 1 to 4 collect
+				   (u-staple tile  k 2 18 25 t k 1 0 16 nil)))
+	 (u4s ;; Staple u in row 1
+	   (loop for k from 1 to 4 collect
+				   (u-staple tile  k 4 13 29 t k 5 30 38 nil)))
+	 (u9s ;; Staple u in row 1
+	   (loop for k from 1 to 4 collect
+				   (u-staple tile  k 10 27 35 t k 9 10 26 nil))))
+    (list u1s u4s u9s)))
+	 
   
 (defun s-staple (tile k i starts lengths)
   "creates an s-shaped staple strand to hold tile helices i, i+1 and i+2 together.
 Starts are taken from tile edges"
-  (let* ((hi (small::find-obj-with-props (scaffold tile)
+  (let* ((hi (SMALL::find-obj-with-props (scaffold tile)
 					  `((:i . ,i) (:k . ,k))))
 	 (hi+1 (small::find-obj-with-props (scaffold tile)
 					  `((:i . ,(+ i 1)) (:k . ,k))))
@@ -392,7 +413,7 @@ Starts are taken from tile edges"
 	  (loop for k from 1 to 4
 		collect
 		(loop
-		  for i from 2 to 18 by 2
+		  for i from 2 to 20 by 2
 		  collect
 		  (s-staple tile k i '(23 16 16) '(8 15 7)))))
     (setf staps (append staps
@@ -415,15 +436,34 @@ Starts are taken from tile edges"
 			      (loop
 				for i from 7 to 15 by 2
 				collect
-				(s-staple tile k i '(70 63 63) '(8 15 7))))))))
+				(s-staple tile k i '(70 63 63) '(8 15 7))))))
+
+    (setf staps (append staps
+			(loop for k from 1 to 4
+			      collect
+			      (loop
+				for i from 10 to 12 by 2
+				collect
+				(s-staple tile k i '(86 78 78) '(8 16 8))))))
+    (setf staps (append staps
+			(loop for k from 1 to 4
+			      collect			    
+				(s-staple tile k 11 '(102 94 94) '(8 16 8))))))))
+
+
+  
+
+  
 
 (defun staple-bridges (tile)
   (let ((staps (remove nil
 		       (loop for k from 1 to 4 collect
 					       (remove nil
 						       (loop for i from 1 to 22 collect
-										(staple-bridge tile k i))))))
-	(interior1 (create-staple))
+										(staple-bridge tile k i)))))))))
+
+
+
 
     
 

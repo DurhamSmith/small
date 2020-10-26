@@ -14,10 +14,11 @@
 
 (let* ((t1 (SMALL::make-dna-tile))
        (stap (SMALL::s-staple t1 1 2 '(23 16 16) '(8 15 7))))
-  (SMALL::wmdna "a-b" (append
+  (SMALL::wmdna "a-u" (append
 		       (list (first (SMALL::scaffold t1))      	
 			     (small::staple-bridges t1 )
 			     (small::internal-staples t1)
+			     (small::u-staples t1)
 		       ))))
 
 	
