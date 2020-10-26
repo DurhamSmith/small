@@ -307,7 +307,6 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
 
 
-
   ;; 1: Create scaff helix
   ;;; Get starting positions of the bases on the 5' and 3' end of helix i
   ;;; Get vec for 5-3 dir of helix axis
@@ -366,3 +365,209 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 
   
   
+(defun s-staple (tile k i starts lengths)
+  "creates an s-shaped staple strand to hold tile helices i, i+1 and i+2 together.
+Starts are taken from tile edges"
+  (let* ((hi (small::find-obj-with-props (scaffold tile)
+					  `((:i . ,i) (:k . ,k))))
+	 (hi+1 (small::find-obj-with-props (scaffold tile)
+					  `((:i . ,(+ i 1)) (:k . ,k))))
+	 (hi+2 (small::find-obj-with-props (scaffold tile)
+					   `((:i . ,(+ i 2)) (:k . ,k))))
+	 (ends (mapcar #'+ starts lengths)))
+    (if (evenp i) ;;TODO: Add error checking on i and k
+	(SMALL::create-staple `((:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end nil)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end t)
+				(:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end nil)))
+	(SMALL::create-staple `((:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end t)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end nil)
+				(:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end t))))))
+	 
+			 
+		       
+	 
+(defun internal-staples (tile)
+  (let (staps)
+    (setf staps
+	  (loop for k from 1 to 4
+		collect
+		(loop
+		  for i from 2 to 18 by 2
+		  collect
+		  (s-staple tile k i '(23 16 16) '(8 15 7)))))
+    (setf staps (append staps
+			(loop for k from 1 to 4
+			      collect
+			      (loop
+				for i from 5 to 18 by 2
+				collect
+				(s-staple tile k i '(39 31 31) '(8 16 8))))))
+    (setf staps (append staps
+			(loop for k from 1 to 4
+			      collect
+			      (loop
+				for i from 6 to 16 by 2
+				collect
+				(s-staple tile k i '(55 47 47) '(8 16 8))))))
+    (setf staps (append staps
+			(loop for k from 1 to 4
+			      collect
+			      (loop
+				for i from 7 to 15 by 2
+				collect
+				(s-staple tile k i '(70 63 63) '(8 15 7))))))))
+
+(defun staple-bridges (tile)
+  (let ((staps (remove nil
+		       (loop for k from 1 to 4 collect
+					       (remove nil
+						       (loop for i from 1 to 22 collect
+										(staple-bridge tile k i))))))
+	(interior1 (create-staple))
+
+    
+
+(defun staple-bridge (tile k i)
+  (let* ((prevk (if (= k 1)
+		    4
+		    (- k 1)))
+	 (nextk (if (= k 4)
+		    1
+		    (+ k 1))))
+    (cond ((= i 2)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,(- *2r* i)) (:k . ,prevk))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,(+ (- *2r* i) 1)) (:k . ,prevk))))
+		  (h3 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h4 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,(+ i 1)) (:k . ,k))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 12 :end 20  :from-3end t)
+			   (:obj ,h2  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h3  :start 0  :end 11 :from-3end t)
+			   (:obj ,h4  :start 12  :end 20 :from-3end nil)))))
+	     stap))
+	  ((= i 3)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 20) (:k . ,prevk))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 12  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 12  :from-3end t)))))
+	     stap))
+	  ((= i 4)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 19) (:k . ,prevk))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 21  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 13  :from-3end t)))))
+	     stap))
+	  ((= i 5)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,(+ i 1)) (:k . ,k))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h3 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 18) (:k . ,prevk))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 22 :end 30  :from-3end t)
+			   (:obj ,h2  :start 0 :end 22  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h3  :start 0 :end 14  :from-3end t)))))
+	     stap))
+	  ((= i 6)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,17) (:k . ,prevk))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h3 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 7) (:k . ,k))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 7  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 14  :from-3end t)
+			   (:obj ,h3  :start 16 :end 23  :from-3end nil)))))
+	     stap))
+	  ((= i 7)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,8) (:k . ,k))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,7) (:k . ,k))))
+		  (h3 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,16) (:k . ,prevk))))
+		  (h4 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 15) (:k . ,prevk))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 9 :end 17 :from-3end t)
+			   (:obj ,h2  :start 0 :end 8 :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h3  :start 0 :end 8  :from-3end t)
+			   (:obj ,h4  :start 9 :end 17  :from-3end nil)))))
+	     stap))
+	  ((= i 8)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 15) (:k . ,prevk))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 9  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 9  :from-3end t)))))
+	     stap))
+	  ((= i 9)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 14) (:k . ,prevk))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 10  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 18  :from-3end t)))))
+	     stap))
+	  ((= i 10)
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 13) (:k . ,prevk))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h3 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,(+ i 1)) (:k . ,k))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 19  :from-3end t)
+			   (:obj ,h3  :start 19 :end 27  :from-3end nil)))))
+	     stap))
+	  ((and (= i 11) (or (= k 1) (= k 3)))
+	   (let* ((h1 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,nextk))))
+		  (h2 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,12) (:k . ,k))))
+		  (h3 (small::find-obj-with-props (scaffold tile)
+						  `((:i . ,i) (:k . ,k))))
+		  (h4 (small::find-obj-with-props (scaffold tile)
+						  `((:i . 12) (:k . ,prevk))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 11 :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h2  :start 0 :end 11 :from-3end t)
+			   (:obj ,h3  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t)
+			   (:obj ,h4  :start 0 :end 11  :from-3end t)))))
+	     stap))
+	  
+	  (t nil))))
+
+
+
+
+
+
+    

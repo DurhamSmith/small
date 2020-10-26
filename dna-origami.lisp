@@ -45,8 +45,10 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 		    (vbb (v3 0 1 1))
 		    prev-hel next-hel)
 	       (when (getf spec :single-strand)
-		 (let ((prev-nt (cm (3nt (nth (- i 1) helix-staps ))))
-		       (next-nt (cm (5nt (nth (+ i 1) helix-staps))))
+		 (let ((prev-nt (cm->bb (cm (3nt (nth (- i 1) helix-staps )))
+					(vbb (3nt (nth (- i 1) helix-staps )))))
+		       (next-nt (cm->bb (cm (5nt (nth (+ i 1) helix-staps)))
+					(vbb (5nt (nth (+ i 1) helix-staps)))))
 		       (num-nts (getf spec :num-nts)))
 		   (bridging-single-strand prev-nt next-nt vbb :len num-nts))))))
 	 (staps

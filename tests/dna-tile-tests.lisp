@@ -1,6 +1,28 @@
 (in-package #:small-tests)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;            Test s-staple            ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(let* ((t1 (SMALL::make-dna-tile))
+       (stap (SMALL::s-staple t1 1 2 '(23 16 16) '(8 15 7))))
+  (SMALL::wmdna "a-s" (append
+		       (list (first (SMALL::scaffold t1)))
+		       (small::internal-staples t1)))
+  (small::internal-staples t1))
+
+
+(let* ((t1 (SMALL::make-dna-tile))
+       (stap (SMALL::s-staple t1 1 2 '(23 16 16) '(8 15 7))))
+  (SMALL::wmdna "a-b" (append
+		       (list (first (SMALL::scaffold t1))      	
+			     (small::staple-bridges t1 )
+			     (small::internal-staples t1)
+		       ))))
+
+	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 					;       testing connecting tiles      ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (let* ((overlap-len 4)
