@@ -44,3 +44,16 @@
 (defmethod connect ((o1 dna-triangle) (o2 dna-triangle) &rest rest)
   (dna-connect o1 o2)
   (connect (3nt o1) (5nt o2)))
+
+(defun tri-edge (tri &key from22)
+  "Returns a unit vector along the triangles edge
+if from22=t then the vector will point from helix 22->21"
+  (let ((nt1 (3nt (first (scaffold tri))))
+	(nt2 (5nt (car (last (scaffold tri))))))
+    (as-unit-vec (if from22
+		     (nt1->nt2 nt2 nt1)
+		     (nt1->nt2 nt1 nt2)))))
+
+(tri-edge (make-instance 'dna-triangle))
+
+

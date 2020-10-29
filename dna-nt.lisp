@@ -319,6 +319,10 @@ if inc-headers = true the header strings are prepended to the list of topology s
   (cm->axis (cm obj) (vbb obj)))
 
 
+(defun nt1->nt2 (nt1 nt2)
+  (.- (axis nt2)
+      (axis nt1)))
+
 (defun midpoint (nt1 nt2)
   (.+ (axis nt1)
       (scale (.- (axis nt2)

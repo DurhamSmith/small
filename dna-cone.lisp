@@ -32,7 +32,12 @@
       (rotate-obj t3 rot3)
       (connect t1 t2)
       (connect t2 t3)
-      
+      (setf (5nt obj) (5nt t1))
+      (setf (3nt obj) (3nt t3))
+      ;; Add as children so transformations on higher order objects will be done
+      (add-child obj t1)
+      (add-child obj t2)
+      (add-child obj t3)
       obj)))
  (write-oxdna (make-instance 'dna-cone) :filename "ice-cream"))
 
