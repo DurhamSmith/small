@@ -54,6 +54,13 @@ if from22=t then the vector will point from helix 22->21"
 		     (nt1->nt2 nt2 nt1)
 		     (nt1->nt2 nt1 nt2)))))
 
-(tri-edge (make-instance 'dna-triangle))
+(defun edge->center (tri &key reverse)
+  (let ((nt1 (3nt (first (scaffold tri))))
+	(nt2 (5nt (first (scaffold tri)))))
+    (as-unit-vec (if reverse
+		     (nt1->nt2 nt2 nt1)
+		     (nt1->nt2 nt1 nt2)))))
+
+
 
 
