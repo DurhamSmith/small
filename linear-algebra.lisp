@@ -111,9 +111,10 @@ by: The list mapping function
 axis: 3D magicl vector
 theta: angle in radians
 See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle"
-  (let* ((x (x axis))
-	 (y (y axis))
-	 (z (z axis))
+  (let* ((uax (as-unit-vec axis))
+	 (x (x uax))
+	 (y (y uax))
+	 (z (z uax))
 	 (C (from-list
 	     `(  0d0 ,(- z) ,y
 		 ,z 0d0 ,(- x)
@@ -121,8 +122,26 @@ See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and
 	     '(3 3)))
 	 (res (.+ (scale (eye '(3 3)) (cos theta))
 		  (scale C (sin theta))))
-	 (res (.+ res (scale (@ axis (transpose axis)) (- 1 (cos theta)))))) ; Note we need this since .+ is not the same as + 
+	 (res (.+ res (scale (@ uax (transpose uax)) (- 1 (cos theta)))))) ; Note we need this since .+ is not the same as + 
     res))
+
+;; (defun rotation-matrix (axis theta)
+;;   "Returns a rotation matrix which rotates by theta (rad) around axis
+;; axis: 3D magicl vector
+;; theta: angle in radians
+;; See: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle"
+;;   (let* ((x (x axis))
+;; 	 (y (y axis))
+;; 	 (z (z axis))
+;; 	 (C (from-list
+;; 	     `(  0d0 ,(- z) ,y
+;; 		 ,z 0d0 ,(- x)
+;; 		 ,(- y) ,x 0d0)
+;; 	     '(3 3)))
+;; 	 (res (.+ (scale (eye '(3 3)) (cos theta))
+;; 		  (scale C (sin theta))))
+;; 	 (res (.+ res (scale (@ axis (transpose axis)) (- 1 (cos theta)))))) ; Note we need this since .+ is not the same as + 
+;;     res))
 
 
 (defun rotate-vec (v axis theta)	;

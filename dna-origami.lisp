@@ -93,7 +93,9 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 
 (defclass/std dna-origami (dna)
   ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")
-   (edge-staples :doc "The sub chem-objs defining the DNA origamis edge-staples")))
+   (edge-staples :doc "The sub chem-objs defining the DNA origamis edge-staples")
+   (5nt :doc "The DNA-NT at the 5'end of the DNA-STRAND")
+   (3nt :doc "The DNA-NT at the 3'end of the DNA-STRAND")))
 ;; )
 ;;   (:documentation "This class defines a DNA origami object. Its scaffold strand is defined as a list similar to subobjs. Its subobjs contain the other dna elements such as edge strands connectorn and staple strands/briges"))
 

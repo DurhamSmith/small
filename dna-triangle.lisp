@@ -17,16 +17,22 @@
 	(unless (= *2r* i)
 	  (add-to-scaffold ori (SMALL::scaffold-loop 1 i)))
 	)))
+  ;(break ori)
   (mapcar #'(lambda (nt base)
-	    (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
-	      (update-base nt  base) ;Set the bases to match the m13 seq
-	      ;; Update coords since we want regular carteisan
-	      ;;and the paper defines y in the opposite direction
-	      (setf (cm nt) (@ (from-diag '(1d0 -1d0 1d0)) cm)) 
-	      (setf (vbb nt) (@ (from-diag '(1d0 -1d0 1d0)) vbb))
-	      (setf (vn nt) (@ (from-diag '(1d0 -1d0 1d0)) vn))))
-	(connected-nts (5nt (first (scaffold ori))))				
-	(map 'list #'string  *m13mp18*))
+	      (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
+		(update-base nt  base) ;Set the bases to match the m13 seq
+		;; Update coords since we want regular carteisan
+		;;and the paper defines y in the opposite direction
+		(setf (cm nt) (@ (from-diag '(1d0 -1d0 1d0)) cm)) 
+		(setf (vbb nt) (@ (from-diag '(1d0 -1d0 1d0)) vbb))
+		(setf (vn nt) (@ (from-diag '(1d0 -1d0 1d0)) vn))))
+	  (connected-nts (5nt (first (scaffold ori))))				
+	  (map 'list #'string  *m13mp18*))
+
+  (setf (5nt ori) (5nt (find-obj-with-props (scaffold ori)
+					       `((:i . 1) (:k . 1)))))
+  (setf	(3nt ori) (3nt (find-obj-with-props (scaffold ori)
+					       `((:i . 22) (:k . 1)))))
   ori)
 
 

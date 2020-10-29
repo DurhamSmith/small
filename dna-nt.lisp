@@ -310,3 +310,18 @@ if inc-headers = true the header strings are prepended to the list of topology s
 
 
 (describe 'dna-nt)
+
+
+(defmethod backbone ((obj dna-nt))
+  (cm->bb (cm obj) (vbb obj)))
+
+(defmethod axis ((obj dna-nt))
+  (cm->axis (cm obj) (vbb obj)))
+
+
+(defun midpoint (nt1 nt2)
+  (.+ (axis nt1)
+      (scale (.- (axis nt2)
+		 (axis nt1))
+	     0.5)))
+
