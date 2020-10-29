@@ -13,10 +13,7 @@
   ;;Fist we loop over the scaffold so that we can set its sequence
   ;;This way when we make partners they have the correct seq
   (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj
-    (let* ((rotx (rotation-matrix (v3 1 0 0) (/ pi 2)))
-	   (roty (rotation-matrix (v3 0 1 0) (/ pi 2)))
-	   (rotz (rotation-matrix (v3 0 0 1) (/ pi 2)))
-	   (r (rotation-matrix (v3 0 1 0) (deg->rad 54.7356)))
+    (let* ((roty (rotation-matrix (v3 0 1 0) (/ pi -2))) ; - because we use normal coords
 	   rot2 rot3 )
       ;; Rotate first then from second rot mat
       (rotate-obj t2 roty)
@@ -26,8 +23,6 @@
 				  (/ pi 2)))
       
       (rotate-obj t2 rot2)
-
-      
       (rotate-obj t3 roty)
       (rotate-obj t3 roty)
       (rotate-obj t3 rot2)
@@ -35,8 +30,8 @@
 					    (5nt t3))
 				  (/ pi 2)))
       (rotate-obj t3 rot3)
-      ;(connect t1 t2)
-      ;(connect t2 t3)
+      (connect t1 t2)
+      (connect t2 t3)
       
       obj)))
  (write-oxdna (make-instance 'dna-cone) :filename "ice-cream"))
@@ -45,8 +40,8 @@
   (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj
     (wmdna filename
 	   (first (scaffold t1))
-	   (first (scaffold t2))
-	   (first (scaffold t3))
+	   ;(first (scaffold t2))
+	   ;(first (scaffold t3))
 	   )))
 
 

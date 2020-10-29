@@ -40,3 +40,7 @@
   (write-oxdna (5nt (first (scaffold obj))) :filename filename))
 
 (write-oxdna (make-instance 'dna-triangle) :filename "tri")
+
+(defmethod connect ((o1 dna-triangle) (o2 dna-triangle) &rest rest)
+  (dna-connect o1 o2)
+  (connect (3nt o1) (5nt o2)))
