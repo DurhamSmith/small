@@ -2,7 +2,7 @@
 
 
 (defclass/std dna-triangle (dna-origami)
-  ()
+  ((joining-strands :doc "list of joining strands"))
   (:documentation "An implementation the DNA a single triangle of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
 
@@ -62,5 +62,49 @@ if from22=t then the vector will point from helix 22->21"
 		     (nt1->nt2 nt1 nt2)))))
 
 
+(defun join-triangle (t1 t2 &key (overlap-len 2) (indices '(1 5 9 13 17 21)))
+  "Creates staple strands which connect triangle 1 and 2 with truncations on t2 and extensions on t1"
+  (let* ((i1s indices)
+	 (i2s (mapcar #'(lambda (x)
+			  (- (+ *2r* 1) x))
+		      i1s))
+	 (staps (mapcar #'(lambda (i1 i2)
+			    (triangle-joining-staples t1 i1 t2  i2
+						      :overlap-len overlap-len))
+			i1s i2s)))
+    (mapcar #'(lambda (stap-pair i1 i2)
+		(add-prop (first stap-pair) :i i1)
+		(add-prop (first stap-pair) :join-strand t)
+		(add-parent (first stap-pair) t1)
+		(push (first stap-pair) (joining-strands t1))		
+		(add-prop (second stap-pair) :i i2)
+		(add-prop (second stap-pair) :join-strand t)		
+		(add-parent (second stap-pair) t2)
+		(push (second stap-pair) (joining-strands t2)))	   
+	    staps i1s i2s)
+    staps))
+			  
 
 
+(defun triangle-joining-staples (t1 i1 t2 i2  &key (overlap-len 4))
+  (let* ((h1-i1 (find-obj-with-props (scaffold t1)
+				    `((:i . ,i1))))
+	 (h1-i1+1 (find-obj-with-props (scaffold t1)
+				      `((:i . ,(+ i1 1)) )))
+	 (h2-i2 (find-obj-with-props (scaffold t2)
+				     `((:i . ,i2) )))
+	 (h2-i2-1 (find-obj-with-props (scaffold t2)
+				       `((:i . ,(- i2 1)) )))
+	 stap1 stap2)
+    (multiple-value-bind (stap nts)
+	(create-staple `((:obj ,h2-i2  :start 0 :end ,overlap-len  :from-3end nil)
+			 (:obj ,h1-i1  :start 0 :end 16  :from-3end t)
+			 (:obj ,h1-i1+1  :start 0 :end 16  :from-3end nil)))
+      (setf stap1 stap))
+    (multiple-value-bind (stap nts)
+	(create-staple `((:obj ,h2-i2-1  :start 0 :end 16  :from-3end t)
+			 (:obj ,h2-i2  :start ,overlap-len :end 16  :from-3end nil)))
+      (setf stap2 stap))
+					;(break "~A"  (list stap1 stap2))
+    (list stap1 stap2)
+    ))
