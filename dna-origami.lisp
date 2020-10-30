@@ -12,11 +12,17 @@
 
 (defun staple-from-objs (&rest stap-objs)
   "Creates a DNA-STAPLE-STRAND which contians stap-objs in the same order"
+  ;; TODO maybe connect them after flatten?
+  (let* ((stap-objs (alexandria:flatten stap-objs))
+	 (stap (make-instance 'dna-staple-strand
+			       :5nt (5nt (first stap-objs))
+			       :3nt (3nt (car (last stap-objs))))))
+    (mapcar #'(lambda (stap-obj)
+		(add-parent stap-obj stap))
+	    stap-objs)
+    stap))
 
-  (setf stap-objs (alexandria:flatten stap-objs))
-  (make-instance 'dna-staple-strand
-		 :5nt (5nt (first stap-objs))
-		 :3nt (3nt (car (last stap-objs)))))
+
 
 
 (defun staple-from-spec (spec)

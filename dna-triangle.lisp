@@ -63,6 +63,7 @@ Starts are taken from tri edges"
     (push
      (s-staple-tri obj  11 '(102 94 94) '(8 16 8))
      staps)
+
      ;TODO: Maybe nreverse
     (reverse staps)))
 
@@ -73,9 +74,13 @@ Starts are taken from tri edges"
   (let* ((h1 (SMALL::find-obj-with-props (scaffold tri)
 					 `((:i . ,i1) )))
 	 (h2 (small::find-obj-with-props (scaffold tri)
-					 `((:i . ,i2)))))
-    (SMALL::create-staple `((:obj ,h1  :start ,s1 :end ,e1 :from-3end ,f3e1)
-			    (:obj ,h2  :start ,s2 :end ,e2 :from-3end ,f3e2)))))
+					 `((:i . ,i2))))
+	 (stap (SMALL::create-staple `((:obj ,h1  :start ,s1 :end ,e1 :from-3end ,f3e1)
+				       (:obj ,h2  :start ,s2 :end ,e2 :from-3end ,f3e2)))))
+     stap))
+
+(break (make-instance 'dna-triangle))
+    
 
 (defun u-staples-tri (tri)
   (let* ((u1s ;; Staple u in row 1
@@ -118,11 +123,17 @@ Starts are taken from tri edges"
     ;; Now we add  staples to hold this bad boy together. awwww yeah
     (setf (internal-staps ori) (internal-staples ori))
     (push (u-staples-tri ori) (internal-staps ori))
+    (mapcar #'(lambda (stap)
+		(add-parent stap ori))
+	    (alexandria:flatten (internal-staps ori)))
     ori)
 
-  (write-oxdna (make-instance 'dna-triangle) :filename "tri"))
+  (write-oxdna (rotate-obj (make-instance 'dna-triangle) (rotation-matrix (v3 0 1 0) (/ pi 2))) :filename "tri2"))
 
-
+(break (all-tfms
+	(first (alexandria:flatten
+		(internal-staps
+		 (rotate-obj (make-instance 'dna-triangle) (rotation-matrix (v3 0 1 0) (/ pi 2))))))))
 
 
 (defmethod write-oxdna ((obj dna-triangle) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
@@ -130,13 +141,15 @@ Starts are taken from tri edges"
   (wmdna filename (all-to-write obj)))
 
 
-
-
 (defmethod all-to-write ((obj dna-triangle))
+  (break "~A" (all-tfms (first (first (internal-staps obj)))))
   (list
    (5nt obj)
    (joining-strands obj)
-   (internal-staps obj)))
+   (internal-staps obj)
+   (mapcar #'5nt (alexandria:flatten (internal-staps obj)))
+
+   ))
 
 (defmethod connect ((o1 dna-triangle) (o2 dna-triangle) &rest rest)
   (dna-connect o1 o2)
