@@ -67,43 +67,60 @@ Starts are taken from tri edges"
     (reverse staps)))
 
      
+(defun u-staple-tri (tri i1 s1 e1 f3e1  i2 s2 e2 f3e2 )
+  "creates an u-shaped staple strand to hold tri helices i, i+1 together.
+Starts are taken from tri edges"
+  (let* ((h1 (SMALL::find-obj-with-props (scaffold tri)
+					 `((:i . ,i1) )))
+	 (h2 (small::find-obj-with-props (scaffold tri)
+					 `((:i . ,i2)))))
+    (SMALL::create-staple `((:obj ,h1  :start ,s1 :end ,e1 :from-3end ,f3e1)
+			    (:obj ,h2  :start ,s2 :end ,e2 :from-3end ,f3e2)))))
+
+(defun u-staples-tri (tri)
+  (let* ((u1s ;; Staple u in row 1
+	   (u-staple-tri tri   2 18 25 t  1 0 16 nil))
+	 (u4s ;; Staple u in row 4	  
+	  (u-staple-tri tri   4 13 29 t  5 30 38 nil))
+	 (u9s ;; Staple u in row 9
+	  (u-staple-tri tri   10 27 35 t  9 10 26 nil)))
+    (list u1s u4s u9s)))
 
 
-
-
-(defmethod initialize-instance :after ((ori dna-triangle) &key)  
-  ;;Fist we loop over the scaffold so that we can set its sequence
-  ;;This way when we make partners they have the correct seq
-  (loop for i from 1 to 22 do
-    (progn
-      ;;(break "scaff ~A" (scaffold ori))
-      (add-to-scaffold ori (scaffold-helix 1 i))
-      (when (evenp i)
-	(unless (= *2r* i)
-	  (add-to-scaffold ori (SMALL::scaffold-loop 1 i)))
-	)))
+(progn
+  (defmethod initialize-instance :after ((ori dna-triangle) &key)  
+    ;;Fist we loop over the scaffold so that we can set its sequence
+    ;;This way when we make partners they have the correct seq
+    (loop for i from 1 to 22 do
+      (progn
+	;;(break "scaff ~A" (scaffold ori))
+	(add-to-scaffold ori (scaffold-helix 1 i))
+	(when (evenp i)
+	  (unless (= *2r* i)
+	    (add-to-scaffold ori (SMALL::scaffold-loop 1 i)))
+	  )))
 					;(break ori)
-  (mapcar #'(lambda (nt base)
-	      (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
-		(update-base nt  base) ;Set the bases to match the m13 seq
-		;; Update coords since we want regular carteisan
-		;;and the paper defines y in the opposite direction
-		(setf (cm nt) (@ (from-diag '(1d0 -1d0 1d0)) cm)) 
-		(setf (vbb nt) (@ (from-diag '(1d0 -1d0 1d0)) vbb))
-		(setf (vn nt) (@ (from-diag '(1d0 -1d0 1d0)) vn))))
-	  (connected-nts (5nt (first (scaffold ori))))				
-	  (map 'list #'string  *m13mp18*))
+    (mapcar #'(lambda (nt base)
+		(with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
+		  (update-base nt  base) ;Set the bases to match the m13 seq
+		  ;; Update coords since we want regular carteisan
+		  ;;and the paper defines y in the opposite direction
+		  (setf (cm nt) (@ (from-diag '(1d0 -1d0 1d0)) cm)) 
+		  (setf (vbb nt) (@ (from-diag '(1d0 -1d0 1d0)) vbb))
+		  (setf (vn nt) (@ (from-diag '(1d0 -1d0 1d0)) vn))))
+	    (connected-nts (5nt (first (scaffold ori))))				
+	    (map 'list #'string  *m13mp18*))
 
-  (setf (5nt ori) (5nt (find-obj-with-props (scaffold ori)
-					    `((:i . 1) (:k . 1)))))
-  (setf	(3nt ori) (3nt (find-obj-with-props (scaffold ori)
-					    `((:i . 22) (:k . 1)))))
-  ;; Now we add  staples to hold this bad boy together. awwww yeah
-  (setf (internal-staps ori) (internal-staples ori))
-  
-  ori)
+    (setf (5nt ori) (5nt (find-obj-with-props (scaffold ori)
+					      `((:i . 1) (:k . 1)))))
+    (setf (3nt ori) (3nt (find-obj-with-props (scaffold ori)
+					      `((:i . 22) (:k . 1)))))
+    ;; Now we add  staples to hold this bad boy together. awwww yeah
+    (setf (internal-staps ori) (internal-staples ori))
+    (push (u-staples-tri ori) (internal-staps ori))
+    ori)
 
-
+  (write-oxdna (make-instance 'dna-triangle) :filename "tri"))
 
 
 
@@ -113,7 +130,7 @@ Starts are taken from tri edges"
   (wmdna filename (all-to-write obj)))
 
 
-(write-oxdna (make-instance 'dna-triangle) :filename "tri")
+
 
 (defmethod all-to-write ((obj dna-triangle))
   (list
