@@ -20,15 +20,18 @@
     (join-cube obj)
     obj
     )
+     
+     
   (defun join-cube (cube)
-  (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
-    (join-triangle (t1 c1) (t1 c2))
-    (join-triangle (t2 c1) (t2 c3))
-    (join-triangle (t3 c1) (t3 c4))
-    (join-triangle (t3 c2) (t3 c3))
-    (join-triangle (t2 c2) (t2 c4))
-    (join-triangle (t1 c3) (t1 c4))
-    ))
+    (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
+      (join-triangle (t1 c1) (t1 c2))
+      (join-triangle (t2 c1) (t2 c3))
+      (join-triangle (t3 c1) (t3 c4))
+      (join-triangle (t3 c2) (t3 c3))
+      (join-triangle (t2 c2) (t2 c4))
+      (join-triangle (t1 c3) (t1 c4))
+      ;(break  c1)
+      ))
 
   (write-oxdna (make-instance 'dna-cube) :filename "ice-cube"))
 
@@ -69,24 +72,10 @@
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) obj
     ;(break "~A" (5nt c1))
     (list
-     (5nt c1)
-     (joining-strands (t1 c1))
-     (joining-strands (t2 c1))
-     (joining-strands (t3 c1))
-     (5nt c2)
-     (joining-strands (t1 c2))
-     (joining-strands (t2 c2))
-     (joining-strands (t3 c2))
-     (5nt c3)
-     (joining-strands (t1 c3))
-     (joining-strands (t2 c3))
-     (joining-strands (t3 c3))
-     (5nt c4)
-     (joining-strands (t1 c4))
-     (joining-strands (t2 c4))
-     (joining-strands (t3 c4))
-
-     
+     (all-to-write c1)
+     (all-to-write c2)
+     (all-to-write c3)
+     (all-to-write c4)
      )))
 
 

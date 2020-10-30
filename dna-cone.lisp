@@ -54,3 +54,14 @@
 
 
 
+(defmethod all-to-write ((obj dna-cone))
+  (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj
+    ;(break "~A" (5nt c1))
+    (list
+     (5nt obj)
+     (joining-strands t1)
+     (joining-strands t2)
+     (joining-strands t3))))
+			    
+
+     

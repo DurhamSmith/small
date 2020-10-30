@@ -2,8 +2,73 @@
 
 
 (defclass/std dna-triangle (dna-origami)
-  ((joining-strands :doc "list of joining strands"))
+  ((joining-strands :doc "list of joining strands")
+   (internal-staps :doc "list of internal staple strands"))
   (:documentation "An implementation the DNA a single triangle of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
+
+
+
+
+
+
+
+
+(defun s-staple-tri (tri i starts lengths)
+  "creates an s-shaped staple strand to hold tri helices i, i+1 and i+2 together.
+Starts are taken from tri edges"
+  (let* ((hi (SMALL::find-obj-with-props (scaffold tri)
+					  `((:i . ,i))))
+	 (hi+1 (small::find-obj-with-props (scaffold tri)
+					  `((:i . ,(+ i 1)))))
+	 (hi+2 (small::find-obj-with-props (scaffold tri)
+					   `((:i . ,(+ i 2)))))
+	 (ends (mapcar #'+ starts lengths)))
+    (if (evenp i) ;;TODO: Add error checking on i and k
+	(SMALL::create-staple `((:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end nil)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end t)
+				(:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end nil)))
+	(SMALL::create-staple `((:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end t)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end nil)
+				(:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end t))))))
+
+
+
+(defmethod internal-staples ((obj dna-triangle))
+  (let (staps)
+    (push (loop
+	    for i from 2 to 20 by 2
+	    collect
+	    (s-staple-tri obj  i '(23 16 16) '(8 15 7)))
+	  staps)
+    (push (loop
+	    for i from 5 to 18 by 2
+	    collect
+	    (s-staple-tri obj  i '(39 31 31) '(8 16 8)))
+	  staps)
+    (push (loop
+	    for i from 6 to 16 by 2
+	    collect
+	    (s-staple-tri obj  i '(55 47 47) '(8 16 8)))
+	  staps)    
+    (push (loop
+	    for i from 7 to 15 by 2
+	    collect
+	    (s-staple-tri obj  i '(70 63 63) '(8 15 7)))
+	  staps)
+    (push (loop
+	    for i from 10 to 12 by 2
+	    collect
+	    (s-staple-tri obj  i '(86 78 78) '(8 16 8)))
+	  staps)
+    (push
+     (s-staple-tri obj  11 '(102 94 94) '(8 16 8))
+     staps)
+     ;TODO: Maybe nreverse
+    (reverse staps)))
+
+     
+
+
 
 
 (defmethod initialize-instance :after ((ori dna-triangle) &key)  
@@ -17,7 +82,7 @@
 	(unless (= *2r* i)
 	  (add-to-scaffold ori (SMALL::scaffold-loop 1 i)))
 	)))
-  ;(break ori)
+					;(break ori)
   (mapcar #'(lambda (nt base)
 	      (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
 		(update-base nt  base) ;Set the bases to match the m13 seq
@@ -30,16 +95,31 @@
 	  (map 'list #'string  *m13mp18*))
 
   (setf (5nt ori) (5nt (find-obj-with-props (scaffold ori)
-					       `((:i . 1) (:k . 1)))))
+					    `((:i . 1) (:k . 1)))))
   (setf	(3nt ori) (3nt (find-obj-with-props (scaffold ori)
-					       `((:i . 22) (:k . 1)))))
+					    `((:i . 22) (:k . 1)))))
+  ;; Now we add  staples to hold this bad boy together. awwww yeah
+  (setf (internal-staps ori) (internal-staples ori))
+  
   ori)
 
 
+
+
+
+
 (defmethod write-oxdna ((obj dna-triangle) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
-  (write-oxdna (5nt (first (scaffold obj))) :filename filename))
+  ;;(write-oxdna (5nt (first (scaffold obj))) :filename filename))
+  (wmdna filename (all-to-write obj)))
+
 
 (write-oxdna (make-instance 'dna-triangle) :filename "tri")
+
+(defmethod all-to-write ((obj dna-triangle))
+  (list
+   (5nt obj)
+   (joining-strands obj)
+   (internal-staps obj)))
 
 (defmethod connect ((o1 dna-triangle) (o2 dna-triangle) &rest rest)
   (dna-connect o1 o2)

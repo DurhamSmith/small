@@ -388,7 +388,8 @@ Starts are taken from tile edges"
 				   (u-staple tile  k 10 27 35 t k 9 10 26 nil))))
     (list u1s u4s u9s)))
 	 
-  
+
+
 (defun s-staple (tile k i starts lengths)
   "creates an s-shaped staple strand to hold tile helices i, i+1 and i+2 together.
 Starts are taken from tile edges"
@@ -410,7 +411,7 @@ Starts are taken from tile edges"
 			 
 		       
 	 
-(defun internal-staples (tile)
+(defmethod internal-staples ((obj dna-tile))
   (let (staps)
     (setf staps
 	  (loop for k from 1 to 4
