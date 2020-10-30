@@ -79,7 +79,7 @@ Starts are taken from tri edges"
 				       (:obj ,h2  :start ,s2 :end ,e2 :from-3end ,f3e2)))))
      stap))
 
-(break (make-instance 'dna-triangle))
+
     
 
 (defun u-staples-tri (tri)
@@ -128,12 +128,12 @@ Starts are taken from tri edges"
 	    (alexandria:flatten (internal-staps ori)))
     ori)
 
-  (write-oxdna (rotate-obj (make-instance 'dna-triangle) (rotation-matrix (v3 0 1 0) (/ pi 2))) :filename "tri2"))
-
-(break (all-tfms
-	(first (alexandria:flatten
-		(internal-staps
-		 (rotate-obj (make-instance 'dna-triangle) (rotation-matrix (v3 0 1 0) (/ pi 2))))))))
+  )
+;; (write-oxdna (rotate-obj (make-instance 'dna-triangle) (rotation-matrix (v3 0 1 0) (/ pi 2))) :filename "tri2")
+;; (break (all-tfms
+;; 	(first (alexandria:flatten
+;; 		(internal-staps
+;; 		 (rotate-obj (make-instance 'dna-triangle) (rotation-matrix (v3 0 1 0) (/ pi 2))))))))
 
 
 (defmethod write-oxdna ((obj dna-triangle) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
@@ -142,7 +142,7 @@ Starts are taken from tri edges"
 
 
 (defmethod all-to-write ((obj dna-triangle))
-  (break "~A" (all-tfms (first (first (internal-staps obj)))))
+;  (break "~A" (all-tfms (first (first (internal-staps obj)))))
   (list
    (5nt obj)
    (joining-strands obj)

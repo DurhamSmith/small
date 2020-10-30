@@ -6,37 +6,9 @@
    (t2 :doc "triangle 2" :std (make-instance 'dna-triangle))
    (t3 :doc "triangle 3" :std (make-instance 'dna-triangle))
    (stap-bridges :doc "Staple Bridges"))
-  (:documentation "An implementation the DNA a cone made from 3 triangles of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords")))
+  (:documentation "An implementation the DNA a cone made from 3 triangles of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
 
-
-
-
-
-
-
-
-
-(staple-bridges-cone (make-instance 'dna-cone))
-
-(defun staple-bridges-cone (cone)
-  (let ((staps (remove nil
-		       (loop for k from 1 to 3 collect
-					       (remove nil
-						       (loop for i from 1 to 22 collect
-										(staple-bridge-cone cone k i)))))))
-    staps))
-
-
-
-(defmethod cone-triangle ((cone dna-cone) num)
-  (cond ((= num 1) (t1 cone))
-	((= num 2) (t2 cone))
-	((= num 3) (t3 cone))
-	(t (error "Only [1,3] are valid indexes"))))
-
-
-    
 
 (defun staple-bridge-cone (cone k i)
   (let* ((prevk (if (= k 1)
@@ -180,6 +152,28 @@
 	  (t nil))))
 
 
+(defun staple-bridges-cone (cone)
+  (let ((staps (remove nil
+		       (loop for k from 1 to 3 collect
+					       (remove nil
+						       (loop for i from 1 to 22 collect
+										(staple-bridge-cone cone k i)))))))
+    staps))
+
+
+
+(defmethod cone-triangle ((cone dna-cone) num)
+  (cond ((= num 1) (t1 cone))
+	((= num 2) (t2 cone))
+	((= num 3) (t3 cone))
+	(t (error "Only [1,3] are valid indexes"))))
+
+
+    
+
+
+
+
 
 
 
@@ -223,7 +217,8 @@
       ;; Create bridge staples
       (setf (stap-bridges obj) (staple-bridges-cone obj))
       obj)))
- (write-oxdna (make-instance 'dna-cone) :filename "ice-cream"))
+ ;(write-oxdna (make-instance 'dna-cone) :filename "ice-cream")
+ )
 
 ;; (defmethod write-oxdna ((obj dna-cone) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
 ;;   (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj

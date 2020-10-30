@@ -8,6 +8,25 @@
   
   (:documentation "An implementation the DNA cube made from 12 triangles (4 cones) of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
+(defun align-cones (c1 c2 edge)
+  (let* ((tri (cond ((= 1 edge) (t1 c1))
+		    ((= 2 edge) (t2 c1))
+		    ((= 3 edge) (t3 c1))
+		    (t (error "invalid num for edge"))))
+	 (tri2 (cond ((= 1 edge) (t1 c2))
+		     ((= 2 edge) (t2 c2))
+		     ((= 3 edge) (t3 c2))
+		     (t (error "invalid num for edge"))))
+	 (r1 (rotation-matrix
+	      (tri-edge tri)
+	      pi))
+	 (r2 (rotation-matrix
+	      (edge->center tri)
+	      pi)))
+    (rotate-obj c2 r1)
+    (rotate-obj c2 r2)
+    (translate-obj c2 (scale (edge->center tri)
+			     (- *w*)))))
 
 (progn
   (defmethod initialize-instance :after ((obj dna-cube) &key)  
@@ -33,28 +52,11 @@
       ;(break  c1)
       ))
 
-  (write-oxdna (make-instance 'dna-cube) :filename "ice-cube"))
+  ;(write-oxdna (make-instance 'dna-cube) :filename "ice-cube")
+  )
 
 
-(defun align-cones (c1 c2 edge)
-  (let* ((tri (cond ((= 1 edge) (t1 c1))
-		    ((= 2 edge) (t2 c1))
-		    ((= 3 edge) (t3 c1))
-		    (t (error "invalid num for edge"))))
-	 (tri2 (cond ((= 1 edge) (t1 c2))
-		     ((= 2 edge) (t2 c2))
-		     ((= 3 edge) (t3 c2))
-		     (t (error "invalid num for edge"))))
-	 (r1 (rotation-matrix
-	      (tri-edge tri)
-	      pi))
-	 (r2 (rotation-matrix
-	      (edge->center tri)
-	      pi)))
-    (rotate-obj c2 r1)
-    (rotate-obj c2 r2)
-    (translate-obj c2 (scale (edge->center tri)
-			     (- *w*)))))
+
 
 (nth 1 '(0 1 2 3))
 
@@ -80,11 +82,3 @@
 
 
 
-  (second (first (join-triangle
-		  (make-instance 'dna-triangle) (make-instance 'dna-triangle) )))
-
-
-  (break
-   (join-triangle
-    (make-instance 'dna-triangle) (make-instance 'dna-triangle) ))
-  

@@ -28,7 +28,7 @@
     cube-array))
 
 
-
+1
 (defparameter arr (dna-array-from-list *sq*))
 
 (defparameter *sq*
