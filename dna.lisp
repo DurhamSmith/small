@@ -63,7 +63,7 @@
 
 
 
-(defun wmdna (filename &rest dna-objs)
+(defun wmdna (filename &rest dna-objs)	;
   "Write oxdna of multiple dna objs"
   (let* ((dna-objs (alexandria:flatten dna-objs)) ;TODO? Need this for handling nested lists
 	 (nt-num 0)

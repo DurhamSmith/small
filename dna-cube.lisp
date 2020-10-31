@@ -35,11 +35,17 @@
     (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) obj
       (align-cones c1 c2 1)
       (align-cones c1 c3 2)
-      (align-cones c1 c4 3))
-    (join-cube obj)
+      (align-cones c1 c4 3)
+      (add-parent c1 obj)
+      (add-parent c2 obj)
+      (add-parent c3 obj)
+      (add-parent c4 obj)
+      (join-cube obj))
+    (format t "~A" (tfms obj))
+    (rotate-obj obj (rotation-matrix (v3 0 1 0) (/ pi 4)))
     obj
     )
-     
+;  (make-instance 'dna-cube)
      
   (defun join-cube (cube)
     (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
