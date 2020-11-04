@@ -60,9 +60,12 @@
     (list nil nil nil nil)))))
 
 (time (defparameter *arr* (dna-array-from-list *sq*)))
-)
+)(break "~A" *arr*)
 (setf *arr* t)
 
+(sb-profile:profile "SMALL")
+(sb-profile:report)
+(sb-profile:reset)
 (stap-bridges (make-instance 'dna-cone))
 (time
  (wmdna "shuttleworth"
@@ -163,3 +166,16 @@
 
 
 
+(let* ((t1 (SMALL::make-dna-tile))
+       (stap (SMALL::s-staple t1 1 2 '(23 16 16) '(8 15 7))))
+  (SMALL::wmdna "a-s" (append
+		       (list (first (SMALL::scaffold t1)))
+		       (small::internal-staples t1)))
+  (small::internal-staples t1))
+
+
+
+
+
+;;; TODO EDGE STAPLS AND BRIDGE STAPS
+;; OXDNA Model

@@ -190,7 +190,8 @@
     ;;This way when we make partners they have the correct seq
     (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj
       (let* ((roty (rotation-matrix (v3 0 1 0) (/ pi -2))) ; - because we use normal coords
-	     rot2 rot3 )
+	     rot2 rot3
+	     scloop1 scloop2)
 	;; Rotate first then from second rot mat
 	(rotate-obj t2 roty)
 					;(rotate-obj t2 (rotation-matrix (v3 1 0 0) (/ pi 4)))
@@ -206,14 +207,32 @@
 					      (5nt t3))
 				    (/ pi 2)))
 	(rotate-obj t3 rot3)
-	(connect t1 t2)
-	(connect t2 t3)
+	(setf scloop1 (bridging-single-strand (backbone (3nt t1))
+					       (backbone (5nt t2))
+					        (v3 0 1 1)
+					       :len 4))
+	(setf scloop2 (bridging-single-strand (backbone (3nt t2))
+					       (backbone (5nt t3))
+					       (v3 0 1 1)
+					       :len 4))
+	;(break "~A" (list scloop1 scloop2))
+	;; (connect t1 t2)
+	;; (connect t1 t2)
+	;; (connect t2 t3)
+	(connect t1 scloop1)
+	(connect scloop1 t2)
+	(connect t2 scloop2)
+	(connect scloop2 t3)
 	(setf (5nt obj) (5nt t1))
 	(setf (3nt obj) (3nt t3))
 	;; Add as children so transformations on higher order objects will be done
 	(add-child obj t1)
+	(add-child obj scloop1)
 	(add-child obj t2)
+	(add-child obj scloop2)
 	(add-child obj t3)
+	(setf (5nt obj) (5nt t1))
+	(setf (3nt obj) (3nt t3))
 	;; Create bridge staples
 	(setf (stap-bridges obj) (staple-bridges-cone obj))
 	;;Add as children so transformations on higher order objects will be done
@@ -221,6 +240,13 @@
 		    (add-parent x obj))
 		;; flatten since we have 3 sets of staples
 		(alexandria:flatten (stap-bridges obj)))
+	;(break "~A" (connected-nts (5nt obj)))
+	(mapcar #'(lambda (nt base)
+		    (update-base nt  base)) ;Set the bases to match the m13 seq
+		    ;; Update coords since we want regular carteisan
+		    ;;and the paper defines y in the opposite direction
+		(connected-nts (5nt obj))				
+		(map 'list #'string  *m13mp18*))
 	
 	obj)))
  ;(write-oxdna (make-instance 'dna-cone) :filename "ice-cream")

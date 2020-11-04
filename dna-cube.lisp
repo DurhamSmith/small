@@ -58,11 +58,12 @@
       ;(break  c1)
       ))
 
-  ;(write-oxdna (make-instance 'dna-cube) :filename "ice-cube")
+
   )
 
 
-
+;(break "~A" (length (stap-strands (c1 (make-instance 'dna-cube)))))
+;(break (make-instance 'dna-cube))
 
 (nth 1 '(0 1 2 3))
 

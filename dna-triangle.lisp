@@ -3,7 +3,8 @@
 
 (defclass/std dna-triangle (dna-origami)
   ((joining-strands :doc "list of joining strands")
-   (internal-staps :doc "list of internal staple strands"))
+   (internal-staps :doc "list of internal staple strands")
+   )
   (:documentation "An implementation the DNA a single triangle of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
 
@@ -155,6 +156,15 @@ Starts are taken from tri edges"
   (dna-connect o1 o2)
   (connect (3nt o1) (5nt o2)))
 
+(defmethod connect ((o1 dna-triangle) (o2 dna-single-strand) &rest rest)
+  (dna-connect o1 o2)
+  (connect (3nt o1) (5nt o2)))
+
+(defmethod connect ((o1 dna-single-strand) (o2 dna-triangle) &rest rest)
+  (dna-connect o1 o2)
+  (connect (3nt o1) (5nt o2)))
+
+
 (defun tri-edge (tri &key from22)
   "Returns a unit vector along the triangles edge
 if from22=t then the vector will point from helix 22->21"
@@ -170,6 +180,7 @@ if from22=t then the vector will point from helix 22->21"
     (as-unit-vec (if reverse
 		     (nt1->nt2 nt2 nt1)
 		     (nt1->nt2 nt1 nt2)))))
+
 
 
 (defun join-triangle (t1 t2 &key (overlap-len 2) (indices '(1 5 9 13 17 21)))
