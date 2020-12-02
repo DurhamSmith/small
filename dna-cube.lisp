@@ -57,9 +57,9 @@
       (join-triangle (t1 c3) (t1 c4))
       ;(break  c1)
       ))
-
-
   )
+
+
 
 
 ;(break "~A" (length (stap-strands (c1 (make-instance 'dna-cube)))))
@@ -89,3 +89,26 @@
 
 
 
+(defmethod stap-bridges-as-idt ((cube dna-cube) prefix )
+  (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
+    (let ((name1 (concatenate 'string prefix "_cone1"))
+	  (name2 (concatenate 'string prefix "_cone2"))
+	  (name3 (concatenate 'string prefix "_cone3"))
+	  (name4 (concatenate 'string prefix "_cone4")))
+      (list
+       (stap-bridges-as-idt c1 name1)
+       (stap-bridges-as-idt c2 name2)
+       (stap-bridges-as-idt c3 name3)
+       (stap-bridges-as-idt c4 name4)))))
+
+(defmethod joining-strands-as-idt ((cube dna-cube) prefix )
+  (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
+    (let ((name1 (concatenate 'string prefix "_cone1"))
+	  (name2 (concatenate 'string prefix "_cone2"))
+	  (name3 (concatenate 'string prefix "_cone3"))
+	  (name4 (concatenate 'string prefix "_cone4")))
+      (list
+       (joining-strands-as-idt c1 name1)
+       (joining-strands-as-idt c2 name2)
+       (joining-strands-as-idt c3 name3)
+       (joining-strands-as-idt c4 name4)))))

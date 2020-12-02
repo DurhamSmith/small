@@ -229,3 +229,10 @@ if from22=t then the vector will point from helix 22->21"
 					;(break "~A"  (list stap1 stap2))
     (list stap1 stap2)
     ))
+
+
+
+(defmethod joining-strands-as-idt ((tri dna-triangle) prefix)
+  (strands-as-idt prefix (joining-strands tri)))
+
+

@@ -169,18 +169,6 @@
 	(t (error "Only [1,3] are valid indexes"))))
 
 
-    
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -296,4 +284,18 @@
 
 			    
 
+(defmethod joining-strands-as-idt ((cone dna-cone) prefix )
+  (with-accessors ((t1 t1) (t2 t2) (t3 t3)) cone
+    (let ((name1 (concatenate 'string prefix "_t1"))
+	  (name2 (concatenate 'string prefix "_t2"))
+	  (name3 (concatenate 'string prefix "_t3")))
+      (list
+       (joining-strands-as-idt t1 name1)
+       (joining-strands-as-idt t2 name2)
+       (joining-strands-as-idt t3 name3)))))
+
      
+(defmethod stap-bridges-as-idt ((cone dna-cone) prefix)
+  (strands-as-idt prefix (stap-bridges cone)))
+
+
