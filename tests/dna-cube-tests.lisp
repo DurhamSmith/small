@@ -32,6 +32,7 @@
 
 
 (list
+ 
  (strand-seq (joining-strands (t1 (c1 *c*))))
  (strand-seq (joining-strands (t1 (c2 *c*)))))
  
@@ -42,3 +43,5 @@
 (joining-strands-as-idt *c* "cube_joining_strands")
 (stap-bridges-as-idt *c* "cube_stap_bridges")
 (break *c*)
+
+(write-oxdna (make-instance 'dna-cube) :filename "cubekilla")

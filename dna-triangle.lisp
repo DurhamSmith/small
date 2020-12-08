@@ -39,7 +39,9 @@ Starts are taken from tri edges"
     (push (loop
 	    for i from 2 to 20 by 2
 	    collect
-	    (s-staple-tri obj  i '(23 16 16) '(8 15 7)))
+	    ;; (s-staple-tri obj  i '(23 16 16) '(8 15 7))
+	    (s-staple-tri obj  i '(24 16 16) '(7 15 7))
+	    )
 	  staps)
     (push (loop
 	    for i from 5 to 18 by 2
@@ -148,8 +150,7 @@ Starts are taken from tri edges"
    (5nt obj)
    (joining-strands obj)
    (internal-staps obj)
-   (mapcar #'5nt (alexandria:flatten (internal-staps obj)))
-
+    ;; (mapcar #'5nt (alexandria:flatten (internal-staps obj)))
    ))
 
 (defmethod connect ((o1 dna-triangle) (o2 dna-triangle) &rest rest)
@@ -183,7 +184,10 @@ if from22=t then the vector will point from helix 22->21"
 
 
 
-(defun join-triangle (t1 t2 &key (overlap-len 2) (indices '(1 5 9 13 17 21)))
+(defun join-triangle (t1 t2
+		      &key (overlap-len 2)
+			(indices '(1 5 9 13 17 21))
+			parent)
   "Creates staple strands which connect triangle 1 and 2 with truncations on t2 and extensions on t1"
   (let* ((i1s indices)
 	 (i2s (mapcar #'(lambda (x)
@@ -196,15 +200,22 @@ if from22=t then the vector will point from helix 22->21"
     (mapcar #'(lambda (stap-pair i1 i2)
 		(add-prop (first stap-pair) :i i1)
 		(add-prop (first stap-pair) :join-strand t)
-		(add-parent (first stap-pair) t1)
+		(add-parent (first stap-pair)
+			    (if parent
+				parent
+				t1))
 		(push (first stap-pair) (joining-strands t1))		
 		(add-prop (second stap-pair) :i i2)
 		(add-prop (second stap-pair) :join-strand t)		
-		(add-parent (second stap-pair) t2)
+		(add-parent (second stap-pair) (if parent
+				parent
+				t2))
 		(push (second stap-pair) (joining-strands t2)))	   
 	    staps i1s i2s)
     staps))
 			  
+
+
 
 
 (defun triangle-joining-staples (t1 i1 t2 i2  &key (overlap-len 4))

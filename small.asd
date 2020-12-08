@@ -19,6 +19,7 @@
 	       (:file "dna-triangle" :depends-on ("dna-origami"))
 	       (:file "dna-cone" :depends-on ("dna-triangle"))
 	       (:file "dna-cube" :depends-on ("dna-cone"))
+	       (:file "utils" :depends-on ("dna-cube"))
 	       )
   :in-order-to ((asdf:test-op (asdf:test-op #:small-tests))))
 
@@ -46,5 +47,6 @@
 	       (:file "dna-single-strand-tests")
 	       ;; (:file "dna-tile-tests")
 	       (:file "dna-origami-tests")
+	       (:file "util-tests")
 	       ))
 
