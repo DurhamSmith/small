@@ -1,5 +1,5 @@
 (defpackage :small
-  (:use #:cl #:alexandria #:asdf #:magicl #:defclass-std)
+  (:use #:cl #:alexandria #:asdf #:magicl #:defclass-std #:fset-user)
   (:export #:v3       ; vector related 
 	   #:v3l
 	   #:x

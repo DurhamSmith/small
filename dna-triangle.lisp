@@ -4,6 +4,7 @@
 (defclass/std dna-triangle (dna-origami)
   ((joining-strands :doc "list of joining strands")
    (internal-staps :doc "list of internal staple strands")
+   (capping-staps :doc "list of capping staple strands")
    )
   (:documentation "An implementation the DNA a single triangle of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
@@ -129,6 +130,13 @@ Starts are taken from tri edges"
     (mapcar #'(lambda (stap)
 		(add-parent stap ori))
 	    (alexandria:flatten (internal-staps ori)))
+    ;; These are cappping end added in a hacky way
+    
+    (setf (capping-staps ori) (capping-ends ori))
+    (mapcar #'(lambda (stap)
+		(add-parent stap ori))
+	    (capping-staps ori))
+	    
     ori)
 
   )
@@ -150,6 +158,7 @@ Starts are taken from tri edges"
    (5nt obj)
    (joining-strands obj)
    (internal-staps obj)
+   (capping-staps obj)
     ;; (mapcar #'5nt (alexandria:flatten (internal-staps obj)))
    ))
 
@@ -215,7 +224,30 @@ if from22=t then the vector will point from helix 22->21"
     staps))
 			  
 
+(defun capping-ends (triangle &key
+			      (indices '(3 7 11 15 19))
+			      (len 16)
+				parent)
+  (let* ((h1s (mapcar #'(lambda (x)
+			  (find-obj-with-props
+			   (scaffold triangle)
+			   `((:i . ,x))))
+			  indices))
+	 (h2s (mapcar #'(lambda (x)
+			  (find-obj-with-props
+			   (scaffold triangle)
+			   `((:i . ,(+ x 1)))))
+			  indices))
+	 (staps (mapcar
+		 #'(lambda (h1 h2)
+			 (create-staple `((:obj ,h1  :start 0 :end ,len  :from-3end t)
+					  (:obj ,h2  :start 0 :end ,len  :from-3end nil))))
 
+		 h1s h2s)))
+    staps))
+
+
+  
 
 
 (defun triangle-joining-staples (t1 i1 t2 i2  &key (overlap-len 4))

@@ -55,6 +55,7 @@
       (join-triangle (t3 c2) (t3 c3) :parent cube)
       (join-triangle (t2 c2) (t2 c4) :parent cube)
       (join-triangle (t1 c3) (t1 c4) :parent cube)
+      
       ;(break  c1)
       ))
   )

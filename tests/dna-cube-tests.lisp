@@ -45,3 +45,10 @@
 (break *c*)
 
 (write-oxdna (make-instance 'dna-cube) :filename "cubekilla")
+
+(let ((t1 (make-instance 'dna-triangle)))
+  (break  t1))
+
+(empty-set)
+
+
