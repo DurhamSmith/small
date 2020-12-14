@@ -127,7 +127,7 @@ returns: string
 notes: for oxdna config spec see https://dna.physics.ox.ac.uk/index.php/documentation#configuration_and_topology_files"
   (with-accessors ((cm cm) (vbb vbb) (vn vn) (v v) (l l)) nt
     (let* ((oxbb (scale vbb -1)) ;oxdna needs these vecs in the opposite direction of how we store them
-	   (oxn (scale vn -1)))
+	   (oxn (scale vn 1))) ;;;TODO: Look why this doesnt need to be scaled
       (concatenate 'string 
 		   (print-v3 cm)
 		   (print-v3 oxbb :prepend " ")

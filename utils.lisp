@@ -8,7 +8,8 @@
 
 
 (defun overlapping-ends? (all)
-  (let* ((1st (first all))
+  (let* ((all (alexandria:flatten all))
+	 (1st (first all))
 	 (rest (cdr all))
 	 (overlaps (mapcar #'(lambda (x)
 			       (overlaps? 1st x))			   
@@ -62,14 +63,14 @@
 
 
 
-(fset:set)
+;;(fset:set)
 
 
 
 
 
 (defparameter *qqq* (make-instance 'dna-cube))
-
+(write-oxdna *qqq* :filename "pflq")
 
 
 (defun double-partners? (&rest dna-objs)
@@ -88,7 +89,8 @@
 			 (fset:contains? partners (partner nt)))			 
 		    (progn
 		      (incf dbl-count)
-		      (break "Double Partner ~A" (partner nt)))
+		      (setf (base nt) (format nil "~A" dbl-count)))
+;;		      (break "Double Partner ~A" (partner nt)))
 		    (setf partners (fset:with partners (partner nt)))))
 	    nts)
 
@@ -107,12 +109,44 @@
 
 
 (let ((x (make-instance 'dna-cone)))
+  (double-partners? (list (first (stap-bridges x)) 
+			  (third (stap-bridges x)))))
+
+(let ((x (make-instance 'dna-cone)))
+(wmdna "1st" (list (5nt x)
+		   (first (stap-bridges x)))))
+
+(let ((x (make-instance 'dna-cone)))
+  (wmdna "3rd" (list (5nt x)
+		     (third (stap-bridges x)))))
+
+
+
+
+(let ((x (make-instance 'dna-cone)))
   (double-partners? (stap-bridges x)))
 
 
 
 (write-oxdna (make-instance 'dna-cone) :filename "coner")
 
+(multiple-value-bind (hel nts)
+ (helix-strand (v3 0 0 0)
+	      (v3 1 0 0)
+	      (v3 0 0 1)
+	      16)
+  (mapcar #'(lambda (nt b)
+	      (setf (base nt) b)
+	      )
+	  nts
+	  '("A" "T" "C" "G" "G" "C" "T" "A" "A" "T" "C" "G" "G" "C" "T" "A"))
+  (wmdna "dbl" hel 
+	 (make-partner hel)
+	 ))
+  (mapcar #'(lambda (x y)
+	      (list (vbb x) (vbb y)))
+	  nts (mapcar #'make-partner nts)))
+	      
 
 (* 137 4)
 (time 1)
