@@ -129,6 +129,11 @@
 
 
 (write-oxdna (make-instance 'dna-cone) :filename "coner")
+(write-oxdna (make-instance 'dna-triangle) :filename "tri")
+
+(let* ((tri (make-instance 'dna-triangle))
+       (ends (capping-ends tri :indices '(1 3 5 7 9 11 13 15 17 19 21))))
+  (wmdna "tri" (all-to-write tri) ends))
 
 (multiple-value-bind (hel nts)
  (helix-strand (v3 0 0 0)
@@ -136,13 +141,30 @@
 	      (v3 0 0 1)
 	      16)
   (mapcar #'(lambda (nt b)
-	      (setf (base nt) b)
+	      (setf (base nt) "G")
 	      )
 	  nts
 	  '("A" "T" "C" "G" "G" "C" "T" "A" "A" "T" "C" "G" "G" "C" "T" "A"))
   (wmdna "dbl" hel 
 	 (make-partner hel)
 	 ))
+
+
+(multiple-value-bind (hel nts)
+ (helix-strand (v3 0 0 0)
+	      (v3 0 0 1)
+	      (v3 1 0 0)
+	      16)
+  (mapcar #'(lambda (nt b)
+	      (setf (base nt) "G")
+	      )
+	  nts
+	  '("A" "T" "C" "G" "G" "C" "T" "A" "A" "T" "C" "G" "G" "C" "T" "A"))
+  (wmdna "dbl2" hel 
+	 (make-partner hel)
+	 ))
+
+
   (mapcar #'(lambda (x y)
 	      (list (vbb x) (vbb y)))
 	  nts (mapcar #'make-partner nts)))

@@ -158,7 +158,7 @@ Starts are taken from tri edges"
    (5nt obj)
    (joining-strands obj)
    (internal-staps obj)
-   (capping-staps obj)
+   ;(capping-staps obj)
     ;; (mapcar #'5nt (alexandria:flatten (internal-staps obj)))
    ))
 
