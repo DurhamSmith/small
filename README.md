@@ -7,3 +7,11 @@
 *** Positioning of structural children on creation 
 *** ? Joining sub objs on creation
 * Model for single strand linkers (and ones in close proximity)
+
+
+
+
+
+* In field
+
+** Make partner when there are already some ocupied nts

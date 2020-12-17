@@ -164,11 +164,134 @@
 	 (make-partner hel)
 	 ))
 
-
-  (mapcar #'(lambda (x y)
-	      (list (vbb x) (vbb y)))
-	  nts (mapcar #'make-partner nts)))
 	      
 
 (* 137 4)
 (time 1)
+
+
+(* 0.34 15)
+
+(* 16 34)
+(let ((h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			16))
+      (h2 (helix-strand (v3 3 5.1 0)
+			(v3 0 -1 0)
+			(v3 -1 0 0)
+			16)))
+  (connect h1 h2)
+  
+  (wmdna "test1" h1 (make-partner h1)
+	 (make-partner h2)))
+
+
+(let* ((h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 0 0 1)
+			32))
+       (others (loop for z from 0 to 3 collect
+				       (loop for x from 0 to 3 collect
+							       (duplicate-strand h1
+										 :x x
+										 :z z 
+										 :par (evenp (+ x z))))))
+       (fo (alexandria:flatten others)))
+  (mapcar #'(lambda (x y)
+	      (connect x y))
+	  fo (cdr fo))
+  (wmdna "test2" (car fo)))
+
+(let* ((l 32)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+
+       (h2 (helix-strand (v3 3 trans 0)
+			(v3 0 -1 0)
+			(v3 1 0 0)
+		       l))
+       (stap (create-staple `((:obj ,h1 :start 0 :end ,sl :from-3end nil)
+			      (:obj ,h2 :start 0 :end ,sl :from-3end t))))
+       (nts1 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h1)) sl))))
+       (nts2 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h2)) 0 (- l sl)))))
+       (n1 (first nts1))
+       (n2 (first nts2)))
+  (connect h1 h2)
+  (wmdna "test3"  h1 n1 n2 stap))
+
+
+(let* ((l 48)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+
+       (h2 (helix-strand (v3 3 trans 0)
+			(v3 0 -1 0)
+			(v3 -1 0 0)
+		       l))
+       (stap (create-staple `((:obj ,h1 :start 0 :end ,l :from-3end nil)
+			      (:obj ,h2 :start 0 :end ,l :from-3end t))))
+       (nts1 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h1)) sl))))
+       (nts2 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h2)) 0 (- l sl)))))
+       (n1 (first nts1))
+       (n2 (first nts2)))
+  (connect h1 h2)
+  (wmdna "test3"  h1 stap))
+
+
+
+
+
+
+(let* ((l 32)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+
+       (h2 (helix-strand (v3 3 trans 0)
+			(v3 0 -1 0)
+			(v3 1 0 0)
+		       l))
+       (stap (create-staple `((:obj ,h1 :start 0 :end ,sl :from-3end nil)
+			      (:obj ,h2 :start 0 :end ,sl :from-3end t))))
+       (nts1 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h1)) 0))))
+       (nts2 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h2)) 0 (- l sl)))))
+       (n1 (first nts1))
+       (n2 (first nts2)))
+
+  (wmdna "test3"  h1 n1)
+  (mapcar #'(lambda (x y)
+	      (list (vn x) (vn y)))
+	  (connected-nts (5nt h1))
+	  (reverse nts1)))
+
+
+
+
+
+
+
+
+;;;; Test 4
+
+(let* ((l 48)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+       (nts1 (connect-nts (mapcar #'make-partner (connected-nts (5nt h1)))))
+       (n1 (first nts1)))
+  (wmdna "input"  h1 n1))

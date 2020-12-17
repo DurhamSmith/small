@@ -106,3 +106,30 @@ nts: string ordered from 5'->3'"
 
   
   
+;; (defun next-to (strand &key (dist 3)		     
+;; 			 (start 0) len
+;; 			 parallel
+;; 			 v x y z)
+;;   "Creates a helix strand that is dist away from strand"
+;;   (
+(defun duplicate-strand (strand &key (dist 3) v (x 0) (y 0) (z 0) par)
+  (let* ((tfm-vec (if v
+		      v
+		      (v3 (* dist x) (* dist y) (* dist z))))	 
+	 (s5nt (5nt strand))
+	 (len (length (connected-nts s5nt)))
+	 (svax (vn s5nt))
+	 (dvbb (if par
+		   (vbb s5nt)
+		   ;;(scale (vbb s5nt) 1.0)))
+		   (scale (vbb (3nt strand)) -1.0)))
+		  
+	 (dvax (if par
+		   svax
+		   (scale svax -1.0)))
+	 (dcm (.+ (cm s5nt) tfm-vec))
+	 (dcm (if par
+		  dcm
+		  (.- dcm (scale dvax (* (- len 1) *helix-nt-spacing*))))))
+    (helix-strand dcm dvax dvbb len)))
+

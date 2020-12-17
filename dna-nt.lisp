@@ -9,7 +9,7 @@
    (L :doc "The angular velocity"
       :std (v3 0 0 0))
    (base :doc "The Watson-Crick base of the DNA-NT"
-	 :std "?")
+	 :std "T")
    (partner :doc "A DNA-NT object that forms a Watson-Crick base pair"))
   (:documentation "A class for a DNA nucleotide CHEM-OBJ. NTs are defined similary to that of oxdna using a center of mass, a vector from base to backbone and a vector normal to the face of the base. Our vn and vbb are defined OPPOSITE to that of oxdna"))
 
@@ -31,7 +31,7 @@
 
 
 ;;;; Creation Functions
-(defun make-dna-nt (&key cm vbb vn (base "?") tfms )
+(defun make-dna-nt (&key cm vbb vn (base "T") tfms )
   ; TODO Make the arg list better. Right now things will be overwritten
   "Returns a DNA-NT CHEM-OBJ with the correctly initialized slots"
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
@@ -270,7 +270,7 @@ if inc-headers = true the header strings are prepended to the list of topology s
 
 (defun partner-coords (nt)
   (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt
-      (let* ((pbb (scale vbb -1d0)) ;partner nt faces the other way
+      (let* ((pbb (scale vbb -1d0)) ;partner nt faces the other way  
 	     (pcm (.+ (scale pbb (* 2 *helix-cm-offset*)) cm))
 					; partner is same distance from axis (axis->cm "*helix-cm-offset*
 	     (pn (scale vn -1d0)))
