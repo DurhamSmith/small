@@ -88,7 +88,7 @@ Starts are taken from tri edges"
 
 (defun u-staples-tri (tri)
   (let* ((u1s ;; Staple u in row 1
-	   (u-staple-tri tri   2 18 25 t  1 0 16 nil))
+	   (u-staple-tri tri   2 18 26 t  1 0 17 nil))
 	 (u4s ;; Staple u in row 4	  
 	  (u-staple-tri tri   4 13 29 t  5 30 38 nil))
 	 (u9s ;; Staple u in row 9
@@ -132,7 +132,7 @@ Starts are taken from tri edges"
 	    (alexandria:flatten (internal-staps ori)))
     ;; These are cappping end added in a hacky way
     
-    (setf (capping-staps ori) (capping-ends ori))
+    (setf (capping-staps ori) (capping-ends ori :indices '(1 3 5 7 9 11 13 15 17 19 21)));; (capping-ends ori)
     (mapcar #'(lambda (stap)
 		(add-parent stap ori))
 	    (capping-staps ori))
@@ -148,7 +148,7 @@ Starts are taken from tri edges"
 
 
 (defmethod write-oxdna ((obj dna-triangle) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
-  ;;(write-oxdna (5nt (first (scaffold obj))) :filename filename))
+  ;;(write-oxdna (5nt (first (scaffold obj))) :filename filename))  
   (wmdna filename (all-to-write obj)))
 
 
@@ -158,7 +158,7 @@ Starts are taken from tri edges"
    (5nt obj)
    (joining-strands obj)
    (internal-staps obj)
-   ;(capping-staps obj)
+   (capping-staps obj)
     ;; (mapcar #'5nt (alexandria:flatten (internal-staps obj)))
    ))
 

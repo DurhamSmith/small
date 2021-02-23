@@ -71,6 +71,7 @@
 
 (defparameter *qqq* (make-instance 'dna-cube))
 (write-oxdna *qqq* :filename "pflq")
+(write-oxdna (make-instance 'dna-cone) :filename "cone")
 
 
 (defun double-partners? (&rest dna-objs)
@@ -128,8 +129,8 @@
 
 
 
-(write-oxdna (make-instance 'dna-cone) :filename "coner")
-(write-oxdna (make-instance 'dna-triangle) :filename "tri")
+
+
 
 (let* ((tri (make-instance 'dna-triangle))
        (ends (capping-ends tri :indices '(1 3 5 7 9 11 13 15 17 19 21))))
@@ -251,7 +252,7 @@
 
 
 
-(let* ((l 32)
+(let* ((l 48)
        (sl 8)
        (trans (* (- l 1) 0.34))
        (h1 (helix-strand (v3 0 0 0)
@@ -265,16 +266,16 @@
 		       l))
        (stap (create-staple `((:obj ,h1 :start 0 :end ,sl :from-3end nil)
 			      (:obj ,h2 :start 0 :end ,sl :from-3end t))))
-       (nts1 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h1)) 0))))
+       (nts1 (connect-nts (reverse (mapcar #'make-partner (subseq (connected-nts (5nt h1)) 0)))))
        (nts2 (connect-nts (mapcar #'make-partner (subseq (connected-nts (5nt h2)) 0 (- l sl)))))
        (n1 (first nts1))
        (n2 (first nts2)))
 
-  (wmdna "test3"  h1 n1)
+  (wmdna "input"  h1 n1)
   (mapcar #'(lambda (x y)
-	      (list (vn x) (vn y)))
+	      (list (cm x) (cm y)))
 	  (connected-nts (5nt h1))
-	  (reverse nts1)))
+	   nts1))
 
 
 
@@ -295,3 +296,102 @@
        (nts1 (connect-nts (mapcar #'make-partner (connected-nts (5nt h1)))))
        (n1 (first nts1)))
   (wmdna "input"  h1 n1))
+
+(let* ((l 48)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+       (p1 (make-partner h1)))
+  (wmdna "input"  h1 p1))
+
+
+
+(let* ((l 8)
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+       (nts1 (connect-nts (mapcar #'make-partner (connected-nts (5nt h1)))))
+       (n1 (first nts1)))
+  (wmdna "input1"  h1 n1))
+
+(let* ((l 8)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			(v3 0 1 0)
+			(v3 -1 0 0)
+			l))
+       (p1 (make-partner h1)))
+  (wmdna "input2"  h1 p1))
+
+(let* ((l 8)
+       (sl 8)
+       (trans (* (- l 1) 0.34))
+       (h1 (helix-strand (v3 0 0 0)
+			 (v3 0 1 0)
+			 (v3 -1 0 0)
+			 l))
+       (p1 (create-staple `((:obj ,h1  :start 0 :end 8 :from-3end t)))))
+  (wmdna "input-3t"  h1 p1))
+
+(SMALL::create-staple `((:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end nil)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end t)
+				(:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end nil)))
+
+
+(let* ((tri (make-instance 'dna-triangle))
+       (stp (first (joining-strands tri)))
+       (cs (first (capping-staps tri)))
+       (s1 (first (scaffold tri)))
+       (s2 (second (scaffold tri)))
+       (s5 (nth 6 (scaffold tri)))
+       (sng (alexandria:flatten (loop for i from 2 to 31 by 3 collect
+					  (children (nth i (scaffold tri))))))
+       
+       (all (connected-nts (5nt s1)))
+       (x (mapc #'(lambda (x)
+			 (delete x all))
+		     sng))
+       (more (reverse (mapcar #'(lambda (x)
+	      (unless (partner x) (make-partner x)))
+			      all)))
+   ;; ;    )
+       (m (mapcar #'(lambda (x y)
+		      (when y (connect-nts x y)))
+		  more (cdr more)))
+       (more (remove nil more)))
+;;  more)
+;  (setf (next (3nt s5)) nil )
+  ;;  (break (first (internal-staps tri))))
+  
+  (wmdna "tri" x))
+
+(let* ((tri (make-instance 'dna-triangle)))
+  (make-partner (first (scaffold tri)))
+  ;(wmdna "tri" (mapcar #'make-partner (remove-if #'(lambda (x) (typep x 'dna-single-strand )) (scaffold tri)))))
+  (wmdna "tri" (mapcar #'make-partner (remove-if #'(lambda (x) (typep x 'dna-single-strand )) (scaffold tri))) (5nt tri)))
+       
+
+(typep  1)
+(all-to-write tri) more))
+;;  (wmdna "input" s1 (partner (5nt s1)) (subseq (first (internal-staps tri)) 0 2 ))
+
+(break (make-instance 'dna-triangle))
+
+
+
+(write-oxdna (make-instance 'dna-triangle) :filename "tri")
+
+(mapcar #'(lambda (x y)
+	    (format t "~& ~A ~A ~%" x y))
+	'(1 2 3 4) '(a b c d))
+
+
+(write-oxdna (make-instance 'dna-cone) :filename "coner")
+(write-oxdna (5nt (make-instance 'dna-cone)) :filename "coner-scaff")
+(write-oxdna (make-instance 'dna-triangle) :filename "tri")
+(write-oxdna (make-instance 'dna-cube) :filename "cube")

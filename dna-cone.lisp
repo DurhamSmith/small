@@ -151,7 +151,7 @@
 			   (:obj ,h3  :start 0 :end 11  :from-3end nil)
 			   (:single-strand t :num-nts 7)
 			   (:obj ,h4  :start 0 :end 11  :from-3end t)
-			   (:obj ,h5  :start 0 :end 11  :from-3end t)
+			   (:obj ,h5  :start 0 :end 11  :from-3end nil)
 			   (:single-strand t :num-nts 3)
 			   (:obj ,h6  :start 0 :end 11  :from-3end t)))))
 	     stap))
