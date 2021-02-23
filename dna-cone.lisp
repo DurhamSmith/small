@@ -155,7 +155,19 @@
 			   (:single-strand t :num-nts 3)
 			   (:obj ,h6  :start 0 :end 11  :from-3end t)))))
 	     stap))
-	  
+	  ((= i 22) ;; These hold the cones edges together BUT MIGHT BE WRONG (5->3) directions
+	   (let* ((h1 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . 22) )))
+		  (h2 (find-obj-with-props (scaffold next-tri)
+						  `((:i . 1) )))
+		  (h3 (find-obj-with-props (scaffold next-tri)
+						  `((:i . 2) )))
+		  (stap (create-staple
+			 `((:obj ,h3  :start 18 :end 26  :from-3end t)
+			   (:obj ,h2  :start 0 :end 17  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h1  :start 23 :end 33  :from-3end nil)))))
+	     stap))
 	  (t nil))))
 
 
@@ -288,6 +300,10 @@
      (joining-strands t1)
      (joining-strands t2)
      (joining-strands t3)
+     ;;These close the edges of the tile we do not use to truncate-extend to link cones
+     (capping-staps t1)
+     (capping-staps t2)
+     (capping-staps t3)
      )))
 
 			    

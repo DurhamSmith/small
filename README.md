@@ -15,3 +15,6 @@
 * In field
 
 ** Make partner when there are already some ocupied nts
+
+
+* TODO Check that when making staple we make them in the correct 5->3 

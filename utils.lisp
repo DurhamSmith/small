@@ -395,3 +395,11 @@
 (write-oxdna (5nt (make-instance 'dna-cone)) :filename "coner-scaff")
 (write-oxdna (make-instance 'dna-triangle) :filename "tri")
 (write-oxdna (make-instance 'dna-cube) :filename "cube")
+(joining-strands-as-idt (make-instance 'dna-triangle) "hi")
+(strands-as-idt "hi" (make-instance 'dna-triangle))
+(as-idt-seq (make-instance 'dna-triangle))
+
+
+(stap-bridges-as-idt (make-instance 'dna-cube) "staple-bridges")
+(joining-strands-as-idt (make-instance 'dna-cube) "joining-strands")
+(make-instance 'dna-cone)

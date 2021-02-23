@@ -93,7 +93,7 @@ Starts are taken from tri edges"
 	  (u-staple-tri tri   4 13 29 t  5 30 38 nil))
 	 (u9s ;; Staple u in row 9
 	  (u-staple-tri tri   10 27 35 t  9 10 26 nil)))
-    (list u1s u4s u9s)))
+    (list u4s u9s))) ;; Not returning u1 for now since we are use these positions for staples to join triangles together to form cones
 
 
 (progn
@@ -132,7 +132,7 @@ Starts are taken from tri edges"
 	    (alexandria:flatten (internal-staps ori)))
     ;; These are cappping end added in a hacky way
     
-    (setf (capping-staps ori) (capping-ends ori :indices '(1 3 5 7 9 11 13 15 17 19 21)));; (capping-ends ori)
+    (setf (capping-staps ori) (capping-ends ori));; (capping-ends ori :indices '(1 3 5 7 9 11 13 15 17 19 21))
     (mapcar #'(lambda (stap)
 		(add-parent stap ori))
 	    (capping-staps ori))
@@ -194,7 +194,7 @@ if from22=t then the vector will point from helix 22->21"
 
 
 (defun join-triangle (t1 t2
-		      &key (overlap-len 2)
+		      &key (overlap-len 4)
 			(indices '(1 5 9 13 17 21))
 			parent)
   "Creates staple strands which connect triangle 1 and 2 with truncations on t2 and extensions on t1"
