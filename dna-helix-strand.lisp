@@ -17,6 +17,7 @@
   (.- cm (scale vbb *helix-cm-offset*)))
 ;(helix-axis (v3 1.6 1 0) (v3 1 0 0))
 
+
 (defun next-helix-vbb (vbb vn &key 5end)
     (if 5end
 	(as-unit-vec (rotate-vec vbb vn (- *rad/bp*)))
@@ -40,6 +41,33 @@ VALUES cm vn vbb"
 	 (cm+1 (next-helix-cm cm vbb vn :5end 5end))
 	 (vn+1 (as-unit-vec vn)))
     (values cm+1 vbb+1 vn+1)))
+
+
+(defun next-n-helix-vbb (vbb vn &key 5end (n 1))
+    (if 5end
+	(as-unit-vec (rotate-vec vbb vn (- (* n *rad/bp*))))
+	(as-unit-vec (rotate-vec vbb vn (* n *rad/bp*)))))
+
+(defun next-n-helix-cm (cm vbb vn &key 5end (n 1))
+  (let* ((ax (helix-axis cm vbb))
+	 (ax+n (.+ ax (scale vn
+			     (if 5end ; Choosing the direction we grow the axis
+				 (- (* n *helix-nt-spacing*))
+				 (* n *helix-nt-spacing*)))))
+	 (vbb+n (next-n-helix-vbb vbb vn :5end 5end :n n))
+	 (cm+n (.+ ax+n (scale vbb+n *helix-cm-offset*))))
+    cm+n))
+
+
+(defun next-n-helix-nt-coords (cm vbb vn &key 5end (n 1))
+  "Returns coordinates for the next DNA-NT extending in the 3' direction (or 5' if 5end = t) as
+VALUES cm vn vbb"
+  (let* ((vbb+n (next-n-helix-vbb vbb vn :5end 5end :n n))
+	 (cm+n (next-n-helix-cm cm vbb vn :5end 5end :n))
+	 (vn+n (as-unit-vec vn)))
+    (values cm+n vbb+n vn+n)))
+
+
 
 (defun next-helix-nt (nt &key 5end)
   "Returns the next DNA-NT extending in the 3' direction (or 5' if 5end = t)"
