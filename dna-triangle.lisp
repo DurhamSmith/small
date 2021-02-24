@@ -254,9 +254,9 @@ if from22=t then the vector will point from helix 22->21"
 
 (defun triangle-joining-staples (t1 i1 t2 i2  &key (overlap-len 4))
   (let* ((h1-i1 (find-obj-with-props (scaffold t1)
-				    `((:i . ,i1))))
+				     `((:i . ,i1))))
 	 (h1-i1+1 (find-obj-with-props (scaffold t1)
-				      `((:i . ,(+ i1 1)) )))
+				       `((:i . ,(+ i1 1)) )))
 	 (h2-i2 (find-obj-with-props (scaffold t2)
 				     `((:i . ,i2) )))
 	 (h2-i2-1 (find-obj-with-props (scaffold t2)
