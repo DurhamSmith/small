@@ -41,7 +41,9 @@ Starts are taken from tri edges"
 	    for i from 2 to 20 by 2
 	    collect
 	    ;; (s-staple-tri obj  i '(23 16 16) '(8 15 7))
-	    (s-staple-tri obj  i '(24 16 16) '(7 15 7))
+	    ;;	    (s-staple-tri obj  i '(24 16 16) '(7 15 7))
+	    (s-staple-tri obj  i '(24 16 16) '(7 15 8))
+
 	    )
 	  staps)
     (push (loop
@@ -277,5 +279,8 @@ if from22=t then the vector will point from helix 22->21"
 
 (defmethod joining-strands-as-idt ((tri dna-triangle) prefix)
   (strands-as-idt prefix (joining-strands tri)))
+
+(defmethod internal-staps-as-idt ((tri dna-triangle) prefix)
+  (strands-as-idt prefix (internal-staps tri)))
 
 

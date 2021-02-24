@@ -92,10 +92,10 @@
 
 (defmethod stap-bridges-as-idt ((cube dna-cube) prefix )
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
-    (let ((name1 (concatenate 'string prefix "_cone1"))
-	  (name2 (concatenate 'string prefix "_cone2"))
-	  (name3 (concatenate 'string prefix "_cone3"))
-	  (name4 (concatenate 'string prefix "_cone4")))
+    (let ((name1 (concatenate 'string prefix "_stap_bridge_cone1"))
+	  (name2 (concatenate 'string prefix "_stap_bridge_cone2"))
+	  (name3 (concatenate 'string prefix "_stap_bridge_cone3"))
+	  (name4 (concatenate 'string prefix "_stap_bridge_cone4")))
       (list
        (stap-bridges-as-idt c1 name1)
        (stap-bridges-as-idt c2 name2)
@@ -104,12 +104,30 @@
 
 (defmethod joining-strands-as-idt ((cube dna-cube) prefix )
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
-    (let ((name1 (concatenate 'string prefix "_cone1"))
-	  (name2 (concatenate 'string prefix "_cone2"))
-	  (name3 (concatenate 'string prefix "_cone3"))
-	  (name4 (concatenate 'string prefix "_cone4")))
+    (let ((name1 (concatenate 'string prefix "_joining_strand_cone1"))
+	  (name2 (concatenate 'string prefix "_joining_strand_cone2"))
+	  (name3 (concatenate 'string prefix "_joining_strand_cone3"))
+	  (name4 (concatenate 'string prefix "_joining_strand_cone4")))
       (list
        (joining-strands-as-idt c1 name1)
        (joining-strands-as-idt c2 name2)
        (joining-strands-as-idt c3 name3)
        (joining-strands-as-idt c4 name4)))))
+
+(defmethod internal-staps-as-idt ((cube dna-cube) prefix )
+  (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
+    (let ((name1 (concatenate 'string prefix "_internal_stap_cone1"))
+	  (name2 (concatenate 'string prefix "_internal_stap_cone2"))
+	  (name3 (concatenate 'string prefix "_internal_stap_cone3"))
+	  (name4 (concatenate 'string prefix "_internal_stap_cone4")))
+      (list
+       (internal-staps-as-idt c1 name1)
+       (internal-staps-as-idt c2 name2)
+       (internal-staps-as-idt c3 name3)
+       (internal-staps-as-idt c4 name4)))))
+
+(defun as-idt (cube)
+  (let* ((idt (list (stap-bridges-as-idt cube "cube")
+		    (joining-strands-as-idt cube "cube")
+		    (internal-staps-as-idt cube "cube"))))
+    idt))

@@ -280,10 +280,6 @@
 
 
 
-
-
-
-
 (defmethod all-to-write ((obj dna-cone))
   (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj
 					;(break "~A" (5nt c1))
@@ -318,6 +314,15 @@
        (joining-strands-as-idt t2 name2)
        (joining-strands-as-idt t3 name3)))))
 
+(defmethod internal-staps-as-idt ((cone dna-cone) prefix )
+  (with-accessors ((t1 t1) (t2 t2) (t3 t3)) cone
+    (let ((name1 (concatenate 'string prefix "_t1"))
+	  (name2 (concatenate 'string prefix "_t2"))
+	  (name3 (concatenate 'string prefix "_t3")))
+      (list
+       (internal-staps-as-idt t1 name1)
+       (internal-staps-as-idt t2 name2)
+       (internal-staps-as-idt t3 name3)))))
      
 (defmethod stap-bridges-as-idt ((cone dna-cone) prefix)
   (strands-as-idt prefix (stap-bridges cone)))

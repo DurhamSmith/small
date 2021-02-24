@@ -69,9 +69,6 @@
 
 
 
-(defparameter *qqq* (make-instance 'dna-cube))
-(write-oxdna *qqq* :filename "pflq")
-(write-oxdna (make-instance 'dna-cone) :filename "cone")
 
 
 (defun double-partners? (&rest dna-objs)
@@ -400,6 +397,37 @@
 (as-idt-seq (make-instance 'dna-triangle))
 
 
-(stap-bridges-as-idt (make-instance 'dna-cube) "staple-bridges")
+(stap-bridges-as-idt (make-instance 'dna-triangle) "staple-bridges")
 (joining-strands-as-idt (make-instance 'dna-cube) "joining-strands")
+(joining-strands-as-idt (make-instance 'dna-triangle) "joining-strands")
+(joining-strands (t1 (c1 (make-instance 'dna-cube))))
 (make-instance 'dna-cone)
+
+(as-idt (make-instance 'dna-cube))
+(strands-as-idt "internal" (internal-staps (make-instance 'dna-triangle)))
+(internal-staps-as-idt (make-instance 'dna-cone) "cone1")
+
+(defparameter *qqq* (make-instance 'dna-cube))
+(write-oxdna *qqq* :filename "pflq")
+(write-oxdna (make-instance 'dna-cone) :filename "cone")
+(defparameter *t* (make-instance 'dna-triangle))
+(defparameter *c* (make-instance 'dna-cone))
+
+(length (connected-nts (5nt *t*)))
+(length (remove nil (mapcar #'partner (connected-nts (5nt *t*)))))
+
+(let* ((nts (connected-nts (5nt *t*)))
+       (pts (mapcar #'partner (connected-nts (5nt *t*))))
+       (sames (mapcar #'(lambda (x y)
+			  (if y
+			      (magicl::= (vn x) (scale (vn y) -1))
+			      t))
+		      nts pts)))
+  (remove t sames))
+
+(magicl::= (v3 -1 0 0) (scale (v3 1 0 0) -1))
+(scale (v3 1 0 0) -1)
+
+
+(length (connected-nts (5nt *c*)))
+(length (remove nil (mapcar #'partner (connected-nts (5nt *c*)))))
