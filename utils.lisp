@@ -222,7 +222,6 @@
   (connect h1 h2)
   (wmdna "test3"  h1 n1 n2 stap))
 
-
 (let* ((l 48)
        (sl 8)
        (trans (* (- l 1) 0.34))

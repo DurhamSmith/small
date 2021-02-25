@@ -40,19 +40,93 @@
       (add-prop helix :j j)
       helix))
 
+
   (defun make-lattice-helices ()
-    (alexandria:flatten
-     (loop for i from 0 to 7 collect
-			     (loop for j from 0 to 7 collect
-						     (make-lattice-helix i j)))))
-
-
+    (loop for i from 0 to 7 
+	  append (loop for j from 0 to 7
+		       collect	(make-lattice-helix i j))))
 
 
 (defun helix-i-j (scaff-list i j)
   (find-obj-with-props
    (alexandria::flatten scaff-list) `((:i . ,i) (:j . ,j))))
 
+
+;; (defun crossover-plane-1 (ori)
+;;   (let* ((is '(0 2 4 6))
+;; 	 (js '(0 2 4 6))
+;; 	 (scaf (scaffold ori))
+;; 	 (staps (mapcar #'(lambda (i j)
+;; 			    (let* ((h0 (helix-i-j scaf i j))
+;; 				   (h1 (helix-i-j scaf i (1+ j)))
+;; 				   (h2 (helix-i-j scaf (1+ i) (1+ j)))
+;; 				   (stap (create-staple `((:obj ,h0 :start 0 :end 8 :from-3end nil)
+;; 							  (:obj ,h1 :start 0 :end 8 :from-3end t)
+;; 							  (:obj ,h2 :start 0 :end 8 :from-3end nil)))))
+;; 			      stap))
+;; 			is js)))
+;;     staps))
+			    
+(defun crossover-plane-1 (ori)
+  (loop for i from 0 to 6 by 2
+	append (loop for j from 0 to 6 by 2
+		     collect
+		     (cond ((and (= i 0) (evenp j))
+			    (let* ((scaf (scaffold ori))
+				   (h0 (helix-i-j scaf i j))
+				   (h1 (helix-i-j scaf i (1+ j)))
+				   (h2 (helix-i-j scaf (1+ i) (1+ j)))
+				   (stap (create-staple `((:obj ,h0 :start 0 :end 8 :from-3end nil)
+							  (:obj ,h1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h2 :start 0 :end 8 :from-3end nil)))))
+			      stap))
+			   ((and (> i 0) (< i 6) (evenp j))
+			    (let* ((scaf (scaffold ori))
+				   (h-1 (helix-i-j scaf (1- i) j))
+				   (h0 (helix-i-j scaf i j))
+				   (h1 (helix-i-j scaf i (1+ j)))
+				   (h2 (helix-i-j scaf (1+ i) (1+ j)))
+				   (stap (create-staple `((:obj ,h-1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h0 :start 0 :end 8 :from-3end nil)
+							  (:obj ,h1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h2 :start 0 :end 8 :from-3end nil)))))
+			      stap))
+			   ((or
+			     (and (> i 0) (< i 6))
+			     (and (= i 6) (= j 6)))
+			    (let* ((scaf (scaffold ori))
+				   (h-1 (helix-i-j scaf (1- i) j))
+				   (h0 (helix-i-j scaf i j))
+				   (h1 (helix-i-j scaf i (1+ j)))
+				   (h2 (helix-i-j scaf (1+ i) (1+ j)))
+				   (stap (create-staple `((:obj ,h-1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h0 :start 0 :end 8 :from-3end nil)
+							  (:obj ,h1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h2 :start 0 :end 8 :from-3end nil)))))
+			      stap))
+			   ((and (= i 6) (/= j 6) (evenp j))
+			    (let* ((scaf (scaffold ori))
+				   (h-1 (helix-i-j scaf (1- i) j))
+				   (h0 (helix-i-j scaf i j))
+				   (h1 (helix-i-j scaf i (1+ j)))
+				   (h2 (helix-i-j scaf (1+ i) (1+ j)))
+				   (h3 (helix-i-j scaf (1+ i) (+ j 2)))
+				   (stap (create-staple `((:obj ,h-1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h0 :start 0 :end 8 :from-3end nil)
+							  (:obj ,h1 :start 0 :end 8 :from-3end t)
+							  (:obj ,h2 :start 0 :end 8 :from-3end nil)
+							  (:obj ,h3 :start 0 :end 8 :from-3end t)))))
+			      stap))
+			   (t (error "Indexs out of bounds")))
+		     )))
+
+
+(cond (case1 (do-this))
+      (case2 (do-this))
+      (t default))
+
+
+  
 
 
 (defun blah (ori)
@@ -65,6 +139,9 @@
 				(:obj ,h2 :start 0 :end 8 :from-3end nil)))))
     stap))
 
+
+(wmdna "cp-1" (scaffold *pl*) (remove nil (crossover-plane-1 *pl*)))
+       
  
 (wmdna "lat"
        (helix-i-j (scaffold *pl*) 0 0)
@@ -74,6 +151,7 @@
 				
 	 
 (defparameter *pl* (make-instance 'dna-square-lattice))
+(scaff
 
 (defmethod initialize-instance :after ((ori dna-square-lattice) &key)
   (let ((*rad/bp* (deg->rad 33.75)))
