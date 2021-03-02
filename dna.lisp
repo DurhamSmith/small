@@ -1,7 +1,5 @@
 (in-package :small)
 
-
-
 (defparameter *helix-spacing* 1d0 "Spacing between parallel double helices in this design")
 
 (defparameter *helix-diameter* 2d0 "Diameter of DNA double helix in nm")
@@ -31,7 +29,7 @@
   (:method ((obj dna)  &key start end from-3end)
     (error "generic function #'make-partner not implemented for ~A" (class-of obj))))
 
-
+;TODO: Can this be a function?
 (defmethod dna-connect ((o1 dna) (o2 dna))
   "Returns VAUES o1 o2 after setting o2:prev = o1, o1:next = o2"
   (setf (next o1) o2)

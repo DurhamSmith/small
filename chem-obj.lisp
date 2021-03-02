@@ -12,9 +12,7 @@
    (tfms :doc "A list of transformations (translations and rotations) The order is the first applied opperation is first in the list"))
   (:documentation "The base class used for containing chemical objects and the rule for maniipulating them. They can be used to create atomic (in the lisp sense of evaluating to themselves) level detail chemical objects such as atoms or course grain nucleotide models, which have well defined coordinate descriptions. Or chem-obj children can define higher level structures composed of atomic chem-obj or other higher level structures themselves, for example small molecules composed from atoms, DNA helical strands from nucleotides and Double helices from DNA helical strands."))
 
-
-;(defgeneric make-chem-obj 
-
+;TODO: Are Is add-chem-obj needed? 
 (defgeneric add-chem-obj (obj val &opt key)
   (:documentation "Adds val to (chem-objs obj) under key or default key = (concatenate (type-of obj) (occurances of objs type in (chem-objs obj)))"))
 
@@ -25,13 +23,6 @@
     ))
 
     
-;;(describe 'chem-obj)
-
-
-;; (type-of (make-instance 'chem-obj))
-;; (class-of (make-instance 'chem-obj))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
        ; Old impl. Moving to single parent, children as list not ht ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
