@@ -25,7 +25,6 @@
     ))
 
     
-(find-class 'chem-obj)
 ;;(describe 'chem-obj)
 
 

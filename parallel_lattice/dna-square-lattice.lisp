@@ -121,6 +121,63 @@
 		     )))
 
 
+(defun crossover-plane-2 (ori)
+  (loop for i from 0 to 7 by 1
+	append (loop for j from 0 to 7 by 1
+		     collect
+		     (cond ((and (= i 0) (= j 1) (oddp j))
+			    (let* ((scaf (scaffold ori))
+				   (h-3 (helix-i-j scaf (+ i 2) (1- j)))
+				   (h-2 (helix-i-j scaf (1+ i) (1- j)))
+				   (h-1 (helix-i-j scaf (1+ i) j))
+				   (h0 (helix-i-j scaf i j))
+				   (h1 (helix-i-j scaf i (1+ j)))
+				   (stap (create-staple `((:obj ,h-3 :start 8 :end 16 :from-3end nil)
+							  (:obj ,h-2 :start 8 :end 16 :from-3end t)
+							  (:obj ,h-1 :start 8 :end 16 :from-3end nil)
+							  (:obj ,h0 :start 8 :end 16 :from-3end t)
+							  (:obj ,h1 :start 8 :end 16 :from-3end nil)))))
+			      stap))
+			   ((and (= i 0) (/= j 1) (/= j 7) (oddp j))
+			    (let* ((scaf (scaffold ori))
+				   (h-1 (helix-i-j scaf (1+ i) j))
+				   (h0 (helix-i-j scaf i j))
+				   (h1 (helix-i-j scaf i (1+ j)))
+				   (stap (create-staple `((:obj ,h-1 :start 8 :end 16 :from-3end nil)
+							  (:obj ,h0 :start 8 :end 16 :from-3end t)
+							  (:obj ,h1 :start 8 :end 16 :from-3end nil)))))
+			      stap))
+			   ((and (= i 0) (= j 7) (oddp j))
+			    (let* ((scaf (scaffold ori))
+				   (h-5 (helix-i-j scaf (+ i 3) (- j 2)))
+				   (h-4 (helix-i-j scaf (+ i 2) (- j 2)))
+				   (h-3 (helix-i-j scaf (+ i 2) (- j 1)))
+				   (h-2 (helix-i-j scaf (+ i 1) (- j 1)))
+				   (h-1 (helix-i-j scaf (1+ i) j))
+				   (h0 (helix-i-j scaf i j))				   
+				   (stap (create-staple `((:obj ,h-4 :start 8 :end 16 :from-3end t)
+							  (:obj ,h-3 :start 8 :end 16 :from-3end nil)
+							  (:obj ,h-2 :start 8 :end 16 :from-3end t)
+							  (:obj ,h-1 :start 8 :end 16 :from-3end nil)
+							  (:obj ,h0 :start 8 :end 24 :from-3end t)))))
+			      stap))
+			   ;; ((and (= i 1) (evenp j))
+			   ;;  (let* ((scaf (scaffold ori))
+			   ;; 	   (h0 (helix-i-j scaf i j))
+			   ;; 	   (h1 (helix-i-j scaf (+ i 1) j))
+			   ;; 	   (h2 (helix-i-j scaf (+ i 1) (+ j 1)))
+			   ;; 	   (h3 (helix-i-j scaf (+ i 2) (+ j 1)))				   
+			   ;; 	   (stap (create-staple `((:obj ,h0 :start 8 :end 16 :from-3end t)
+			   ;; 				  (:obj ,h1 :start 8 :end 16 :from-3end nil)
+			   ;; 				  (:obj ,h2 :start 8 :end 16 :from-3end t)
+			   ;; 				  (:obj ,h3 :start 8 :end 16 :from-3end nil)))))
+			   ;;    stap))
+			   (t nil)))))
+
+(wmdna "cp-2" ;(scaffold *pl*)
+       (remove nil (crossover-plane-1 *pl*))
+       (remove nil (crossover-plane-2 *pl*)))
+
 (cond (case1 (do-this))
       (case2 (do-this))
       (t default))
@@ -140,7 +197,7 @@
     stap))
 
 
-(wmdna "cp-1" (scaffold *pl*) (remove nil (crossover-plane-1 *pl*)))
+
        
  
 (wmdna "lat"

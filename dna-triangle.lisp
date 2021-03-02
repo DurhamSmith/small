@@ -14,7 +14,6 @@
 
 
 
-
 (defun s-staple-tri (tri i starts lengths)
   "creates an s-shaped staple strand to hold tri helices i, i+1 and i+2 together.
 Starts are taken from tri edges"
