@@ -9,11 +9,10 @@
    (L :doc "The angular velocity"
       :std (v3 0 0 0))
    (base :doc "The Watson-Crick base of the DNA-NT"
-	 :std "T")
-   (partner :doc "A DNA-NT object that forms a Watson-Crick base pair"))
+	 :std "T"))
   (:documentation "A class for a DNA nucleotide CHEM-OBJ. NTs are defined similary to that of oxdna using a center of mass, a vector from base to backbone and a vector normal to the face of the base. Our vn and vbb are defined OPPOSITE to that of oxdna"))
 
-;;;; Generic Functions specific to DNA CHEM-OBJs (only exist when specilized on DNA CHEM-OBJs
+;;;; Generic Functions specific to DNA-NT CHEM-OBJs (only exist when specilized on DNA CHEM-OBJs
 
 (defmethod vbb ((nt dna-nt))  
   (apply-rotations nt (slot-value nt 'vbb )))
@@ -25,10 +24,9 @@
 (defmethod cm ((nt dna-nt))  
   (apply-transformations nt (slot-value nt 'cm )))
 
-;;;; Generic Functions specialized on DNA CHEM-OBJs
 
 
-
+;; =============================================GROUP: RANDOM FUNCTIONS START ======================================
 
 ;;;; Creation Functions
 (defun make-dna-nt (&key cm vbb vn (base "T") tfms )
@@ -37,7 +35,156 @@
   (make-instance 'dna-nt :cm cm :vbb vbb :vn vn :base base :tfms tfms))
 
 
-(defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;todo check param list (maybe use &rest &allow-other-keys)
+;;TODO:  Can this net be a normal function?
+(defmethod update-base ((nt dna-nt) base)
+  (with-accessors ((b base) (p partner)) nt
+    (setf b base)
+    (when p   
+      (setf (base p) (base-partner base)))))
+    
+;; =============================================GROUP: RANDOM FUNCTIONS END ======================================
+  
+    
+
+
+
+
+;; =============================================GROUP: CONNECTION FUNCTIONS START ======================================
+
+;;; implementation of chem-objs required methods
+;TODO: Check where this is used and see if it cannot be replaced by augmenting the generic function (connect ...)
+(defun connect-nts (&rest nts)
+  "dna-nt:connects all dna-nts in nts in the order they are provided"
+  ;; todo: errors: not provided dna-nts, this prob done by the fact connoct errors if no valid specilizations
+  (let ((nts (alexandria:flatten nts)))
+    (append (mapcar #'connect nts (cdr nts)) (last nts))))
+
+
+
+(defmethod connect ((o1 dna-nt) (o2 dna-nt) &rest rest)
+  "sets (next o1) = o2 and (prev o2) = o1"
+  (dna-connect o1 o2))
+
+
+;TODO: Look if this is used and if it cannot maybe replaced by (nts DNA-OBJ :all t)
+(defun connected-nts (nt)
+  "returns a list of dna-nt, ordered 5'->3"
+  (let* ((orig nt)
+	 (prev-nts (reverse (loop while (prev nt) 
+				  do (setf nt (prev nt))
+				  collect nt)))
+	 (nt orig)
+	 (next-nts (loop while (next nt) 
+			 do (setf nt (next nt))
+			 collect nt))
+	 (all-nts (append prev-nts
+			  (list orig)
+			  next-nts)))
+    all-nts))
+
+;; =============================================GROUP: CONNECTION FUNCTIONS END ======================================
+
+
+
+
+
+;; =============================================GROUP: NEXT NT FUNCTIONS STARTS  ======================================
+
+;;TODO: Check where this is used and see if it cannot rather be replaced by the specilaizing on the obj arugment as opposed to a passing in the :kind keyword
+
+(defmethod next-vbb ((obj dna-nt) &key 5end kind)
+  "returns a vector that would be vbb for the next dna-nt given strand type :kind"
+  (with-accessors ((5nt 5nt) (3nt 3nt)) obj
+    (typecase kind
+      (dna-helix (next-helix-vbb obj :end 5end))
+      (dna-strand (next-strand-vbb obj :end 5end))
+      (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
+
+(defmethod next-nt ((obj dna-nt) &key 5end kind)
+  "returns a dna-nt that would be the next nucleotide in the sequence for a given strand type"
+  (with-accessors ((5nt 5nt) (3nt 3nt)) obj
+    (case kind
+      (dna-helix-strand (next-helix-nt obj :5end 5end))
+      (dna-single-strand (next-single-strand-nt obj :5end 5end))
+      (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
+
+(defun next-n-nts (nt n &key 5end kind)
+  (let* ((tmp-nt (next-nt nt :5end 5end :kind kind))
+	 (nts (list tmp-nt)))
+    (loop for i from 2 to n do
+      (progn
+	(setf tmp-nt (next-nt tmp-nt :5end 5end :kind kind))
+	(push tmp-nt nts)))
+    (reverse nts)))
+
+;; =============================================GROUP: NEXT NT FUNCTIONS ENDS ======================================
+
+
+;; =============================================GROUP: PARTNER GEN FUNCTIONS START ======================================
+
+(defun base-partner (base)
+   (cond ((consp base) (base-partner (car base)))
+	((string-equal "A" base) "T")
+	((string-equal "T" base) "A")
+	((string-equal "G" base) "C")
+	((string-equal "C" base) "G")
+	(t "!")))
+
+(defun partner-coords (nt)
+  (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt
+      (let* ((pbb (scale vbb -1d0)) ;partner nt faces the other way  
+	     (pcm (.+ (scale pbb (* 2 *helix-cm-offset*)) cm))
+					; partner is same distance from axis (axis->cm "*helix-cm-offset*
+	     (pn (scale vn -1d0)))
+	(values pcm pbb pn))))
+
+
+(defmethod make-partner ((obj dna-nt) &key start end from-3end)
+  (multiple-value-bind (cm vbb vn)
+      (partner-coords obj)
+    (let ((partner (make-instance 'dna-nt
+				  :cm cm
+				  :vbb vbb
+				  :vn vn
+				  :base (base-partner (base obj))
+				  :partner obj)))
+      (setf (partner obj) partner)
+      ;(break partner)
+      partner)))
+
+;; =============================================GROUP: PARTNER GEN FUNCTIONS END ======================================
+
+
+
+;; =============================================GROUP: COORDINATE HELPER FUNCTIONS START ======================================
+
+;;TODO: Can this not be a normal function?
+(defmethod backbone ((obj dna-nt))
+  (cm->bb (cm obj) (vbb obj)))
+
+;;TODO: Can this not be a normal function?
+(defmethod axis ((obj dna-nt))
+  (cm->axis (cm obj) (vbb obj)))
+
+
+(defun nt1->nt2 (nt1 nt2)
+  (.- (axis nt2)
+      (axis nt1)))
+
+(defun midpoint (nt1 nt2)
+  (.+ (axis nt1)
+      (scale (.- (axis nt2)
+		 (axis nt1))
+	     0.5)))
+
+;; =============================================GROUP: COORDINATE HELPER FUNCTIONS END ======================================
+
+
+
+;; =============================================GROUP: OXDNA FUNCTIONS START ======================================
+
+;;TODO: Maybe move the OXDNA related functions to specific exporting file types
+(defgeneric oxdna-topology (obj &key all start prev next strand inc-headers) ;TODO check param list (maybe use &rest &allow-other-keys)
   (:documentation "returns the oxdna topolog of the object as a list of strings. dna/rna nucleotides will evaluate to themselves, other structures search through (chem-obj obj) to create a nested, order list of lists of strings containing oxdna-config")
   (:method ((obj dna-nt) &key (all nil) (start 0) (prev -1) (next -1) (strand 1) (inc-headers t))
     (let* ((bases (if all
@@ -200,132 +347,5 @@ if inc-headers = true the header strings are prepended to the list of topology s
     (values top-lines top-header)))
 
 
-
-
-
-
-(defun connected-nts (nt)
-  "returns a list of dna-nt, ordered 5'->3"
-  (let* ((orig nt)
-	 (prev-nts (reverse (loop while (prev nt) 
-				  do (setf nt (prev nt))
-				  collect nt)))
-	 (nt orig)
-	 (next-nts (loop while (next nt) 
-			 do (setf nt (next nt))
-			 collect nt))
-	 (all-nts (append prev-nts
-			  (list orig)
-			  next-nts)))
-    all-nts))
-
-
-
-;;; implementation of chem-objs required methods
-
-(defun connect-nts (&rest nts)
-  "dna-nt:connects all dna-nts in nts in the order they are provided"
-  ;; todo: errors: not provided dna-nts, this prob done by the fact connoct errors if no valid specilizations
-  (let ((nts (alexandria:flatten nts)))
-    (append (mapcar #'connect nts (cdr nts)) (last nts))))
-
-
-
-
-
-
-
-(defmethod connect ((o1 dna-nt) (o2 dna-nt) &rest rest)
-  "sets (next o1) = o2 and (prev o2) = o1"
-  (dna-connect o1 o2))
-
-
-
-
-(defmethod next-vbb ((obj dna-nt) &key 5end kind)
-  "returns a vector that would be vbb for the next dna-nt given strand type :kind"
-  (with-accessors ((5nt 5nt) (3nt 3nt)) obj
-    (typecase kind
-      (dna-helix (next-helix-vbb obj :end 5end))
-      (dna-strand (next-strand-vbb obj :end 5end))
-      (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
-    
-(defmethod next-nt ((obj dna-nt) &key 5end kind)
-  "returns a dna-nt that would be the next nucleotide in the sequence for a given strand type"
-  (with-accessors ((5nt 5nt) (3nt 3nt)) obj
-    (case kind
-      (dna-helix-strand (next-helix-nt obj :5end 5end))
-      (dna-single-strand (next-single-strand-nt obj :5end 5end))
-      (t (error "(next-nt dna-nt :kind ~a) is not of valid dna-nt kind" kind)))))
-
-(defun next-n-nts (nt n &key 5end kind)
-  (let* ((tmp-nt (next-nt nt :5end 5end :kind kind))
-	 (nts (list tmp-nt)))
-    (loop for i from 2 to n do
-      (progn
-	(setf tmp-nt (next-nt tmp-nt :5end 5end :kind kind))
-	(push tmp-nt nts)))
-    (reverse nts)))
-
-
-(defun partner-coords (nt)
-  (with-accessors ((cm cm) (vbb vbb) (vn vn)) nt
-      (let* ((pbb (scale vbb -1d0)) ;partner nt faces the other way  
-	     (pcm (.+ (scale pbb (* 2 *helix-cm-offset*)) cm))
-					; partner is same distance from axis (axis->cm "*helix-cm-offset*
-	     (pn (scale vn -1d0)))
-	(values pcm pbb pn))))
-
-
-(defmethod make-partner ((obj dna-nt) &key start end from-3end)
-  (multiple-value-bind (cm vbb vn)
-      (partner-coords obj)
-    (let ((partner (make-instance 'dna-nt
-				  :cm cm
-				  :vbb vbb
-				  :vn vn
-				  :base (base-partner (base obj))
-				  :partner obj)))
-      (setf (partner obj) partner)
-      ;(break partner)
-      partner)))
-
-(defmethod update-base ((nt dna-nt) base)
-  (with-accessors ((b base) (p partner)) nt
-    (setf b base)
-    (when p   
-      (setf (base p) (base-partner base)))))
-    
-  
-    
-
-(defun base-partner (base)
-   (cond ((consp base) (base-partner (car base)))
-	((string-equal "A" base) "T")
-	((string-equal "T" base) "A")
-	((string-equal "G" base) "C")
-	((string-equal "C" base) "G")
-	(t "!")))
-
-
-
-(describe 'dna-nt)
-
-
-(defmethod backbone ((obj dna-nt))
-  (cm->bb (cm obj) (vbb obj)))
-
-(defmethod axis ((obj dna-nt))
-  (cm->axis (cm obj) (vbb obj)))
-
-
-(defun nt1->nt2 (nt1 nt2)
-  (.- (axis nt2)
-      (axis nt1)))
-
-(defun midpoint (nt1 nt2)
-  (.+ (axis nt1)
-      (scale (.- (axis nt2)
-		 (axis nt1))
-	     0.5)))
+;; =============================================GROUP: OXDNA FUNCTIONS END ======================================
 
