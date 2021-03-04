@@ -1,35 +1,41 @@
 (in-package :small)
 
-(defparameter *helix-spacing* 1d0 "Spacing between parallel double helices in this design")
+(defparameter *helix-spacing* 1d0 "Spacing between parallel double helices")
 
 (defparameter *helix-diameter* 2d0 "Diameter of DNA double helix in nm")
-
+;TODO: Remove and update codebase
 (defparameter *helix-radius* (/ *helix-diameter* 2d0) "Radius of DNA double helix in nm")
-
+;TODO: Check where this is needed and update codebase
 (defparameter *inter-helix-spacing* 1d0 "Spacing between two helices in an origmi design")
 
-(defparameter *helix-nt-spacing* 0.34d0 "Length of each base pair in a double helix in nm")
+(defparameter *helix-nt-spacing* 0.34d0 "Length in nm between successive bases in a double helix")
 
-(defparameter *single-strand-nt-spacing* 0.4d0 "Length of each base pair in a single in nm")
+(defparameter *single-strand-nt-spacing* 0.4d0 "Length in nm between successive bases in an unpaired DNA strand")
 
-(defparameter *bp/turn* 10.44d0 "Length of each base pair in a double helix in nm")
+;TODO: Maybe provide convienice functions for setting things with a relationship between them
+(defparameter *bp/turn* 10.44d0 "The number of bases per helical turn")
 
 (defparameter *rad/bp* (/ (* pi 2) *bp/turn*) "The delta theta between backbone vectors when viewed down the axis in the 5'->3' direction (- theta-nt1 theta-nt0)")
 
 (defclass/std dna (chem-obj)
   ((prev :doc "The previous DNA CHEM-OBJ in dna sequence. Together with (next dna) form a doubly linked list of DNA CHEM-OBJS used to represent a grouped sequence of these DNA CHEM-OBJs, which themselves could be at various levels of abstraction (e.g strand composed of nucleotides, or origami scaffolds composed of single and helical strands). These sequences are on the same molecule, i.e. partner strands are not included")
-   (next :doc "The next DNA CHEM-OBJ in dna sequence. Together with (next dna) form a doubly linked list of DNA CHEM-OBJS used to represent a grouped sequence of these DNA CHEM-OBJs, which themselves could be at various levels of abstraction (e.g strand composed of nucleotides, or origami scaffolds composed of single and helical strands). These sequences are on the same molecule, i.e. partner strands are not included"))
+   (next :doc "The next DNA CHEM-OBJ in dna sequence. Together with (next dna) form a doubly linked list of DNA CHEM-OBJS used to represent a grouped sequence of these DNA CHEM-OBJs, which themselves could be at various levels of abstraction (e.g strand composed of nucleotides, or origami scaffolds composed of single and helical strands). These sequences are on the same molecule, i.e. partner strands are not included")
+   (partner :doc "A DNA-NT object that forms a Watson-Crick base pair"))
   (:documentation "A class for DNA chem-objs. Defines constants and connect methods"))
 
 ;(describe 'dna)
 
-
+;TODO: Should I add a destructive keyword?
 (defgeneric make-partner (obj &key start end from-3end)
   (:documentation "Return a complementary DNA CHEM-OBJ for the given DNA CHEM-OBJ")
   (:method ((obj dna)  &key start end from-3end)
     (error "generic function #'make-partner not implemented for ~A" (class-of obj))))
 
-;TODO: Can this be a function?
+;TODO: Make connect do tail traversal so we can connect a list of dna objects
+(defgeneric connect (dna1  dna2 &rest rest))
+
+
+;;TODO: Can this be a function?
 (defmethod dna-connect ((o1 dna) (o2 dna))
   "Returns VAUES o1 o2 after setting o2:prev = o1, o1:next = o2"
   (setf (next o1) o2)
@@ -40,21 +46,18 @@
   (:documentation "Gets DNA-NTs from dna CHEM-OBJ. If all = t all connected nts are returned if all all = nil then only the DNA-NTs in the strand are returned"))
 
 
-
+;TODO: Can this be moved to just a function? What are the use cases for things like calling it on a dna strand?
 (defgeneric next-nt (obj &key 5end kind)
   (:documentation "Returns a DNA-NT that would be the next nucleotide in the sequence for a given strand type")
   (:method (obj &key 5end kind)
     (error "(next-nt (obj ~A ) &key 5end) has not been implemented ~A" (type-of obj) obj)))
 
-
+;TODO: Are these needed?
 (defgeneric 5end (obj &key all)
   (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
 
 (defgeneric 3end (obj &key all)
   (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
-
-(defgeneric partner (obj)
-  (:documentation "Returns a partner of the DNA CHEM-OBJ"))
 
 
 

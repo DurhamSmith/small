@@ -25,6 +25,7 @@
 		       nil)))
       (values 5nt coords))))
 
+;TODO: Can we move this to a class slot and overwrite the class slots behaviour?
 (defmethod 3end ((obj dna-strand) &key all)
   (with-accessors ((3nt 3nt)) obj
     ;; (unless 3nt
