@@ -59,11 +59,11 @@
 
 
 ;;======================================== START PROP FUNCTIONS ================================
-(defgeneric add-prop (obj key val)nn
+(defgeneric add-prop (obj key val)
   (:method ((obj chem-obj) key val)
     (+ht (props obj) val :key key)))
 
-
+;TODO: Check the behaviour of this for passing (key . vals) and just keys
 (defun has-props (chem-obj needed-props)
   "Returns t if chemobj contains keys and vals from props in its prop field
 e.g props is an alist "
@@ -91,49 +91,7 @@ e.g props is an alist "
 ;;======================================== START TFMS FUNCTIONS ================================
 
 
-(defmethod add-transformation ((obj chem-obj) tfm)
-  "Prepends tfm  tfms of obj
-Returns VALUES obj & list of transforms on obj"
-  ;; TODO: Typechecks
-   (values obj (push tfm (tfms obj))))
-
-(defun valid-transformation? (trans)
-  (if (find (car trans) '("translate" "rotate") :test #'string-equal)
-      t
-      (error "Not a valid transformation")))
-
-(defun apply-transformation (tfm vec)
-  "Applies a transform tfm to vector v"
-  ;(format t "~& ~A ~%" tfm)
-  (let ((tfm-type (car tfm))
-	(tfm-val (cdr tfm)))
-    (cond ((string=  "translate" tfm-type) (MAGICL::.+ tfm-val vec))
-	  ((string=  "rotate" tfm-type) (MAGICL::@ tfm-val vec))
-	  (t (error "Not a valid transform")))))
-
-
-(defmethod all-tfms ((obj chem-obj))
-  "Returns all transformations that should be applied to the obj
-Parents transformations are applied AFTER child ones
-;TODO: Add return as VALUES tfms list of parents & their tfms "
-  ;(break obj)
-  (let ((all-tfms (tfms obj)))
-    (do ((parent (parent obj) (parent parent)))
-	((null parent) all-tfms)
-      (when (tfms parent)
-	(setf all-tfms (append (tfms parent) all-tfms))
-	))))
-	   
-
-    
-(defmethod apply-transformations ((obj chem-obj) v)
-  "Does all the transformations that have been applied to the object in the order they were applied"
-  (let* ((tfms (all-tfms obj))
-	 (rl (reverse tfms))
-	 (res (reduce #'apply-transformation tfms :initial-value  v :from-end t)))
-    res))
-
-
+;TODO: Check that these are enough and are logically consistent and that they need to be generic functions
 (defmethod add-transformation ((obj chem-obj) tfm)
   "Prepends tfm  tfms of obj
 Returns VALUES obj & list of transforms on obj"
