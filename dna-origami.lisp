@@ -1,7 +1,7 @@
 (in-package :small)
 
 
-
+;;TODO: Do we need this? or can we get away with using only helix strands? Or is there a better abstraction (maybe one that contains a list of helical strands that define the partners?
 (defclass/std dna-staple-strand (dna-strand)
  ())
 
@@ -96,6 +96,7 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
  ; (break "2  ~A" staps)
   staps)
   
+;;TODO: Recheck this and see in we need edge-staples
 
 (defclass/std dna-origami (dna)
   ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")

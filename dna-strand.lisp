@@ -1,6 +1,9 @@
 (in-package :small)
 ;;;; NOTE: strand nt subobjs should can contain ids nt number in that strands sequence, them the strand can be gotten (traverse length) or the strand and its partner can be gotten (traverse prev next) or check if a strand is a solo strand or part of a  composite one (len = prev-next traversal len
 
+
+;;TODO: We need a way of creating strands and initializing them with a given sequence.
+
 (defclass/std dna-strand (dna)
   ((vaxis :doc "A vector pointing in the 5'->3' direction")
    (vbb :doc "A vector pointing in from the base towards the backbone")
