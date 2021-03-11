@@ -44,6 +44,6 @@
 	   #:add-nt
 	   #:dna-single-strand
 	   #:dna-helix-strand
-	   ))
+	   #:t2))
 
 ;(in-package :small)
