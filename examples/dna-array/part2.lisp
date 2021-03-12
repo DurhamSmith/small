@@ -42,9 +42,6 @@
 
 
 ;;;; We see that the triangles (and the DNA-HELIX-STRAND and DNA-NTs) have been rotated. Notice how we have retrieved each individual triangle from the tile and written it out. This is because currently the triangle are disconnected entities. We fix this by adding each triangle to the tiles scaffold using the add-to-scaffold function provided by the dna-origami class (that we used as a superclass when creating the tile). Again we use the add-to-scaffold function introduced in part 1.
-
-
-
        
 (defmethod initialize-instance :after ((obj dna-tile2) &key)
   (with-accessors ((t1 t1) (t2 t2) (t3 t3) (t4 t4)) obj
@@ -60,10 +57,49 @@
     (add-to-scaffold obj t4)))
 
 
-;(fmakunbound  connect ((o1 dna-triangle2) (o2 dna-triangle2) &rest rest))
+;;;; This has set the 5nt and 3nt of the tile, as well as connected the ith triangle to the i+1th as they were added to the scaffold. Again we can write this to a file and see the results.
+(wmdna "tile-v1"  (make-instance 'dna-tile2))
 
+;;;; All looks good! Or does it? We have forgotten to add the scaffold bridges that join triangle i to triangle i+1. Not to worry this is easily fixed. Again we will use the bridging-single-strand function, this time explicitly passing the number of nucleotide to be 10 as in the paper (see SI p9). We create a function to do this,
 
-(with-accessors ((t1 t1) (t2 t2) (t3 t3) (t4 t4)) (make-instance 'dna-tile2)
-  ;; (wmdna "tile-v0" t1 t2 t3 t4)
-  (wmdna "tile-v1" (5nt (make-instance 'dna-tile2))))
-  )
+(defun tile-stap-bridge (tile k)
+  "Returns a DNA-SINGLE-STRAND that connects triangle k to triangle k+1 in the tile"
+  (let* ((tk (cond ((= k 1) (t1 tile))
+		   ((= k 2) (t2 tile))
+		   ((= k 3) (t3 tile))
+		   (t (error "k=~A is not a valid triangle index"))))
+	 (tk+1 (cond ((= k 1) (t2 tile))
+		   ((= k 2) (t3 tile))
+		   ((= k 3) (t4 tile))
+		   (t (error "k=~A is not a valid triangle index"))))
+	 (axis-k (axis (3nt tk)))   ;; Retrive the helix axis coords of last nucleotide in triangle k
+	 (axis-k+1 (axis (5nt tk+1)))) ;; Retrive the helix axis coords of first nucleotide in triangle k+1
+    (bridging-single-strand axis-k axis-k+1 (v3 0 1 0) :len 10)))
+
+;;;; In this we used the function axis which takes a DNA-NT and returns the coordinates of its axis. small provides many such function for the retireval of geometric points, one can look at the dna.lisp file to find more such functions. Lets check that this works as expected
+
+(tile-stap-bridge (make-instance 'dna-tile2) 1)
+
+;;;; We see we get DNA-SINGLE-STRAND and that there are 10 nucleotides as expected. Now lets modify our initialization of the DNA-TILE
+
+	 
+(defmethod initialize-instance :after ((obj dna-tile2) &key)
+  (with-accessors ((t1 t1) (t2 t2) (t3 t3) (t4 t4)) obj
+    (let* ((rot90 (rotation-matrix (v3 0 1 0) (/ pi -2)))
+	   (rot180 (rotation-matrix (v3 0 1 0) pi))
+	   (rot270 (rotation-matrix (v3 0 1 0) (/ (* 3 pi) -2))))
+      (rotate-obj t2 rot90)
+      (rotate-obj t3 rot180)
+      (rotate-obj t4 rot270))
+    (add-to-scaffold obj t1)
+    (add-to-scaffold obj (tile-stap-bridge obj 1))
+    (add-to-scaffold obj t2)
+    (add-to-scaffold obj (tile-stap-bridge obj 2))
+    (add-to-scaffold obj t3)
+    (add-to-scaffold obj (tile-stap-bridge obj 3))
+    (add-to-scaffold obj t4)))
+
+;;;; Now we can write the new tile out and check that everything works as expected
+(wmdna "tile-v2"  (make-instance 'dna-tile2))
+
+;;;; We see that the scaffold bridges are included. TODO ADD FIG
