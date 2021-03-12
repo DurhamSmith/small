@@ -32,7 +32,12 @@
     (error "generic function #'make-partner not implemented for ~A" (class-of obj))))
 
 ;TODO: Make connect do tail traversal so we can connect a list of dna objects
-(defgeneric connect (dna1  dna2 &rest rest))
+;TODO: Check that adding the generic fallback is sensible
+(defgeneric connect (dna1  dna2 &rest rest)
+(:documentation "Return a complementary DNA CHEM-OBJ for the given DNA CHEM-OBJ")
+  (:method ((dna1 dna) (dna2 dna)  &key start end from-3end)
+    (format t "generic function #'connect relying on default implemented for DNA")
+    (dna-connect dna1 dna2)))
 
 
 ;;TODO: Can this be a function?
