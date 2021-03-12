@@ -110,11 +110,20 @@ p
 
 (find-obj-with-props (scaffold (t1 (make-instance 'dna-tile2))) '((:i . 1)))
 
+(defun next-triangle-index (k)
+  (cond ((= k 1) 2)
+	 ((= k 2) 3)
+	 ((= k 3) 4)
+	 ((= k 4) 1)
+	 ((t (error "Invalid index ~A" (= k 1))))))
+
+
+
 (defun stap-bridge (tile k i &key (len1 8) (len2 8))
   (if (or (> i 11) (> 23 i))
       (let* ((hel1 (find-obj-with-props (scaffold (get-triangle tile k))
 					`((:i . ,i))))
-	     (hel2 (find-obj-with-props (scaffold (get-triangle tile (1+ k)))
+	     (hel2 (find-obj-with-props (scaffold (get-triangle tile (next-triangle-index k)))
 					`((:i . ,(- 23 i)))))
 	     (stap (if (oddp i)
 		       (create-staple `((:obj ,hel1 :start 0 :end ,len1 :from-3end nil)
@@ -128,12 +137,14 @@ p
 	stap)
       (error "Not a valid row selection")))
 
+;;;; Before incoporating this into the class initialization lets quickly print out the results on the two cases of scaffold bridge 
+
 (let* ((tile (make-instance 'dna-tile2))
        (sb1 (stap-bridge tile 1 12))
        (sb2 (stap-bridge tile 2 13)))
   (wmdna "tile-v3" tile sb1 sb2))
 
-;;;; 
+
 
 
 
