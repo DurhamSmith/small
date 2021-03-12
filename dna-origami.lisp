@@ -142,7 +142,23 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 
 					;  (break "~A ~A" o1 o2)
 ;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
-  (format t "~& WE HERE ~%")
+  (dna-connect (3nt o1) (5nt o2))
+  (dna-connect o1 o2))
 
+(defmethod connect ((o1 dna-strand) (o2 dna-origami) &rest rest)
+  
+  "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
+
+					;  (break "~A ~A" o1 o2)
+;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
+  (dna-connect (3nt o1) (5nt o2))
+  (dna-connect o1 o2))
+
+(defmethod connect ((o1 dna-origami) (o2 dna-strand) &rest rest)
+  
+  "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
+
+					;  (break "~A ~A" o1 o2)
+;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
   (dna-connect (3nt o1) (5nt o2))
   (dna-connect o1 o2))
