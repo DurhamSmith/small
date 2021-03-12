@@ -115,13 +115,15 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
   "Returns VALUES ori (scaffold ori) after connecting last DNA CHEM-OBJ in scaffold to scaff-obj and appends scaff-obj to (scaffold ori)"
   (with-accessors ((scaffold scaffold)) ori
     (if (null scaffold)
-	(setf scaffold (list scaff-obj))
+	(setf scaffold (list scaff-obj)
+	      (5nt ori) (5nt scaff-obj)) ; We set the 5nt if it is the firs obj in the scaffold)
 	(progn
 	  (connect (car (last scaffold)) scaff-obj)
 	  (setf scaffold (append scaffold (list scaff-obj)))))
     ;;We need to set origami as the parent to the scaff-obj
+    (setf (3nt ori) (3nt scaff-obj))
     (add-parent scaff-obj ori)
-    )) 
+    ori))
 
 (defmethod add-to-edge-staples ((ori dna-origami) (obj dna))
   "Returns VALUES ori (scaffold ori) after connecting last DNA CHEM-OBJ in scaffold to obj and appends obj to (scaffold ori)"
@@ -132,3 +134,15 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 
 
 	
+
+;;;; Generic implementation for connect for origami
+(defmethod connect ((o1 dna-origami) (o2 dna-origami) &rest rest)
+  
+  "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
+
+					;  (break "~A ~A" o1 o2)
+;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
+  (format t "~& WE HERE ~%")
+
+  (dna-connect (3nt o1) (5nt o2))
+  (dna-connect o1 o2))
