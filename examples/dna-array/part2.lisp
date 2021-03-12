@@ -144,6 +144,27 @@ p
        (sb2 (stap-bridge tile 2 13)))
   (wmdna "tile-v3" tile sb1 sb2))
 
+;;;; Everthing works as expected. Let unpack what is going on in the stap-bridges function. There are two new and important functions that we use here, (find-obj-with-props) and (create-staple). Before we dive into them it is important to understand a little bit about lisp, since we make some use of language features that might be unfamiliar to those coming into programming from an ALGOL derived langage.
+
+;;;; In lisp code and data is represented as a list. Representing code and data in the same form is called homoiconcity and is a large source of lisps power and expressiveness. For example, code to call a function is composed of a list, with the first list entry being the fuction name and the next entries being its arguments. E.g.
+(+ 1 2)
+;;;; Data is also composed of lists, say for example a list of vaules (1 2). If we wanted to create a list with data we cannot simply type (1 2) as when lisp interprets this first value in the list as the function name. 
+(1 2)
+;;;; To get around this we can use the quote function. It takes one argument and returns exactly that argument, without evaluating anything in it or trying to interpret first list entry as a function name.
+(quote (+ 1 2))
+(quote (:i (+ 1 2) (+ 2 3)))
+;;;; Since lists are so prolific in lisp the syntax has a lot of synatctic sugar to deal with their manipulation. For example instead or writing quote we can just write ' before the argument we normally pass to quote.
+'(:i (+ 1 2) (+ 2 3))
+;;;; Notice how the (1+ 1) hree is not evaluated. If we did want it to be evaluated we could use the function list which takes n arguments, evaluates them and returns the values resulting from evaluating them in a list of length n.
+(list :i (+ 1 2) (+ 2 3))
+;;;; Another sytactic sugar that we use is backquote. We need to understand its use if we want to understand create-staple and find-obj-with-props. Just like the syntactic sugar for quote, ', infact using it in place of quote yeilds the same result
+`(:i (+ 1 2) (+ 2 3))
+;;;; Where its behavior changes is when a TODO (argument?) is preceeded by a ,. When this happens the expression is evaluated and placed in the resulting list, e.g.
+`(:i (+ 1 2) ,(+ 2 3))
+
+
+
+
 
 
 
