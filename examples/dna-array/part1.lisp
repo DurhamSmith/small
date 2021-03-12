@@ -39,7 +39,7 @@
 		       (* (+ *helix-diameter* *helix-spacing*)
 			  (- i 1)))
 		    *helix-nt-spacing*))
-	  (ai (+ 2r 1 (- i))))))
+	  (ai (+ *2r* 1 (- i))))))
 
 
 ;;;; After that we define functions calculate the coordinate of the helices that make the triangles axis. See page 8 of the supplementary information. Notice that their coordinate system in not given IN CONVENTIONAL CARTESIAN COORDINATES, as such we translate the coords to a normal cartesian coordinate system by reflecting the y-vaules around the origin, although this does not matter for the coordinates for the helices axis since these are defined to be in the y=0 plane.
@@ -185,40 +185,11 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	  (unless (= *2r* i)
 	    (add-to-scaffold ori (tri-scaf-loop i)))
 	  )))
-  )
+  ;; Now we set the 5' and 3' ends of the dna-tile
+  (setf (5nt ori) (5nt (first (scaffold ori)))
+	(3nt ori) (3nt (car (last (scaffold ori))))))
 
-(defparameter t2 (make-instance 'dna-triangle2))
+(last (scaffold (make-instance 'dna-triangle2)))
+(defparameter tri2 (make-instance 'dna-triangle2))
 (wmdna "t2al" (5nt (first (children (make-instance 'dna-triangle2)))))
 
-
-
-					;(break ori)
-    (mapcar #'(lambda (nt base)
-		(with-accessors ((cm cm) (vbb vbb) (vn vn)) nt  
-		  (update-base nt  base) ;Set the bases to match the m13 seq
-		  ;; Update coords since we want regular carteisan
-		  ;;and the paper defines y in the opposite direction
-		  (setf (cm nt) (@ (from-diag '(1d0 -1d0 1d0)) cm)) 
-		  (setf (vbb nt) (@ (from-diag '(1d0 -1d0 1d0)) vbb))
-		  (setf (vn nt) (@ (from-diag '(1d0 -1d0 1d0)) vn))))
-	    (connected-nts (5nt (first (scaffold ori))))				
-	    (map 'list #'string  *m13mp18*))
-
-    (setf (5nt ori) (5nt (find-obj-with-props (scaffold ori)
-					      `((:i . 1) (:k . 1)))))
-    (setf (3nt ori) (3nt (find-obj-with-props (scaffold ori)
-					      `((:i . 22) (:k . 1)))))
-    ;; Now we add  staples to hold this bad boy together. awwww yeah
-    (setf (internal-staps ori) (internal-staples ori))
-    (push (u-staples-tri ori) (internal-staps ori))
-    (mapcar #'(lambda (stap)
-		(add-parent stap ori))
-	    (alexandria:flatten (internal-staps ori)))
-    ;; These are cappping end added in a hacky way
-    
-    (setf (capping-staps ori) (capping-ends ori));; (capping-ends ori :indices '(1 3 5 7 9 11 13 15 17 19 21))
-    (mapcar #'(lambda (stap)
-		(add-parent stap ori))
-	    (capping-staps ori))
-	    
-    ori)
