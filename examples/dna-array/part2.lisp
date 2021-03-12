@@ -59,19 +59,21 @@
 
 ;;;; This has set the 5nt and 3nt of the tile, as well as connected the ith triangle to the i+1th as they were added to the scaffold. Again we can write this to a file and see the results.
 (wmdna "tile-v1"  (make-instance 'dna-tile2))
+p
+;;;; All looks good! Or does it? We have forgotten to add the scaffold bridges that join triangle i to triangle i+1. Not to worry this is easily fixed. Again we will use the bridging-single-strand function, this time explicitly passing the number of nucleotide to be 10 as in the paper (see SI p9). We create a function to do this, 
 
-;;;; All looks good! Or does it? We have forgotten to add the scaffold bridges that join triangle i to triangle i+1. Not to worry this is easily fixed. Again we will use the bridging-single-strand function, this time explicitly passing the number of nucleotide to be 10 as in the paper (see SI p9). We create a function to do this,
+(defun get-triangle (tile k)
+  "Utility function to retrieve triangle k from the tile"
+  (cond ((= k 1) (t1 tile))
+	((= k 2) (t2 tile))
+	((= k 3) (t3 tile))
+	((= k 4) (t4 tile))
+	(t (error "k=~A is not a valid triangle index"))))
 
 (defun tile-stap-bridge (tile k)
   "Returns a DNA-SINGLE-STRAND that connects triangle k to triangle k+1 in the tile"
-  (let* ((tk (cond ((= k 1) (t1 tile))
-		   ((= k 2) (t2 tile))
-		   ((= k 3) (t3 tile))
-		   (t (error "k=~A is not a valid triangle index"))))
-	 (tk+1 (cond ((= k 1) (t2 tile))
-		   ((= k 2) (t3 tile))
-		   ((= k 3) (t4 tile))
-		   (t (error "k=~A is not a valid triangle index"))))
+  (let* ((tk (get-triangle tile k))
+	 (tk+1 (get-triangle tile (1+ k)))
 	 (axis-k (axis (3nt tk)))   ;; Retrive the helix axis coords of last nucleotide in triangle k
 	 (axis-k+1 (axis (5nt tk+1)))) ;; Retrive the helix axis coords of first nucleotide in triangle k+1
     (bridging-single-strand axis-k axis-k+1 (v3 0 1 0) :len 10)))
@@ -103,3 +105,42 @@
 (wmdna "tile-v2"  (make-instance 'dna-tile2))
 
 ;;;; We see that the scaffold bridges are included. TODO ADD FIG
+
+;;;; Next we want to add some staple bridges to hold the tile together. To do so we will define a function that take a dna-tile the tile number k [1,4] and a helix number i [12,22] and keyword arguments :l1 and :l2 returns a staple that between the kth triangle ith helix and the k+1th triangle 23-ith helix.
+
+(find-obj-with-props (scaffold (t1 (make-instance 'dna-tile2))) '((:i . 1)))
+
+(defun stap-bridge (tile k i &key (len1 8) (len2 8))
+  (if (or (> i 11) (> 23 i))
+      (let* ((hel1 (find-obj-with-props (scaffold (get-triangle tile k))
+					`((:i . ,i))))
+	     (hel2 (find-obj-with-props (scaffold (get-triangle tile (1+ k)))
+					`((:i . ,(- 23 i)))))
+	     (stap (if (oddp i)
+		       (create-staple `((:obj ,hel1 :start 0 :end ,len1 :from-3end nil)
+					(:single-strand t)					
+					(:obj ,hel2 :start 0 :end ,len2 :from-3end t)))
+		       (create-staple `((:obj ,hel2 :start 0 :end ,len2 :from-3end nil)
+					(:single-strand t)					
+					(:obj ,hel1 :start 0 :end ,len1 :from-3end t))))))
+	(format t "~& aoeusntaoe ~%")
+
+	stap)
+      (error "Not a valid row selection")))
+
+(let* ((tile (make-instance 'dna-tile2))
+       (sb1 (stap-bridge tile 1 12))
+       (sb2 (stap-bridge tile 2 13)))
+  (wmdna "tile-v3" tile sb1 sb2))
+
+;;;; 
+
+
+
+    
+    
+  
+
+
+  
+
