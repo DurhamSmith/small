@@ -1,10 +1,12 @@
-;; The first tutorial aims to show how the SIZE dna array of Tikhomirov et al can be created in small.
-;; It is dividede into 4 sections, each demonstraiting a section of smalls capabilites
-;; In the first section the basic dna model is introduced and some of the api functionality for creating dna is showcased in creating functions to create a triangle of dna tile used in the paper.
-;; The next section shows how four such triangles can be used to create the full tile used in the array.
-;; Section 4 shows how these tiles are in turn used to create a DNA array, and how staple strands can be extended to create arbitrary pictures.
+;; This tutorial aims to show how a 16x16 array of DNA tiles based on the work of Tikhomirov et al can be created in `small`.
+;; It is divided into 3 parts, each aimed at introducing some of `small`s capabilites and the key ideas behind them while laying down the codebase to create an array of DNA tiles.
+;; In the first part we cover the basic syntax of `common lisp` so that even those unfamilar with the language may easily follow along. Along side this we introduce the DNA model that `small` uses to represent DNA and showcase some of the API functionality for creating objects to represent DNA and build our own such object to represent the scaffold of one of the four triangles used in 
 
-;;;; First we need to specify that we want to be in the small package to  gain aceess to its functionality
+;; The next section shows how `small` allows one to build nanostructures of ever increasing size. We learn how to geometrically manipulate the triangle we created in part 1 and how we can four such triangles to create a full tile used in the 16x16array. We show how we associate key value pairs to parts of DNA structures and how we can retrieve structures based on these key-value pairs. How to create staple strands to hold the created tile together is also shown.
+
+;; Part 3 shows how these tiles are in turn used to create a DNA array and how staple strands can be extended to create arbitrary patterns on these arrays.
+
+;;;; First we need to specify that we want to be in the small package to  gain access to its functionality
 (in-package :small)
 
 
