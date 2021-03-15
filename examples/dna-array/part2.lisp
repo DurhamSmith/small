@@ -163,16 +163,13 @@ p
 `(:i (+ 1 2) ,(+ 2 3))
 
 
+;;;; Now we  are in a positino to understand what is going on in the find-obj-with-props and create-staple. First find-obj-with-props is a function we get access to from the chem-obj class that forms the lowest level of abstraction for building chemical entities in small. find-obj-with-props takes a list of chem-objs and a list of key-value pairs, as cons cells and returns the first object that contains them. Without getting into to much detail on the cons cell data structure for our purposese we can create a cons cell using the (key . value) synatax or (cons key val). So in the call to find-obj-with-props we retrieve all the scaffold helices for a triangle within a tile (scaffold (get-triangle tile (next-triangle-index k))) and then query for the i-th helice and the (- 23 i)th of the triangle that its right edge (helices 12-22) (remebering that , in a backtick environment causes evaluation of the expression). We store and retrieve these helices so we can add staples to hold them together.
 
+;;;; create-staple take a nexted list that specifies what the staple should look like. The entries in the nested list can be of two forms. The fist is (:obj ,hel1 :start 0 :end ,len1 :from-3end nil) where :obj is a DNA-HELIX-STRAND to which the staple strand should be made, :start specifies the 0 indexed inclusive position from the 5' prime end of the DNA-HELIX-STRAND, :end specifies the 0 indexed excluded end position of what nucleotide sequence strand. The :from-3end entry changes the behaviour of the :start and :end keywords to traverse the strand in the 3'->5' direction. The second entry the list can t
 
+;;  \lstinline{create-staple} takes a nested list where each inner list can take one one of two forms. The first of these forms is
+;; \lstinline{(:obj DNA  :start INT :end INT  :from-3end BOOL)} which will create a staple strand the \lstinline{dna-strand} that follows the \lstinline{:obj} keyword. The \lstinline{:start} keyword specify the zero indexed inclusive starting bound and excluded ending bounds, as traversed starting at the \(5^{\prime}\) end of the \lstinline{dna-strand}. The \lstinline{from-3end} keyword argument when \lstinline{t} modifies this behaviour traversing the strand from the \(3^{\prime}\) end instead.
 
+;; The second type of list that \lstinline{(create-staple)} can accept has the form \lstinline{(:single-strand t [opt] :num-nts INT/nil)} which will create a \lstinline{dna-single-strand} that connects the \lstinline{dna-helix-strand} of the staple that is that is \textcolor{red}{created by the list entry just before it in the nested list} passed to \lstinline{create-staple} to the \lstinline{dna-helix-strand} that is created in the following nested list entry. If the \lstinline{:num-nts} keyword is passed the \lstinline{dna-single-strand} will contain than many \lstinline{dna-nt}s. If this argument is not passed or is \lstinline{nil} the number of \lstinline{dna-nt}s will be calculated based on the Euclidian distance between the \(3^{\prime}\) and \(5^{\prime}\) end of the \lstinline{dna-helix-strand}s that this \lstinline{dna-single-strand} connects.
 
-
-
-    
-    
-  
-
-
-  
 
