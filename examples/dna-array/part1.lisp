@@ -1,12 +1,47 @@
-This tutorial aims to show how a 16x16 array of DNA tiles based on the work of Tikhomirov et al can be created in `small`.
-It is divided into 3 parts, each aimed at introducing some of `small`s capabilites and the key ideas behind them while laying down the codebase to create an array of DNA tiles.
-In the first part we cover the basic syntax of `common lisp` so that even those unfamilar with the language may easily follow along. Along side this we introduce the DNA model that `small` uses to represent DNA and showcase some of the API functionality for creating objects to represent DNA and build our own such object to represent the scaffold of one of the four triangles used in 
+;;;; # Introduction
+;; This tutorial aims to show how a 8x8 array of DNA tiles based on the work of Tikhomirov et al, shown below, can be created in `small`.
+;; ![title](tile-array.png)
+;; The tutorial is divided into 3 parts, each aimed at introducing some of `small`s capabilites and the key ideas behind them while laying down the code needed to create an array of DNA tiles.
+;; In the first part we cover the basic syntax of `common lisp` so that even those unfamilar with the language may easily follow along. Along side this we introduce the DNA model that `small` uses to represent DNA, showcase some of the API functionality for creating representations of objects made of DNA and define our own such object to represent the scaffold of one of the four triangles that a single tile in the array is made of. 
 
-The next section shows how `small` allows one to build nanostructures of ever increasing size. We learn how to geometrically manipulate the triangle we created in part 1 and how we can four such triangles to create a full tile used in the 16x16array. We show how we associate key value pairs to parts of DNA structures and how we can retrieve structures based on these key-value pairs. How to create staple strands to hold the created tile together is also shown.
+;; The next section shows how `small` allows one to build nanostructures of ever increasing size. We learn how to geometrically manipulate the triangle we created in part 1 and how to connect four such triangles to create a full tile used in the 8x8 array. We show how we can associate key-value pairs to parts of DNA structures and how we can retrieve structures based on these key-value pairs. Additionally how to create staple strands to hold the created tile together is also shown.
 
-Part 3 shows how these tiles are in turn used to create a DNA array and how staple strands can be extended to create arbitrary patterns on these arrays.
+;; Part 3 shows how these tiles are in turn used to create a DNA array and how staple strands can be extended to create arbitrary patterns on these arrays.
 
-First we need to specify that we want to be in the small package to  gain access to its functionality
+;;;; # Introduction to Common Lisp
+;; Those unfamiliar with Lisp might be confused by the syntax and the abundance of parenthesis. This is no reason for concern, in-fact it is what give the Lisp family of languages their incredible expressive power. Lisp code is comprised of s-expressions, which can either be lists or atoms. Lists are delimited by parentheses and can contain any number of whitespace-separated elements. Atoms are everything else, for example a number, a character or a user defined object. Code and data are represented by lists, hence the large amount of parenthesis.
+
+;; Code to call a function is composed of a list, with the first list entry being the function name and the next entries being its arguments. E.g.
+
+(+ 1 2)
+
+;; When evaluating multiple lists the inner most lists are evaluated before the enclosing list. E.g;
+
+(- (+ 2 3) (+ 1 2))
+
+;; Lists can also contain data, say for example a list of values (1 2) or all the nucleotides in a strand of DNA. If we wanted to create a list with data we cannot simply type (1 2) as Lisp will try to interpret first value in the list as the function name, resulting in an illegal function call `ERROR`.
+(1 2)
+
+;; To get around this we can use the `quote` function. It takes one argument and returns exactly that argument, without evaluating anything in it or trying to interpret first list entry as a function name.
+(quote (+ 1 2))
+(quote (:i (+ 1 2) (+ 2 3)))
+
+;; Since lists are so prolific in Lisp the syntax has a lot of syntactic sugar to deal with their manipulation. For example instead or writing quote we can just write ' before the argument we normally pass to quote.
+'(:i (+ 1 2) (+ 2 3))
+
+;; Notice how the lists containing the `+` are not evaluated. If we did want it to be evaluated we could use the function `list` which takes n arguments, evaluates them and returns the values results from evaluating them in a list of length n.
+(list :i (+ 1 2) (+ 2 3) 10 "DNA nanotechnology is fun!")
+
+;; Another syntactic sugar that we use is backquote, `` ` ``. We need to understand its use if we want to understand create-staple and find-obj-with-props. Just like the syntactic sugar for quote, `'`, in fact using it in place of quote yields the same result.
+`(:i (+ 1 2) (+ 2 3))
+
+;; Where its behavior of `` ` `` is different to that of `'` is when an s-expression in the list is preceded by a `,`. When this happens the expression is evaluated and placed in the resulting list, e.g.
+`(:i (+ 1 2) ,(+ 2 3))
+
+
+# Introduction to `small`
+First we need to tell Common Lisp that we to use of the `small` package to gain access to its functionality it provides.
+
 (in-package :small)
 
 
