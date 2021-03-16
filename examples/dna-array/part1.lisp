@@ -208,7 +208,9 @@ j th base pair in the i th row in the first triangle."
 (tri-scaf-coords 1 1 :cm nil)
 (tri-scaf-coords 1 1 :cm t)
 
-;;;; Now its finally time to use these coordinate functions to create the scaffold helices of the triangle. We use the helix-strand function to do this. This function takes as its arugments the coordinate of the 5' end of helixs axis, a unit vector pointing in the 5'->3' direction, a unit vector pointing from the coordinate of the 5' end of helixs axis to the center of mass of the first nucleotide and how many nucleotides the strand contains. It returns a DNA-HELIX-STRAND object with the desired number of nucleotides.
+
+;;;; ## Creating DNA Strands For The Scaffold
+;; Now its finally time to use these coordinate functions to create the scaffold helices of the triangle. We use the `helix-strand` function to do this. The arguments are the coordinates of the 5' end of helix's axis, a unit vector pointing in the 5'->3' direction, a unit vector pointing from the coordinate of the 5' end of helix's axis to the center of mass of the first nucleotide and how many nucleotides the strand contains. It returns a `DNA-HELIX-STRAND` object with the desired number of nucleotides.
 
 (defun tri-scaffold-helix (i)
   (let* ((j (if (oddp i)
@@ -225,12 +227,21 @@ j th base pair in the i th row in the first triangle."
 	 (vbb0 (as-unit-vec (.- cm 5axis)))
 	 (hel (helix-strand 5axis vn vbb0 (ai i))))
     (add-prop hel :i i)
-					;TODO: remember to add-prop k later
-    ;;    (break "~A" props)
     hel))
 
+;;;; Lets check that it works;
+(tri-scaffold-helix 1)
 
+### Writing DNA objects
+We can write DNA objects using the `wmdna` (write multiple dna) function. It takes a filename and N `dna` objects as its arguments and writes a the OxDNA topology and configuration for these `dna` objects to filename.top and filename.oxdna respectively. Lets write out the first two helices;
 
+(wmdna "first-two" (tri-scaffold-helix 1) (tri-scaffold-helix 2))
+
+We can then view these in any capable OxDNA viewer, such as [oxdna-viewer](https://sulcgroup.github.io/oxdna-viewer/). The result is shown below. Note that the axis in oxdna-viewer are not positioned at (0,0,0) in our coordinate frame.
+
+![First two helices](first-two.png)
+
+## Understanding `small`s DNA Model
 ;;;; small allows the heirachial building of objects of increasing levels of abstraction. This allows these objects to be modified and manipulated as individual units. (TODO ADD FIG). In defining (tri-scaffold-helix) we have made use of this without even knowing it. The DNA-HELIX-STRAND class that it returns in on object that represents a strand in a double helix. The DNA strand representation is created from a DNA nucleotides, which are implemented using the DNA-NT class. These DNA-NTs are stored in the children slot of the DNA-HELIX-STRAND.
 (children (tri-scaffold-helix 1))
 
