@@ -155,8 +155,11 @@
 
 
 ;;;; ## Coordinates Where Scaffold Base Joins Backbone.
-;; Next we define functions to calculate The coordinate location of where the scaffold base joins the helix backbone in the two-dimensional plane of the j th base pair in the i th row in the first triangle. See page p8 of the supplementary info. First we need to calculate the angle that scaffold base makes with the helix's axis. 
+;; Next we define functions to calculate The coordinate location of where the scaffold base joins the helix backbone. Below are the instructions for doing so take from page p8 of supplementary info;
 
+;; ![Scaffold Base Coords Calculation](scaf-base.png)
+
+;; First we need to calculate the angle that scaffold base makes with the helix's axis. 
 
 (defun theta-1ij (i j &key (odd-offset 0) (even-offset 0))
   (let* ((rotation (mod (* (- j 1)
@@ -173,9 +176,16 @@
 	     :even-offset pi))
 
 
-;;;; In defining theta-1ij we have used keyword arguments, this allows us to specify the values we want to use for angular offsets for even and odd rows of helices. Following the paper we use 0 when i in odd, and 180 (pi radians) when i is even, when we call theta-1ij from theta-1ij-scaffold.
+;; In defining `theta-1ij` we have used keyword arguments. We did this allows us to specify the values we want to use for angular offsets for even and odd rows of helices. Although in this case we could have hard-coded the even and off offsets but we wanted show off the keyword argument.  Following the paper we use 0 when i in odd, and 180 (pi radians) when i is even, when we call `theta-1ij` from `theta-1ij-scaffold` passing `:odd-offset` and `:even-offset` to specify their values. Had we not provided the keyword and argument the default value of `0` would be used as they were the default value we specified when defining `theta-1ij`  (i.e `(defun theta-1ij (i j &key (odd-offset 0) (even-offset 0))`).
 
-(theta-1ij-scaffold 1 1)
+;; We have also used the [`let*` function](http://www.lispworks.com/documentation/HyperSpec/Body/s_let_l.htm). This function is used to introduce local variable. It's first argument is a list of list, where the form of each of the sub-lists is of the form `(variable-name expression-to-evaluate-for-value)`. For example in the first of these forms in `theta-1ij` we bind the variable `rotation` to the result of evaluating `(mod (* (- j 1) *rad/bp*) (* 2 pi)))` (where `*rad/bp*` in constant defining the amount of radians per base pair in a double helix and is defined in [dna.lisp](https://github.com/DurhamSmith/small/blob/master/dna.lisp)).
+
+;; Lets check that everything works (remembering the returned value will be in radians).
+(theta-1ij-scaffold 1 2)
+
+;; `small` also provides functions to convert from degrees to radians (and vice versa).
+(rad->deg (theta-1ij-scaffold 1 2))
+
 
 ;;;; Next we get the coordinate of th
 
@@ -209,8 +219,8 @@
 	 (vbb0 (as-unit-vec (.- cm 5axis)))
 	 (hel (helix-strand 5axis vn vbb0 (ai i))))
     (add-prop hel :i i)
-    ;TODO: remember to add-prop k later
-;;    (break "~A" props)
+					;TODO: remember to add-prop k later
+    ;;    (break "~A" props)
     hel))
 
 
