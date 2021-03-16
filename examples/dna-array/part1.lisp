@@ -273,23 +273,20 @@ j th base pair in the i th row in the first triangle."
 (wmdna "scaf-loop" (tri-scaffold-helix 2) (tri-scaffold-helix 3) (tri-scaf-loop 2))
 ;; ![Scaffold Loop Test](scaf-loop.png)
 
+;; ## Creating Abstractions of DNA objects
+;; We will now create our own higher level of abstraction that represents the dna triangle we have layed the groundwork for. To do so we create a class to represent the DNA triangle. Here we make use of the [defclass/std](https://quickref.common-lisp.net/defclass-std.html) package to define classes but it could also be done using the native [`defclass` macro](http://www.lispworks.com/documentation/HyperSpec/Body/m_defcla.htm) provided by Common Lisp.
 
-;;;; We will now create our own higher level of abstraction that represents the dna triangle. To do so we create a class to represent the DNA triangle. Here we make use of the defclass/std package.
-(defclass/std dna-triangle2 (dna-origami)
-  ((joining-strands :doc "list of joining strands")
-   (internal-staps :doc "list of internal staple strands")
-   (capping-staps :doc "list of capping staple strands")
-   )
+(defclass/std dna-triangle (dna-origami)
+  ()
   (:documentation "An implementation the DNA a single triangle of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
-;;;; Notice how we extended the dna-origami class. This allows us to make use of the class slots provided by dna-origami and the functions that have been specialized on them. It is good to remember that at any time (describe ...) can be used to gain information on a class or function.
+;; Notice how we inherit from the `dna-origami` class. This allows us to make use of the class slots provided by the `dna-origami` class and the functions that have been specialized on them. It is good to remember that at any time (describe ...) can be used to gain information on a class or function.
 
 (describe 'dna-origami)
 
-;;;; Now that we have defined our class lets create the dna strands that correspond to the scaffold. 
-(defmethod initialize-instance :after ((ori dna-triangle2) &key)  
-    ;;Fist we loop over the scaffold so that we can set its sequence
-    ;;This way when we make partners they have the correct seq
+;; Now that we have defined the class to contain the DNA tile abstraction lets create the dna strands that correspond to its scaffold. We do this in [the constructor](http://www.gigamonkeys.com/book/object-reorientation-classes.html) of the `dna-triangle`.
+
+(defmethod initialize-instance :after ((ori dna-triangle) &key)  
     (loop for i from 1 to 22 do
       (progn
 	;;(break "scaff ~A" (scaffold ori))
@@ -302,7 +299,13 @@ j th base pair in the i th row in the first triangle."
   (setf (5nt ori) (5nt (first (scaffold ori)))
 	(3nt ori) (3nt (car (last (scaffold ori))))))
 
-(last (scaffold (make-instance 'dna-triangle2)))
-(defparameter tri2 (make-instance 'dna-triangle2))
-(wmdna "t2al" (5nt (first (children (make-instance 'dna-triangle2)))))
+;; Notice how we added the `DNA-HELIX-STRAND` and `DNA-SINGLE-STRAND`s to the scaffold using the `add-to-scaffold` function.
 
+(scaffold (make-instance 'dna-triangle))
+;; Lets write the triangle out, visualize it, and see that everything is as expected.
+(wmdna "triangle" (make-instance 'dna-triangle))
+;; ![DNA Triangle](dna-triangle.png)
+
+;; All is working as expected. The attentive follower might have noticed that currently our scaffold has no sequence (all bases are T). This is fine for now and we add this in the next parts of the tutorial.
+
+;; This ends off part 1 of this tutorial.
