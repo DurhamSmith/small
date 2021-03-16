@@ -210,6 +210,7 @@ j th base pair in the i th row in the first triangle."
 
 
 ;;;; ## Creating DNA Strands For The Scaffold
+;; ### Creating Scaffold Helices
 ;; Now its finally time to use these coordinate functions to create the scaffold helices of the triangle. We use the `helix-strand` function to do this. The arguments are the coordinates of the 5' end of helix's axis, a unit vector pointing in the 5'->3' direction, a unit vector pointing from the coordinate of the 5' end of helix's axis to the center of mass of the first nucleotide and how many nucleotides the strand contains. It returns a `DNA-HELIX-STRAND` object with the desired number of nucleotides.
 
 (defun tri-scaffold-helix (i)
@@ -229,36 +230,48 @@ j th base pair in the i th row in the first triangle."
     (add-prop hel :i i)
     hel))
 
-;;;; Lets check that it works;
+;; Notice how we also called the `add-prop` function to add the helix number `i` under the key `:i` to the `DNA-HELIX-STRAND`. Don't worry about this right now, we will return it again in Part 2 of the tutorial.
+;; Lets check that it works;
 (tri-scaffold-helix 1)
 
-### Writing DNA objects
-We can write DNA objects using the `wmdna` (write multiple dna) function. It takes a filename and N `dna` objects as its arguments and writes a the OxDNA topology and configuration for these `dna` objects to filename.top and filename.oxdna respectively. Lets write out the first two helices;
+;;;; ### Writing DNA objects
+;; We can write DNA objects using the `wmdna` (write multiple dna) function. It takes a filename and N `dna` objects as its arguments and writes a the OxDNA topology and configuration for these `dna` objects to filename.top and filename.oxdna respectively. Lets write out the first two helices;
 
 (wmdna "first-two" (tri-scaffold-helix 1) (tri-scaffold-helix 2))
 
-We can then view these in any capable OxDNA viewer, such as [oxdna-viewer](https://sulcgroup.github.io/oxdna-viewer/). The result is shown below. Note that the axis in oxdna-viewer are not positioned at (0,0,0) in our coordinate frame.
+;; We can then view these in any capable OxDNA viewer, such as [oxdna-viewer](https://sulcgroup.github.io/oxdna-viewer/). The result is shown below. Note that the axis in oxdna-viewer are not positioned at (0,0,0) in our coordinate frame.
 
-![First two helices](first-two.png)
+;; ![First two helices](first-two.png)
 
-## Understanding `small`s DNA Model
-;;;; small allows the heirachial building of objects of increasing levels of abstraction. This allows these objects to be modified and manipulated as individual units. (TODO ADD FIG). In defining (tri-scaffold-helix) we have made use of this without even knowing it. The DNA-HELIX-STRAND class that it returns in on object that represents a strand in a double helix. The DNA strand representation is created from a DNA nucleotides, which are implemented using the DNA-NT class. These DNA-NTs are stored in the children slot of the DNA-HELIX-STRAND.
+;;;; ### Understanding `small`s DNA Model
+;; `small` allows the hierarchical building of chemical entities of increasing levels of abstraction. These entities are represented as `object`s that are subclasses of `chem-obj`. The `chem-obj` class provides some functionality for things like keeping track of objects, connecting them and performing geometric rotations and translation on them. This allows these objects to be modified and manipulated as individual units. This hierarchy can be seen in the figure below.
+
+;; (TODO ADD FIG).
+
+;; In defining `(tri-scaffold-helix)` we have made use of this hierarchy without even knowing it. The `DNA-HELIX-STRAND` class that `(tri-scaffold-helix)` returns is an object that represents a strand in a double helix. The DNA strand representation is created from a DNA nucleotides, which are implemented by the `DNA-NT` class. These `DNA-NT`s are stored in the `children` slot of the `DNA-HELIX-STRAND`.
+
 (children (tri-scaffold-helix 1))
 
-;;;; Similarly the DNA-NTs store their parent in the parent slot. Tracking these relationships allows modifications, such as geometric translations parents, to effect children.
+;; Similarly the `DNA-NT`s store their parent in the `parent` slot. Tracking these relationships allows modifications, such as geometric translations parents, to effect children.
 (parent (first (children (tri-scaffold-helix 1))))
 
+;; ### Creating Scaffold Loops
+;; Next we define a function to create the scaffold loops. It takes the row number, `i`, and uses the `bridging-single-strand` function to create a `DNA-SINGLE-STRAND` between two coordinates. `bridging-single-strand` first two arguments are the coordinates of the strands 5' end and the coordinate of strands 3' end. The last required argument is a unit vector that points from the helix axis to the base of the first nucleotide in the strand. `bridging-single-strand` also takes a keyword argument `:len` which is the amount of nucleotides the strand should have. If it is not given the number of nucleotides is automatically calculated based on the distance and the variable `*single-strand-nt-spacing*` (defined in [dna.lisp](https://github.com/DurhamSmith/small/blob/master/dna.lisp)). The amount of nucleotides is given the formula 9 of the supplementary information, which for convenience is given below.
 
-;;;; Next we create a function to create the scaffold loops. It takes the helix number, i, and uses the bridging-single-strand to create single strands between the two coordinantes. The first coord specifes the 5' end strand of the strand, the second specifies the 3' coordinate. The last argument is a unit vector that points from the helix axis to the base of the first nucleotide in the strand. bridging-single-strand also takes a keyword argument :len which is the amount of nucleotide to use in the strand. If it is not given the number of nucleotides is automatically calculated based on the distance and the variable TODO *single-nt-length* as given on page 9 of the supplementary information.
+;; ![Scaffold Loop Length Calculation](scaf-loop-len.png)
+
+;; We define a function to create the scaffold loop as follows;
+
 (defun tri-scaf-loop (i)
   (let* ((c1 (tri-scaf-coords i (ai i)))
 	 (c2 (tri-scaf-coords (+ i 1) (ai (+ i 1))))
 	 (loop-strand (bridging-single-strand c1 c2 (v3 0 1 0))))
-    ;TODO: (add-prop loop-strand :k k) this somewhere later
     (add-prop loop-strand :i i)
     loop-strand))
 
-(tri-scaf-loop 1)
+;; Lets test this by writing out the second and third scaffold helix and the scaffold loop between them and visualizing the result.
+(wmdna "scaf-loop" (tri-scaffold-helix 2) (tri-scaffold-helix 3) (tri-scaf-loop 2))
+;; ![Scaffold Loop Test](scaf-loop.png)
 
 
 ;;;; We will now create our own higher level of abstraction that represents the dna triangle. To do so we create a class to represent the DNA triangle. Here we make use of the defclass/std package.
