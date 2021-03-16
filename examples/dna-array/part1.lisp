@@ -39,13 +39,19 @@
 `(:i (+ 1 2) ,(+ 2 3))
 
 
-# Introduction to `small`
-First we need to tell Common Lisp that we to use of the `small` package to gain access to its functionality it provides.
+;;;; # Introduction to `small`
+
+;; First we need to tell Common Lisp that we to use of the `small` package to gain access to its functionality it provides. First we load the package using [quicklisp](https://www.quicklisp.org/beta/).
+;; (ql:quickload :small)
+
+;; Next we specify that we want to be in the `small` package so that we are able to use the functions and global variable that are defined in it.
 
 (in-package :small)
 
+;;; ## Creating constants
+;; In this section we  introduce the constants defined in [Tikhomirov et al](https://doi.org/10.1038/nnano.2016.256) that implement the geometric model of DNA that they use. See [pages 7-11 of the supplementary information](https://static-content.springer.com/esm/art%3A10.1038%2Fnnano.2016.256/MediaObjects/41565_2017_BFnnano2016256_MOESM28_ESM.pdf) for information on the geometric model.
 
-;;;; Next we introduce the constants as set out in Tikhomirov et al. See pages 7-11 of the supplementary information for information on the geometric model. If you are unfamilair with common lisp the it uses infix notation. Code is composed of list, with the start denoted by ( and the end donted by ). The first argument after the opening of a list is the function name to be called. In the following codesnippets it is defparameter, which binds sybols to values. The list items that follow are the arguments to the function. In this case the fist argument is the symbol to bind and the following arugment is value to bind it to. Lisp also the ability code to add documentation to itself. The third argument is a docstring that adds such documentation describing the introduced symbols. The surrounding *'s in the name of the variable is a convention in common lisp for denoting global variables.
+;;To do so we use the [`defparameter` function](http://clhs.lisp.se/Body/m_defpar.htm), which binds a value to a variable. The list items that follow are the arguments to the function. In this case the fist argument is the variable name and the second argument is value to bind to it. Lisp also the ability code to add documentation to itself and the third argument is a docstring that adds such documentation describing the introduced variable. The surrounding *'s in the name of the variable is a convention in Common Lisp for denoting global variables.
 
 
 (defparameter *i1*  11.3d0
