@@ -49,34 +49,46 @@
 (in-package :small)
 
 ;;; ## Creating constants
-;; In this section we  introduce the constants defined in [Tikhomirov et al](https://doi.org/10.1038/nnano.2016.256) that implement the geometric model of DNA that they use. See [pages 7-11 of the supplementary information](https://static-content.springer.com/esm/art%3A10.1038%2Fnnano.2016.256/MediaObjects/41565_2017_BFnnano2016256_MOESM28_ESM.pdf) for information on the geometric model.
+;; In this section we  introduce the constants defined in [Tikhomirov et al](https://doi.org/10.1038/nnano.2016.256) that implement the geometric model of DNA Square (below) that they use.
+;; ![DNA Tile](greg-tile.png)
 
-;;To do so we use the [`defparameter` function](http://clhs.lisp.se/Body/m_defpar.htm), which binds a value to a variable. The list items that follow are the arguments to the function. In this case the fist argument is the variable name and the second argument is value to bind to it. Lisp also the ability code to add documentation to itself and the third argument is a docstring that adds such documentation describing the introduced variable. The surrounding *'s in the name of the variable is a convention in Common Lisp for denoting global variables.
+;; See [pages 7-11 of the supplementary information](https://static-content.springer.com/esm/art%3A10.1038%2Fnnano.2016.256/MediaObjects/41565_2017_BFnnano2016256_MOESM28_ESM.pdf) for information on the geometric model. For convenience we repeat the definition of the constants;
+
+;; ![title](consts.png)
+
+
+;; To do so we use the [`defparameter` function](http://clhs.lisp.se/Body/m_defpar.htm), which binds a value to a variable. The list items that follow are the arguments to the function. In this case the fist argument is the variable name and the second argument is value to bind to it. Lisp also the ability code to add documentation to itself and the third argument is a docstring that adds such documentation describing the introduced variable. The surrounding *'s in the name of the variable is a convention in Common Lisp for denoting global variables.
+
+;;  Lets define the constants;
 
 
 (defparameter *i1*  11.3d0
-  "The length of the shortest double helix in the square")
-
-
+  "The length of the shortest double helix in the square DNA tile in nanometers")
      
 (defparameter *r*  11
-  "the total number of rows with increasing length in each of the four isosceles right triangles composing the square")
+  "the total number of rows with increasing length in each of the four isosceles right triangles composing the square DNA tile")
 
 (defparameter *2r*  (* 2 *r*)
-  "the total number of rows with increasing length in each of the four isosceles right triangles composing the square")
+  "The total number of rows in each of the four isosceles right triangles composing the square DNA tile")
 
-(defparameter *g* 1.42d0 "Distance between the center of the square to the central vertex of each of the four triangles")
+(defparameter *g* 1.42d0 "Distance between the center of the square to the central vertex of each of the four triangles in nanometers")
 
 
 (defparameter *w* (+ (* 2 (+ *i1* *g*))
 		     (* (+ *helix-diameter* *helix-spacing*)
 			(- (* 2 *r*)
-			   1))))
+			   1)))
+  "The length of the side of the square DNA tile in nanometers")
 
- ;;;; Next we define a function to calculate the number of base pairs in each row of the double helix (see page 7 of SUP INFO REF). Notice how we use the sybols *helix-diameter* *helix-spacing* and *helix-nt-spacing*. These are variable provided by small (see the dna.lisp file) that define common parameters of DNA.
+;; We see that the variables have been correctly introduced.
+
+;;;;## Calculating Number of Base Pairs Per Helix
+;; Next we define the `ai` function (from the extract of the supplementary info above) that calculates the number of base pairs in each row of the double helix. To define a function we use the [defun](http://clhs.lisp.se/Body/m_defun.htm) function. which as its first argument takes the function name, then a list of variable that the function accepts (in this case only the row number `i`) followed by an optional documentation string and the body of the function.
+
 (defun ai (i)
+  "Calculate the number of base pairs in the i-th of the a DNA triangle that makes up the DNA square"
   (if (or (> i *2r*) (< i 0))
-      (error "~a is an invalid index for ai calculation. valid indices: [1, ~a]" i 2r)
+      (error "~a is an invalid index for ai calculation. valid indices: [1, ~a]" i *2r*)
       (if (<= i *r*)
 	  (round (/ (+ *i1*
 		       (* (+ *helix-diameter* *helix-spacing*)
@@ -84,8 +96,30 @@
 		    *helix-nt-spacing*))
 	  (ai (+ *2r* 1 (- i))))))
 
+;; Notice how we use the global variables `*helix-diameter*` `*helix-spacing*` and `*helix-nt-spacing*`. These are variable provided by `small` (see the [dna.lisp](https://github.com/DurhamSmith/small/blob/master/dna.lisp) file) that defines common parameters of DNA.
 
-;;;; After that we define functions calculate the coordinate of the helices that make the triangles axis. See page 8 of the supplementary information. Notice that their coordinate system in not given IN CONVENTIONAL CARTESIAN COORDINATES, as such we translate the coords to a normal cartesian coordinate system by reflecting the y-vaules around the origin, although this does not matter for the coordinates for the helices axis since these are defined to be in the y=0 plane.
+;; Also since we added a docstring to the function we are able to retrieve this (and other) information about the function using the `describe` function.
+
+(describe #'ai)
+
+;; If we only wanted the documentation can use the `documentation` function.
+
+(documentation #'ai t)
+
+;; Notice since we wanted information on a function we use the `#'` syntax, this means we want the information on the function contained in the symbol named `ai`. Had we not used this we would have run into an error since we would try to retrieve information on the variable (not the function).
+(describe ai)
+
+;;`small` is fully documented and the documentation can be viewed at anytime using `describe` and `documentation` or viewed using a browser at the official documentation page. ;TODO: 
+
+## Functions for Helix Axis Coordinates
+Next we will define functions that caluclate the coordinates of the helix axis for nucleotide number `j` in helix `i` of the DNA triangle composing the square.
+
+These are defined on page 8 of the supplementary information but are also given in the figure below. Notice that in the paper coordinate system is not defined in conventional cartesian coordinate system. As such we translate the coords in the pape to a normal cartesian coordinate system by reflecting the y-vaules around the origin. Although this does not matter for the coordinates for the helices axis since these are defined to be in the y=0 plane.
+
+![Scaffold Helix Coords Calculation](greg-tile.png)
+
+We define functions to calculate the `x`,`y` and `z` coordinates of the helix axis and a function that then uses these to return a vector with these coordinates. 
+
 (defun tri-ax-x (i)
   "Calculate the x coordinate (left-right) of the helix axis in the two-dimensional plane of the  bases pair in the i-th row in the 'top' triangle [0-3] going clockwise with 0 at top
 Returns: float (x with)
