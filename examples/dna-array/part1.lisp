@@ -162,6 +162,8 @@
 ;; First we need to calculate the angle that scaffold base makes with the helix's axis. 
 
 (defun theta-1ij (i j &key (odd-offset 0) (even-offset 0))
+  "The coordinates where scaffold base joins the backbone in the two-dimensional plane of the
+j th base pair in the i th row in the first triangle."
   (let* ((rotation (mod (* (- j 1)
 			   *rad/bp*)
 			(* 2 pi)))
@@ -187,7 +189,7 @@
 (rad->deg (theta-1ij-scaffold 1 2))
 
 
-;;;; Next we get the coordinate of th
+;; Next implement a function to retrieve the coordinates of the scaffold base. 
 
 (defun tri-scaf-coords (i j &key cm)
   "The coordinate location of where the scaffold base joins the backbone in the two-dimensional plane of the j th base pair in the i th row in the first triangle"
@@ -200,7 +202,11 @@
 	 (coords (.+ helix-axis cart-cyl)))
     coords))
 
-;;;; Here we have again used a keyword argument, cm. If cm is t then the returned coordinates will be of the  center of mass of the nucleotide, which is *helix-cm-offset* = 0.6nm from the helixes axis. If cm is nil then the returned coordinates will be given at *helix-radius* = 1nm from the helix axis. The cylindrical->cartesian function is another function provided by small and can be seen in TODO REF FOR cylindrical->cartesian.
+;; Here we have again used a keyword argument, `cm`. If `cm` is `t` then the returned coordinates will be of the  center of mass of the nucleotide, which is `*helix-cm-offset* = 0.6nm` from the helix's axis. If `cm` is `nil` then the returned coordinates will be given at `*helix-radius* = 1nm` from the helix axis. The `cylindrical->cartesian` function is another function provided by `small` and can be seen in the [linear-algebra.lisp file](https://github.com/DurhamSmith/small/blob/master/linear-algebra.lisp).
+
+;; Lets check that `tri-scaf-coords` works as expected;
+(tri-scaf-coords 1 1 :cm nil)
+(tri-scaf-coords 1 1 :cm t)
 
 ;;;; Now its finally time to use these coordinate functions to create the scaffold helices of the triangle. We use the helix-strand function to do this. This function takes as its arugments the coordinate of the 5' end of helixs axis, a unit vector pointing in the 5'->3' direction, a unit vector pointing from the coordinate of the 5' end of helixs axis to the center of mass of the first nucleotide and how many nucleotides the strand contains. It returns a DNA-HELIX-STRAND object with the desired number of nucleotides.
 
