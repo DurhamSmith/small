@@ -111,19 +111,17 @@
 
 ;;`small` is fully documented and the documentation can be viewed at anytime using `describe` and `documentation` or viewed using a browser at the official documentation page. ;TODO: 
 
-## Functions for Helix Axis Coordinates
-Next we will define functions that caluclate the coordinates of the helix axis for nucleotide number `j` in helix `i` of the DNA triangle composing the square.
+;;;;## Functions for Helix Axis Coordinates
+;; Next we will define functions that calculate the coordinates of the helix axis for nucleotide number `j` in helix `i` of the DNA triangle composing the square.
 
-These are defined on page 8 of the supplementary information but are also given in the figure below. Notice that in the paper coordinate system is not defined in conventional cartesian coordinate system. As such we translate the coords in the pape to a normal cartesian coordinate system by reflecting the y-vaules around the origin. Although this does not matter for the coordinates for the helices axis since these are defined to be in the y=0 plane.
+;; These are defined on page 8 of the supplementary information but are also given in the figure below. Notice that in the paper coordinate system is not defined in conventional Cartesian coordinate system. As such we translate the coords in the paper to a normal Cartesian coordinate system by reflecting the y-values around the origin. Although this does not matter for the coordinates for the helices axis since these are defined to be in the y=0 plane.
 
-![Scaffold Helix Coords Calculation](greg-tile.png)
+;; ![Scaffold Helix Coords Calculation](scaf-hel-calcs.png)
 
-We define functions to calculate the `x`,`y` and `z` coordinates of the helix axis and a function that then uses these to return a vector with these coordinates. 
+;; We define functions to calculate the `x`,`y` and `z` coordinates of the helix axis and a function that then uses these to return a vector with these coordinates. 
 
 (defun tri-ax-x (i)
-  "Calculate the x coordinate (left-right) of the helix axis in the two-dimensional plane of the  bases pair in the i-th row in the 'top' triangle [0-3] going clockwise with 0 at top
-Returns: float (x with)
-Note: The geometric model in https://www.nature.com/articles/nnano.2016.256 defines the coordinate system"
+  "Calculate the x coordinate of the helix axis of the ith helix in the first triangle that makes the DNA square"
   (float (+ (- (/ *w* 2))
 	    *i1*
 	    *g*
@@ -132,34 +130,32 @@ Note: The geometric model in https://www.nature.com/articles/nnano.2016.256 defi
 
 
 (defun tri-ax-y ()
-  "Calculate the y coordinate (in/out) in the 'top' triangle [0-3] going clockwise with 0 at top
-Returns: float (y)
-Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defines the coordinate system and y is constant at 0 for the helix axis"
+  "Calculate the y coordinate of the helix axis of the helices in the first triangle that makes the DNA square"
   0d0)
 
 (defun tri-ax-z (j)
-  "Calculate the z coordinate (up/down) of the helix axis in the two-dimensional plane of the  
-j-th base pair in a row of the 'top' triangle triangle [0-3] going clockwise with 0 at top
-Returns: float (y)
-Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defines the coordinate system"
+  "Calculate the z coordinate of the helix axis of the jth base pair in the first triangle that makes the DNA square."
     (float (+ (- (/ *w* 2))
 	      (* *helix-nt-spacing* j))))
 
 
 
 (defun tri-ax-coords (i j)
-  "The coordinate location of the helix axis in the two-dimensional plane of the j th base pair in the i th row in the first triangle: C1,i,j =(cx, cy, cz)"
+  "The coordinate location of the helix axis of the j th base pair in the i th row in the first triangle: C1,i,j =(cx, cy, cz)"
   (v3
    (tri-ax-x i)
    (tri-ax-y)
    (tri-ax-z j)))
 
 
-;;;; The tri-ax-coords function now gives the coordinates of the helix axis for the j-th base pair in the i-th row of the triangle. We have used the v3 function that creates a 3 dimensonal vector. Small provides many functions for operating on vectors and accessing their elements, these can be seen in the TODO: ADD DOC REF file.
-;;;; We see that everything works as exected
+;; The `tri-ax-coords` function gives the coordinates of the helix axis for the j-th base pair in the i-th row of the triangle. We have used the `v3` function to creates a 3 dimensional vector. `small` provides many functions for operating on vectors and accessing their elements, these can be seen in the [linear-algebra.lisp file](https://github.com/DurhamSmith/small/blob/master/linear-algebra.lisp).
+;; We see that everything works as expected;
 (tri-ax-coords 1 1)
 
-;;;; Next we define functions to calculate The coordinate location of where the scaffold base joins the helix backbone in the two-dimensional plane of the j th base pair in the i th row in the first triangle. See page p8 of the supplementary info. First we need to calculate the angle that scaffold base makes with the helix's axis. 
+
+
+;;;; ## Coordinates Where Scaffold Base Joins Backbone.
+;; Next we define functions to calculate The coordinate location of where the scaffold base joins the helix backbone in the two-dimensional plane of the j th base pair in the i th row in the first triangle. See page p8 of the supplementary info. First we need to calculate the angle that scaffold base makes with the helix's axis. 
 
 
 (defun theta-1ij (i j &key (odd-offset 0) (even-offset 0))
