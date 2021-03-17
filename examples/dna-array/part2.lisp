@@ -3,7 +3,7 @@
 
 ;; ![DNA Tile](greg-tile.png)
 
-;; During this we show case some of the geometric manipulation functionality that `small` provides and takes a deeper look at the parent-child hierarchy. Finally we will demonstrate how to create staples to join the triangle and tiles together and how to set the sequence of our `dna` objects. 
+;; During this we show case some of the geometric manipulation functionality that `small` provides and takes a deeper look at the parent-child hierarchy. Finally we will demonstrate how to create staples to join the triangle and tiles together and how to set the sequence of our `dna` objects.
 
 ;; Lets get started! First we need to import the definitions of the `dna-triangle` that we created in Part 1. To do we we use the `load` function to load in the whole file. Note we load the .lisp file with the code from part, not the .ipynb file we were working on, although these contain the same code.
 
@@ -23,7 +23,7 @@
 
 ;;  Notice that now we have added the custom slots `t1-t4` to our `dna-tile` class, whereas when defining the  `dna-triangle` we only had the slots we inherited from the `dna-origami` superclass. These slots are each initialized to hold an instance of the `dna-triangle` class, which we use to construct the tile the tile.
 
-;; Next we rotate the `dna-triangle`s to position them to form the `dna-tile`. 
+;; Next we rotate the `dna-triangle`s to position them to form the `dna-tile`.
 
 (defmethod initialize-instance :after ((obj dna-tile) &key)
   (with-accessors ((t1 t1) (t2 t2) (t3 t3) (t4 t4)) obj
@@ -36,7 +36,7 @@
 
 ;; We used the [`with-accessors` function](http://www.lispworks.com/documentation/HyperSpec/Body/m_w_acce.htm) to retrieve the objects in the `t1`-`t4` slots of the `dna-tile`. `with-accessors` first argument is a list where each element of the list is a two-item list containing a variable name and the name of an accessor function for a class, the second is an instance of that class. The result is that the variable are bound to the slots of the object passed as the second argument (this is similar to the `let` function in that it binds variables). For more information on classes in Common Lisp [see here](http://www.gigamonkeys.com/book/object-reorientation-classes.html).
 
-;; We then create rotation matrices to represent the rotation we want performed on the `dna-triangle`s. `small` provides the `rotation-matrix` function (defined in [linear-algebra.lisp file](https://github.com/DurhamSmith/small/blob/master/linear-algebra.lisp)) to easily create rotation matrices. It takes a vector, which is the axis to rotate around and an angle in radians and returns a 3x3 matrix representing a rotation of the angle around the 
+;; We then create rotation matrices to represent the rotation we want performed on the `dna-triangle`s. `small` provides the `rotation-matrix` function (defined in [linear-algebra.lisp file](https://github.com/DurhamSmith/small/blob/master/linear-algebra.lisp)) to easily create rotation matrices. It takes a vector, which is the axis to rotate around and an angle in radians and returns a 3x3 matrix representing a rotation of the angle around the
 
 ;; Here we have used the `rotate-obj` function to rotate triangles 2-4. Applying geometric manipulations (translation, rotation) on a `chem-obj` (the fundamental superclass that `small` uses to represent chemical entities) that is `parent` to other objects effects all the `children`, however geometrically manipulating a child has no effect on the `parent` objects coordinates, only on that of the children. The function `all-tfms` retrieves the list transformations that will be applied to the object. We can see this parent-child behavior;
 
@@ -57,7 +57,7 @@
 ;; ![DNA Tile V0](tile-v0.png)
 
 ;;;; # Adding Scaffold Bridges
-;; We see that the triangles (and the `dna-helix-strand`s and `dna-nt`s they contain) have been rotated. Notice how we have retrieved each individual triangle from the tile and written it out. This is because currently the triangle are disconnected entities. We fix this by adding each triangle to the `dna-tile`s scaffold using the `add-to-scaffold` function (introduced in part 1) provided by the `dna-origami` class (that we used as a superclass when creating the tile). We redefine the `initialize-instance` function 
+;; We see that the triangles (and the `dna-helix-strand`s and `dna-nt`s they contain) have been rotated. Notice how we have retrieved each individual triangle from the tile and written it out. This is because currently the triangle are disconnected entities. We fix this by adding each triangle to the `dna-tile`s scaffold using the `add-to-scaffold` function (introduced in part 1) provided by the `dna-origami` class (that we used as a superclass when creating the tile). We redefine the `initialize-instance` function
 ;; specialized on `dna-tile` so that the `dna-triangle`s are added to the scaffold when we create an instance of `dna-tile` instead of having to do it manually every time.
 
 (defmethod initialize-instance :after ((obj dna-tile) &key)
@@ -108,7 +108,7 @@
 
 ;; Now lets modify our initialization of the `dna-tile` to add the scaffold bridges to our scaffold.
 
-	 
+
 (defmethod initialize-instance :after ((obj dna-tile) &key)
   (with-accessors ((t1 t1) (t2 t2) (t3 t3) (t4 t4)) obj
     (let* ((rot90 (rotation-matrix (v3 0 1 0) (/ pi -2)))
@@ -130,19 +130,19 @@
 ;; ![DNA Tile V2](tile-v2.png)
 ;; Great! The staple bridges are included and everything is as expected
 
-# Adding Staples
-Next we want to add some staple bridges to hold the tile together. To do so we will define a function that take a dna-tile the tile number k [1,4] and a helix number i [12,22] and keyword arguments :l1 and :l2 returns a staple that between the kth triangle ith helix and the k+1th triangle 23-ith helix.
+;;;; # Adding Staples
+;; Next we want to add some staple bridges to hold the `dna-tile` together. To do so we will define a function that takes a `dna-tile` the tile number `k` (values: [1,4]) and a helix number `i` (values [12,22]) and keyword arguments `:len1` and `:len2` and returns a `dna-staple-strand` that has its helical partners on the `k`th triangles `i`th helix and the `k+1`th triangle `(23-i)`th helix. The keyword arguments `:len1` and `:len2` are used to specify the length of the staple of on the `k`th and `k+1`th triangle respectively.
 
-(find-obj-with-props (scaffold (t1 (make-instance 'dna-tile))) '((:i . 1)))
+;; First we define a function that takes triangle index `k` and returns the index of the triangle that helices 12-22 of the triangle should be connected to. We cannot simply add 1 to the index since triangle 4 is connected to triangle 1.
 
 (defun next-triangle-index (k)
   (cond ((= k 1) 2)
 	 ((= k 2) 3)
 	 ((= k 3) 4)
 	 ((= k 4) 1)
-	 ((t (error "Invalid index ~A" (= k 1))))))
+	 (t (error "Invalid index ~A" (= k 1)))))
 
-
+;; Now we can define the function that creates the `dna-staple-strand`.
 
 (defun stap-bridge (tile k i &key (len1 8) (len2 8))
   (if (or (> i 11) (> 23 i))
@@ -152,50 +152,39 @@ Next we want to add some staple bridges to hold the tile together. To do so we w
 					`((:i . ,(- 23 i)))))
 	     (stap (if (oddp i)
 		       (create-staple `((:obj ,hel1 :start 0 :end ,len1 :from-3end nil)
-					(:single-strand t)					
+					(:single-strand t)
 					(:obj ,hel2 :start 0 :end ,len2 :from-3end t)))
 		       (create-staple `((:obj ,hel2 :start 0 :end ,len2 :from-3end nil)
-					(:single-strand t)					
+					(:single-strand t)
 					(:obj ,hel1 :start 0 :end ,len1 :from-3end t))))))
-	(format t "~& aoeusntaoe ~%")
-
 	stap)
       (error "Not a valid row selection")))
 
-;;;; Before incoporating this into the class initialization lets quickly print out the results on the two cases of scaffold bridge 
+Before incorporating this into `initialize-instance` specialized on `dna-tile` lets print out the results of the staple bridges created on each triangle.
 
 (let* ((tile (make-instance 'dna-tile))
        (sb1 (stap-bridge tile 1 12))
-       (sb2 (stap-bridge tile 2 13)))
-  (wmdna "tile-v3" tile sb1 sb2))
+       (sb2 (stap-bridge tile 2 13))
+       (sb3 (stap-bridge tile 3 14))
+       (sb4 (stap-bridge tile 4 15)))
+  (wmdna "tile-v3" tile sb1 sb2 sb3 sb4))
 
-;;;; Everthing works as expected. Let unpack what is going on in the stap-bridges function. There are two new and important functions that we use here, (find-obj-with-props) and (create-staple). Before we dive into them it is important to understand a little bit about lisp, since we make some use of language features that might be unfamiliar to those coming into programming from an ALGOL derived langage.
+;; ![DNA Tile V3](tile-v3.png)
+;; Everything works as expected. Let unpack what is going on in the `stap-bridges` function. There are two new and important functions that we use here, `find-obj-with-props` and `create-staple`. Before we dive into them it is important to understand the `` ` `` function and its use. If you're still unfamiliar re-read the Introduction to Common Lisp section in part 1.
 
-;;;; In lisp code and data is represented as a list. Representing code and data in the same form is called homoiconcity and is a large source of lisps power and expressiveness. For example, code to call a function is composed of a list, with the first list entry being the fuction name and the next entries being its arguments. E.g.
-(+ 1 2)
-;;;; Data is also composed of lists, say for example a list of vaules (1 2). If we wanted to create a list with data we cannot simply type (1 2) as when lisp interprets this first value in the list as the function name. 
-(1 2)
-;;;; To get around this we can use the quote function. It takes one argument and returns exactly that argument, without evaluating anything in it or trying to interpret first list entry as a function name.
-(quote (+ 1 2))
-(quote (:i (+ 1 2) (+ 2 3)))
-;;;; Since lists are so prolific in lisp the syntax has a lot of synatctic sugar to deal with their manipulation. For example instead or writing quote we can just write ' before the argument we normally pass to quote.
-'(:i (+ 1 2) (+ 2 3))
-;;;; Notice how the (1+ 1) hree is not evaluated. If we did want it to be evaluated we could use the function list which takes n arguments, evaluates them and returns the values resulting from evaluating them in a list of length n.
-(list :i (+ 1 2) (+ 2 3))
-;;;; Another sytactic sugar that we use is backquote. We need to understand its use if we want to understand create-staple and find-obj-with-props. Just like the syntactic sugar for quote, ', infact using it in place of quote yeilds the same result
-`(:i (+ 1 2) (+ 2 3))
-;;;; Where its behavior changes is when a TODO (argument?) is preceeded by a ,. When this happens the expression is evaluated and placed in the resulting list, e.g.
-`(:i (+ 1 2) ,(+ 2 3))
+;; Armed with understanding of `` ` ``s behavior are in a position to understand what is going on in the `find-obj-with-props` and `create-staple` functions. First `find-obj-with-props` is a function implemented by the the `chem-obj` class. The `chem-obj` class forms the lowest level of abstraction for building chemical entities in `small`. `find-obj-with-props` takes a list of `chem-obj`s and a list of key-value pairs, as `cons cells` and returns the first `chem-obj` in the that contains all the given key-val pairs. Without getting into to much detail on the `cons cell` data structure for our purposes we can create a `cons cell` using the `(key . value)` or `(cons key val)`. Lets see how this works;
+(find-obj-with-props (scaffold (t1 (make-instance 'dna-tile))) '((:i . 1)))
 
+;; In the call to `find-obj-with-props` we retrieve all the `scaffold` helices for a `dna-triangle` within the `dna-tile` `(scaffold (get-triangle tile k))` and then query for the `i`-th helice. We do the same for the `k+1`th triangle and its `(- 23 i)`th helice. We store and retrieve these helices so we can add staples to hold them together. We do us using the `create-staple` function.
 
-;;;; Now we  are in a positino to understand what is going on in the find-obj-with-props and create-staple. First find-obj-with-props is a function we get access to from the chem-obj class that forms the lowest level of abstraction for building chemical entities in small. find-obj-with-props takes a list of chem-objs and a list of key-value pairs, as cons cells and returns the first object that contains them. Without getting into to much detail on the cons cell data structure for our purposese we can create a cons cell using the (key . value) synatax or (cons key val). So in the call to find-obj-with-props we retrieve all the scaffold helices for a triangle within a tile (scaffold (get-triangle tile (next-triangle-index k))) and then query for the i-th helice and the (- 23 i)th of the triangle that its right edge (helices 12-22) (remebering that , in a backtick environment causes evaluation of the expression). We store and retrieve these helices so we can add staples to hold them together.
+;; `create-staple` take a nested list that specifies what the staple should look like. The entries in the nested list can be of two forms. The fist is `(:obj ,hel1 :start 0 :end ,len1 :from-3end nil)` where :obj is a `DNA-HELIX-STRAND` to which the staple strand should be made, `:start` specifies the 0 indexed inclusive position from the 5' prime end of the `DNA-HELIX-STRAND`, `:end` specifies the 0 indexed excluded end position of what nucleotide sequence strand. The `:from-3end` keyword changes the behaviour of the `:start` and `:end` keywords to traverse the strand in the 3'->5' direction. 
 
-;;;; create-staple take a nexted list that specifies what the staple should look like. The entries in the nested list can be of two forms. The fist is (:obj ,hel1 :start 0 :end ,len1 :from-3end nil) where :obj is a DNA-HELIX-STRAND to which the staple strand should be made, :start specifies the 0 indexed inclusive position from the 5' prime end of the DNA-HELIX-STRAND, :end specifies the 0 indexed excluded end position of what nucleotide sequence strand. The :from-3end entry changes the behaviour of the :start and :end keywords to traverse the strand in the 3'->5' direction. The second entry the list can t
+;; `create-staple` takes a nested list where each inner list can take one one of two forms. The first of these forms is `(:obj DNA-HELIX-STRAND  :start INT :end INT  :from-3end BOOL)` which will create a `DNA-STAPLE-STRAND` to the  `DNA-HELIX-STRAND` that follows the `:obj` keyword. The `:start` keyword specify the zero indexed inclusive starting bound and excluded ending bounds, as traversed starting at the 5' end of the `DNA-HELIX-STRAND`. The `from-3end` keyword argument when `t` modifies this behaviour traversing the strand from the 3' end instead.
 
-;;  \lstinline{create-staple} takes a nested list where each inner list can take one one of two forms. The first of these forms is
-;; \lstinline{(:obj DNA  :start INT :end INT  :from-3end BOOL)} which will create a staple strand the \lstinline{dna-strand} that follows the \lstinline{:obj} keyword. The \lstinline{:start} keyword specify the zero indexed inclusive starting bound and excluded ending bounds, as traversed starting at the \(5^{\prime}\) end of the \lstinline{dna-strand}. The \lstinline{from-3end} keyword argument when \lstinline{t} modifies this behaviour traversing the strand from the \(3^{\prime}\) end instead.
+;; The second type of list that `create-staple` can accept has the form `(:single-strand t [opt] :num-nts INT/nil)` which will create a `DNA-SINGLE-STRAND` that connects the `DNA-HELIX-STRAND` of the staple that is that specified by the immediately preceding entry of the list passed to `create-staple` to the `DNA-HELIX-STRAND` specified by the list entry that immediately follows the `(:single-strand t)` entry. If the `:num-nts` keyword is passed the `DNA-SINGLE-STRAND` will contain than many `DNA-NT`s. If this argument is not passed or is `nil` the number of `DNA-NT`s will be calculated based on the Euclidean distance between the 3' and 5' ends of the `DNA-HELIX-STRAND`s that the `DNA-SINGLE-STRAND` connects.
 
-;; The second type of list that \lstinline{(create-staple)} can accept has the form \lstinline{(:single-strand t [opt] :num-nts INT/nil)} which will create a \lstinline{dna-single-strand} that connects the \lstinline{dna-helix-strand} of the staple that is that is \textcolor{red}{created by the list entry just before it in the nested list} passed to \lstinline{create-staple} to the \lstinline{dna-helix-strand} that is created in the following nested list entry. If the \lstinline{:num-nts} keyword is passed the \lstinline{dna-single-strand} will contain than many \lstinline{dna-nt}s. If this argument is not passed or is \lstinline{nil} the number of \lstinline{dna-nt}s will be calculated based on the Euclidian distance between the \(3^{\prime}\) and \(5^{\prime}\) end of the \lstinline{dna-helix-strand}s that this \lstinline{dna-single-strand} connects.
+;; We can see this behavior better by zooming in on the created staple
+;; ![DNA Tile V3 Staples](tile-v3-zoomed.png)
 
 
 
