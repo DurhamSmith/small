@@ -20,7 +20,7 @@
 (- (+ 2 3) (+ 1 2))
 
 ;; Lists can also contain data, say for example a list of values (1 2) or all the nucleotides in a strand of DNA. If we wanted to create a list with data we cannot simply type (1 2) as Lisp will try to interpret first value in the list as the function name, resulting in an illegal function call `ERROR`.
-(1 2)
+;(1 2)
 
 ;; To get around this we can use the `quote` function. It takes one argument and returns exactly that argument, without evaluating anything in it or trying to interpret first list entry as a function name.
 (quote (+ 1 2))
@@ -42,7 +42,7 @@
 ;;;; # Introduction to `small`
 
 ;; First we need to tell Common Lisp that we to use of the `small` package to gain access to its functionality it provides. First we load the package using [quicklisp](https://www.quicklisp.org/beta/).
-;; (ql:quickload :small)
+(ql:quickload :small)
 
 ;; Next we specify that we want to be in the `small` package so that we are able to use the functions and global variable that are defined in it.
 
@@ -107,7 +107,7 @@
 (documentation #'ai t)
 
 ;; Notice since we wanted information on a function we use the `#'` syntax, this means we want the information on the function contained in the symbol named `ai`. Had we not used this we would have run into an error since we would try to retrieve information on the variable (not the function).
-(describe ai)
+;(describe ai)
 
 ;;`small` is fully documented and the documentation can be viewed at anytime using `describe` and `documentation` or viewed using a browser at the official documentation page. ;TODO: 
 
