@@ -162,3 +162,8 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 ;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
   (dna-connect (3nt o1) (5nt o2))
   (dna-connect o1 o2))
+
+(defun update-scaffold-bases (ori bases)
+  "Take a dna-origami object and a string containing the new bases for the scaffold and sets the scaffold bases to this string"
+  (let ((nts (connected-nts (5nt ori))))
+    (mapcar #'update-base nts (map 'list #'string  bases))))
