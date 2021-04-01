@@ -18,3 +18,18 @@
 
 
 * TODO Check that when making staple we make them in the correct 5->3 
+
+* While Writing Article
+\textcolor{red}{Should connect be at the chem-obj level or dna level?}
+** For cearting partners for DNA
+\textcolor{red}{Should I also make a destructive keyword?}
+
+
+ \textcolor{red}{If the destructive keyword is given as \lstinline{t} then \lstinline{partner} class slot of the argument \lstinline{dna} object is set to the created \lstinline{dna} object partner and similarly the \lstinline{dna} object partner is set to the argument \lstinline{dna} object.}
+ 
+ ** DNA-NT section notes
+The \lstinline{dna-nt} class adds implementations \textcolor{red}{(specializations?)} the generic functions \lstinline{connect} \lstinline{make-partner} 
+ and \textcolor{red}{TODO: update code so nts replaces connected-nts}. \textcolor{red}{TODO Check what to do about the helper-like functions that we implementation in dna-nt.lisp. }
+
+\textcolor{red}{TODO: Should I add the vbb vn and vcm rotation and transformations information to capture why we have the chem-obj class?}
+

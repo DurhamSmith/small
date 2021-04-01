@@ -4,8 +4,6 @@
   ()
   (:documentation "A CHEM-OBJ representing a DNA double helix strand"))
 
-(defparameter *helix-cm-offset* 0.6d0 "Distance from helix axis to NT center of mass")
-
 (defmethod initialize-instance :after ((strand dna-helix-strand) &key)
   "Creates all DNA-NT CHEM-OBJS for the strand"
   ;; Loop for length and

@@ -1,5 +1,7 @@
 (in-package :small)
 
+(defparameter *helix-cm-offset* 0.6d0 "Distance from helix axis to NT center of mass")
+
 (defparameter *helix-spacing* 1d0 "Spacing between parallel double helices")
 
 (defparameter *helix-diameter* 2d0 "Diameter of DNA double helix in nm")
