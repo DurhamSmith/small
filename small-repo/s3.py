@@ -11,8 +11,11 @@ all_objects = s3.list_objects(Bucket = 'zs3-demo', Delimiter='/')
 
 s3 = boto3.resource('s3')
 pres = all_objects['CommonPrefixes']
+d=[]
 for pre in pres:
     filename = f'{pre["Prefix"]}info'
     obj = s3.Object("zs3-demo", filename)
 #    print(filename)
     print(obj.get()['Body'].read().decode('utf-8'))
+    d.append((obj.get()['Body'].read().decode('utf-8')))
+print(d)    
