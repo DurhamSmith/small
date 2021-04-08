@@ -156,12 +156,6 @@ Note: The geometric model inhttps://www.nature.com/articles/nnano.2016.256 defin
 	     :odd-offset 0
 	     :even-offset pi))
 
-(defun deg->rad (deg)
-  (* (/ pi 180) deg))
-
-(defun rad->deg (rad)
-  (* (/ 180 pi) rad))
-
 
 
 (defun theta-1ij-staple (i j)

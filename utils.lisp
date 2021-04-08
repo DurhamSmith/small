@@ -67,6 +67,12 @@
 
 
 
+(defun deg->rad (deg)
+  (* (/ pi 180) deg))
+
+(defun rad->deg (rad)
+  (* (/ 180 pi) rad))
+
 
 
 
