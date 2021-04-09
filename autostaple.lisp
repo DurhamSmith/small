@@ -56,19 +56,75 @@
 
 (setf l (make-instance 'dna-square-lattice))
 
-(defun NN (strand strands)
-  "Returns a list of (strand-nt  [nearest nt in strands] dist) for each strand-nt in strand"
+(defun nearest-partners (strand strands)
+  "Returns a list of (strand-nt  [nearest nt in strands] dist-between-partnrs) for each strand-nt in strand"
   (let* ((nts-strand (strand-nts strand))
 	 ;; Maybe remove non helices
 	 (nts-all (alexandria:flatten (mapcar #'strand-nts strands))))
-    (mapcar #'(lambda (nt-s)
+     (mapcar #'(lambda (nt-s)
 		(mapcar #'(lambda (nt-a)
 			    (list
+			     nt-s
 			     nt-a
-			     (euclidean-distance (partner-coords nt-s) (partner-coords nt-a))))
+			     (euclidean-distance (partner-coords nt-s)
+						 (partner-coords nt-a))))
 			nts-all))
-	    nts-strand)))
+	     nts-strand)))
 
+
+(defun partner-dists (s1 s2 &optional threshold)
+  "Returns a list of (strand-nt  [nearest nt in strands] dist-between-partnrs) for each strand-nt in strand"
+  (let* ((nts1 (strand-nts s1))
+	 ;; Maybe remove non helices
+	 (nts2 (strand-nts s2))
+	 (pt-dists (mapcar #'(lambda (nt-s1)
+			      (mapcar #'(lambda (nt-s2)
+					  (list
+					   nt-s1
+					   nt-s2
+					   (euclidean-distance (partner-coords nt-s1)
+							       (partner-coords nt-s2))))
+				      nts2))
+			   nts1)))
+    (mapcar #'sort-by-dist
+	    (remove nil
+		    (if threshold
+			(mapcar #'(lambda (1nt-dists)
+				    (remove-if #'(lambda (x)
+						   (>= (third x) threshold))				       
+					       1nt-dists))
+				pt-dists)
+			pt-dists)))))
+    
+
+(defun sort-by-dist (dist-list)
+  (sort (copy-list dist-list) #'< :key #'third))
+    
+ (partner-dists (first (scaffold l))
+			       (second (scaffold l))
+			       )
+  
+(let* ((l (make-instance 'dna-square-lattice))
+       (all-pts (partner-dists (first (scaffold l))
+			       (second (scaffold l))
+			       2))
+       ;; (pts-as-nts (mapcar  #'(lambda (pts)	       
+       ;; 				(mapcar #'(lambda (pt-pair)
+       ;; 					    (list (make-partner (first pt-pair))
+       ;; 						  (make-partner (second pt-pair))))
+       ;; 					pts))
+       ;; 			    all-pts))
+       (pts-as-nts 
+	 (mapcar #'(lambda (pt-pair)
+		     (list (make-partner (first pt-pair))
+			   (make-partner (second pt-pair))))
+		 (mapcar #'first all-pts)))
+       )
+  (wmdna "tst"
+	 (first (scaffold l))
+	 (second (scaffold l))
+	 pts-as-nts)
+  (mapcar #'first all-pts))
 
 			
 		
@@ -76,15 +132,54 @@
     ;; 			       (let* (nearest
     ;; 				      (a 1))
     ;; 				 (list nearest a)))
-    ))
 
-(setf nns (NN (first (scaffold l)) (subseq (scaffold l) 1)))
-(last (first nns))
+(setf nns (nearest-partners (first (scaffold l)) (subseq (scaffold l) 1)))
+(setf fnn (sort (copy-list (first nns)) #'< :key #'third))
+
+
+(defun possible-staple-partners (dists &optional (threshold 2.0))
+  "Dists: (nt1 nt2 dist-between-partners), Returns all dists <= threshold"
+  (remove-if #'(lambda (x)
+		 (>= (third x) threshold))
+	     dists))
+
+
+
+
+(defun set-close-bases (dists &optional (base "X"))
+  (mapcar #'(lambda (x)
+	      (update-base (first dists)
+			   (format nil "~A" base))
+	      (update-base (second dists)
+			   (format nil "~A" base)))
+	  dists))
+
+(set-close-bases (first (possible-staple-partners fnn 3)))
+
+(let* ((l (make-instance 'dna-square-lattice))
+       (pts (nearest-partners (first (scaffold l)) (subseq (scaffold l) 1)))
+       
+  pts)
+  
+       
+  (mapcar #'set-close-bases
+	  (first (possible-staple-partners fnn 3)))
+  (wmdna "NNp-lat-pts"
+       (first (scaffold l))
+       (second (scaffold l))
+       (make-partner (first (scaffold l)))
+       (make-partner (second (scaffold l)))))
+
+			   
+  
+
+
+
 
 (update-base (5nt (first (scaffold l))) "Z")
-(update-base (car (first (sort (copy-list (first nns)) #'< :key #'cadr))) "Q")
+(update-base (car (first (sort (copy-list (first nns)) #'< :key #'third))) "Q")
 
-(wmdna "NN-lat-pt"
+(wmdna "NNp-lat-pt"
        (first (scaffold l))
        (second (scaffold l))
        (make-partner (first (scaffold l)))
