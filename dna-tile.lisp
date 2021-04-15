@@ -408,7 +408,7 @@ Starts are taken from tile edges"
 			 
 		       
 	 
-(defmethod internal-staples ((obj dna-tile))
+(defmethod internal-staples ((tile dna-tile))
   (let (staps)
     (setf staps
 	  (loop for k from 1 to 4
@@ -612,3 +612,4 @@ Starts are taken from tile edges"
 
 
     
+(wmdna "ot1" (scaffold (make-instance 'dna-tile)))

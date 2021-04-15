@@ -54,7 +54,7 @@
 ;; ================================ Auto Staple Functions ==================================
 ;; 1: Find Nearest neigbors
 
-(setf l (make-instance 'dna-square-lattice))
+
 
 (defun nearest-partners (strand strands)
   "Returns a list of (strand-nt  [nearest nt in strands] dist-between-partnrs) for each strand-nt in strand"
@@ -78,20 +78,21 @@
 	 ;; Maybe remove non helices
 	 (nts2 (strand-nts s2))
 	 (pt-dists (mapcar #'(lambda (nt-s1)
-			      (mapcar #'(lambda (nt-s2)
-					  (list
-					   nt-s1
-					   nt-s2
-					   (euclidean-distance (partner-coords nt-s1)
-							       (partner-coords nt-s2))))
-				      nts2))
+			       (mapcar #'(lambda (nt-s2)
+					   (list
+					    nt-s1
+					    nt-s2
+					    (euclidean-distance (partner-coords nt-s1)
+								(partner-coords nt-s2))))
+				       nts2))
 			   nts1)))
     (mapcar #'sort-by-dist
 	    (remove nil
 		    (if threshold
 			(mapcar #'(lambda (1nt-dists)
 				    (remove-if #'(lambda (x)
-						   (>= (third x) threshold))				       
+						   (>= (third x)
+						       threshold))				       
 					       1nt-dists))
 				pt-dists)
 			pt-dists)))))
@@ -99,10 +100,17 @@
 
 (defun sort-by-dist (dist-list)
   (sort (copy-list dist-list) #'< :key #'third))
-    
- (partner-dists (first (scaffold l))
-			       (second (scaffold l))
-			       )
+
+;; (let (x)
+
+;;   (push (partner-dists (first (scaffold l))
+;; 	       (second (scaffold l))
+;; 	       2)
+;; 	x)
+;;   (push (partner-dists (second (scaffold l))
+;; 	       (third (scaffold l))
+;; 	       2)
+;; 	x))
   
 (let* ((l (make-instance 'dna-square-lattice))
        (all-pts (partner-dists (first (scaffold l))
@@ -133,8 +141,16 @@
     ;; 				      (a 1))
     ;; 				 (list nearest a)))
 
-(setf nns (nearest-partners (first (scaffold l)) (subseq (scaffold l) 1)))
-(setf fnn (sort (copy-list (first nns)) #'< :key #'third))
+;; (progn
+;;   (setf l (make-instance 'dna-square-lattice))
+;;   (setf nns (nearest-partners (first (scaffold l)) (subseq (scaffold l) 1)))
+;;   (setf fnn (sort (copy-list (first nns)) #'< :key #'third)))
+
+
+;; (format t "~A~%~A" 
+;; (first (second (partner-dists (first (scaffold l)) (second (scaffold l)) 2)))
+;; (first (third (partner-dists (first (scaffold l)) (second (scaffold l)) 2))))
+
 
 
 (defun possible-staple-partners (dists &optional (threshold 2.0))
@@ -154,21 +170,21 @@
 			   (format nil "~A" base)))
 	  dists))
 
-(set-close-bases (first (possible-staple-partners fnn 3)))
+;; (set-close-bases (first (possible-staple-partners fnn 3)))
 
-(let* ((l (make-instance 'dna-square-lattice))
-       (pts (nearest-partners (first (scaffold l)) (subseq (scaffold l) 1)))
+;; (let* ((l (make-instance 'dna-square-lattice))
+;;        (pts (nearest-partners (first (scaffold l)) (subseq (scaffold l) 1)))
        
-  pts)
+;;   pts)
   
        
-  (mapcar #'set-close-bases
-	  (first (possible-staple-partners fnn 3)))
-  (wmdna "NNp-lat-pts"
-       (first (scaffold l))
-       (second (scaffold l))
-       (make-partner (first (scaffold l)))
-       (make-partner (second (scaffold l)))))
+;;   (mapcar #'set-close-bases
+;; 	  (first (possible-staple-partners fnn 3)))
+;;   (wmdna "NNp-lat-pts"
+;;        (first (scaffold l))
+;;        (second (scaffold l))
+;;        (make-partner (first (scaffold l)))
+;;        (make-partner (second (scaffold l)))))
 
 			   
   
@@ -176,11 +192,3 @@
 
 
 
-(update-base (5nt (first (scaffold l))) "Z")
-(update-base (car (first (sort (copy-list (first nns)) #'< :key #'third))) "Q")
-
-(wmdna "NNp-lat-pt"
-       (first (scaffold l))
-       (second (scaffold l))
-       (make-partner (first (scaffold l)))
-       (make-partner (second (scaffold l))))

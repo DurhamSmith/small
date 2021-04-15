@@ -8,7 +8,7 @@
 ;; Lets get started! First we need to import the definitions of the `dna-triangle` that we created in Part 1. To do we we use the `load` function to load in the whole file. Note we load the .lisp file with the code from part, not the .ipynb file we were working on, although these contain the same code.
 
 (in-package :small)
-(load "./part1.lisp")
+(load "~/quicklisp/local-projects/small/examples/dna-array/part1.lisp")
 
 ;;;; # Creating The `dna-tile` Classs
 ;; First we create a class to hold the DNA Tile abstraction. This is similar to what we did in part 1 where we created the `dna-triangle` to represent the DNA triangle.
@@ -160,7 +160,7 @@
 	stap)
       (error "Not a valid row selection")))
 
-Before incorporating this into `initialize-instance` specialized on `dna-tile` lets print out the results of the staple bridges created on each triangle.
+;; Before incorporating this into `initialize-instance` specialized on `dna-tile` lets print out the results of the staple bridges created on each triangle.
 
 (let* ((tile (make-instance 'dna-tile))
        (sb1 (stap-bridge tile 1 12))
@@ -197,9 +197,9 @@ Before incorporating this into `initialize-instance` specialized on `dna-tile` l
   (update-scaffold-bases tile *m13mp18*)
   (wmdna "tile-v4" tile))
 
+
 ;; We see that everything works as expected and the scaffold has the desired sequence.
 ;; ![DNA Tile V4 Staples](tile-v4.png)
 
 ;;;; # Next Steps
-;; In this section of the tutorial we saw how to create staples (although we did not create all of the staple) and set the scaffold sequence. At this time we know all we need to know to create complex DNA structures. In the final part of the tutorial we will use what we have already learnt to create an abstraction to hold an array of DNA tiles and how to extend the staples of this array to create arbitrary patterns on the DNA array.
-;; ; LocalWords:  dna accessors accessor
+;; In this section of the tutorial we saw how to create staples (although we did not create all of the staple) and set the scaffold sequence. At this time we know all we need to know to create complex DNA structures. In the final part of the tutorial we will use what we have already learnt to create an abstraction to hold an array of DNA tiles and how to extend the staples of this array to create arbitrary patterns on the DNA aextended-char;; ; LocalWords:  dna accessors accessor
