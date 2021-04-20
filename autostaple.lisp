@@ -1,5 +1,42 @@
-(in-package :small)
+Autostaple works as follows:
+User Defined Params (:min-length int
+		     :max-length int
+		     :min-helix-length int
+		     :max-helix-length int
+		     :nucleation-dist int
+		     :?enforce-ends bool
+		     :cutoff-dist int
+		     :disallowed (list DNA))
+lat type: wireframe, surface, hex, square?
 
+* Get all partner nts (exculding :disallowed) withinin :cutoff-dist
+* Try get matching end nts (no prev/next nt and 3' 5' ends are antiparallel)
+* If there are use them to start, else choose first partner nt pair
+* Go along by lattice type rules, hex closest to 21 bp, square:36, if not antiparallel error
+** print and check at this step*
+* Create long strands sucessively eliminating pt-pairs, if at the end of the strands capacity choose the next pt-pairs thats left and start again until all pt-pairs are done
+** print and check at this step*
+* break strands into parts between min and max length by some heuristic algo (not within 10bps of crossovers within 10 bps of a scaffold crossover and connecting the same two helices)
+* Return staples as list
+
+
+Problems
+How to make sure we dont span disallowed?
+How to make sure every scaffold is visited?
+
+
+
+
+Notes:
+
+Avoid 3nt from target see Martin, T. G. & Dietz, H. Magnesium-free self-assembly of multi-layer DNA objects. Nature Communications 3, 1103 (2012)
+
+appropriate helical positions are applied, except the staple
+crossovers within 10 bps of a scaffold crossover and connecting the same two helices
+(Supplementary Figure 14b).
+
+
+(in-package :small)
 
 (defclass/std dna-square-lattice (dna-origami)
   ((m :doc "The number of layers (layers are stacked in the z direction"
@@ -67,7 +104,7 @@
 			     nt-s
 			     nt-a
 			     (euclidean-distance (partner-coords nt-s)
-						 (partner-coords nt-a))))
+nn						 (partner-coords nt-a))))
 			nts-all))
 	     nts-strand)))
 
