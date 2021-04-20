@@ -1,4 +1,4 @@
-Autostaple works as follows:
+* Autostaple works as follows:
 User Defined Params (:min-length int
 		     :max-length int
 		     :min-helix-length int
@@ -6,19 +6,33 @@ User Defined Params (:min-length int
 		     :nucleation-dist int
 		     :?enforce-ends bool
 		     :cutoff-dist int
-		     :disallowed (list DNA))
+		     :disallowed (list DNA)
+		     :breakpoints (list DNA-NT))
 lat type: wireframe, surface, hex, square?
 
-* Get all partner nts (exculding :disallowed) withinin :cutoff-dist
-* Try get matching end nts (no prev/next nt and 3' 5' ends are antiparallel)
-* If there are use them to start, else choose first partner nt pair
-* Go along by lattice type rules, hex closest to 21 bp, square:36, if not antiparallel error
-** print and check at this step*
-* Create long strands sucessively eliminating pt-pairs, if at the end of the strands capacity choose the next pt-pairs thats left and start again until all pt-pairs are done
-** print and check at this step*
-* break strands into parts between min and max length by some heuristic algo (not within 10bps of crossovers within 10 bps of a scaffold crossover and connecting the same two helices)
-* Return staples as list
-
+* 1: Get all partner nts (exculding :disallowed) withinin :cutoff-dist
+Ensure antiparallel when matching, antiparallel is checked by dotproduct > *antiparallel-dotproduct*
+Excepts scaffold, groups scaffold by elements?
+* 2: Prune potential partners
+** Removing staple crossovers within 10 bps of a scaffold crossover and connecting the same two helices
+Get staple crossover points, check if any pt-pairs are (within 10nts :5end and/or :3end) ?disallowed to?
+If there are check if they are between the same helices that the scaffold crossover joins,
+If there are any remove them and return list of pt pairs without them (non-destructive).
+* Potentially later:
+** Try get matching end nts (nt2=next/nt1=prev or no relation)
+** If there are use them to start, else choose first partner nt pair
+** Go along by lattice type rules, hex closest to 21 bp, square:36, if not antiparallel error
+*** print and check at this step*
+** Create long strands sucessively eliminating pt-pairs, if at the end of the strands capacity choose the next pt-pairs thats left and start again until all pt-pairs are done
+*** print and check at this step*
+** break strands into parts between min and max length by some heuristic algo (not within 10 bps of a scaffold crossover and connecting the same two helices)
+** Return staples as list
+* 3: Starting from scaffold 3' end
+** traverse by atleast min-helix-length then choose next pt-pair branch 
+** if we cross a disallowed nt, stop strand creation, return whole strand if >= min-length, else error
+** keep track of crossed pt-pairs
+** if (intersection crossed-pt-pairs all-pt-pairs) is the empty set continue
+** else repeat the process for next nt from 3' end of the scaffold that doesnt have a partner and isnt disallowed
 
 Problems
 How to make sure we dont span disallowed?
@@ -104,7 +118,7 @@ crossovers within 10 bps of a scaffold crossover and connecting the same two hel
 			     nt-s
 			     nt-a
 			     (euclidean-distance (partner-coords nt-s)
-nn						 (partner-coords nt-a))))
+						 (partner-coords nt-a))))
 			nts-all))
 	     nts-strand)))
 
