@@ -10,7 +10,6 @@
 
 (defun v3l (l  &key (type-spec '(double-float)))
   (v3 (nth 0 l) (nth 1 l) (nth 2 l)))
-
 (defun as-unit-vec (v)
   (let* ((v (if (typep v 'MAGICL::MATRIX/DOUBLE-FLOAT)
 		(from-list (list (x v) (y v) (z v)) '(3))
@@ -168,3 +167,18 @@ https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindr
 (defun cylindrical->cartesian (cyl-vec)
   "Converts a vector in a cylindrical coords to cartesian"
   (@ (cylindrical->cartesian-matrix (y cyl-vec)) cyl-vec))
+
+
+(defun angle (v1 v2 &key deg)
+  "Takes vector like objects and finds their dotproduct"
+  (let* ((dotprod (MAGICL:dot (as-vec (as-unit-vec v1))
+			      (as-vec (as-unit-vec v2))))
+	 (ang (acos dotprod)))
+    (if deg
+	(rad->deg ang)
+	ang)))
+
+(defun dotproduct (v1 v2 )
+  "Takes vector like objects and finds their dotproduct"
+   (MAGICL:dot (as-vec (as-unit-vec v1))
+	       (as-vec (as-unit-vec v2))))

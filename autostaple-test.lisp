@@ -9,13 +9,18 @@
 
 
 ;; ==========================Helper functions =====================================
-(defparameter *antiparallel-dotproduct* -1.0 "Variable that defines a number that the dot product between two vectors should be LESS THAN OR EQUAL TO to be considered antiparallel")
+(defparameter *antiparallel-angle* pi "Variable that defines the minimum angle in radians for two helices to be considered antiparallel")
+
+(defparameter *antiparallel-dotproduct* -0.99 "Variable that defines a number that the dot product between two vectors should be LESS THAN OR EQUAL TO to be considered antiparallel")
 
 (defparameter *cutoff-dist* 2.0 "Distance in nm that nts must be within to be considered as a crossover point")
 
 (defun antiparallelp (strand1 strand2)
-  "Returns t if strands are antiparallel. Antiparallel means dot-product between vn <= *antiparallel-dotproduct*")
-    
+  "Returns t if strands are antiparallel. Antiparallel means dot-product between the first nts vn <= *antiparallel-dotproduct*"
+  (<= (dotproduct (vn (5nt strand1))
+	     (vn (5nt strand2))) 
+      *antiparallel-dotproduct*))
+
 
 (defun all-potential-crossovers (strands &key (cutoff-dist *cutoff-dist*))
   "strands is a list of DNA-HELIX-STRANDS
@@ -23,8 +28,25 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
   ;; 1: Recurse through strands to get all potential antiparallel partners (list (list hel-in-1-dir all-antiparallel-helices))
   ;; 2: double mapcar (over cdrs for second) for each car of potential antiparallel and create all possible crossovers
   ;; 3: remove crossovers if > cutoff-dist
+  
   )
 
+(defun antiparallel-strands (strand others)
+  "strand: DNA-HELIX-STRAND
+other: (list DNA-HELIX-STRAND)
+Returns a list of all DNA strands that are antiparallel by antiparallelp
+"
+  (remove nil
+	  (mapcar #'(lambda (x)
+		      (when (antiparallelp strand x)
+			x))
+		  others)))
+
+(setf l (make-instance 'dna-square-lattice))
+(setf s (scaffold l))
+(length s)
+(length (antiparallel-strands (car s) (cdr s)))
+(wmdna "tyr" (first s) (antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
 
 
 (defun staple-crossovers (helices)
