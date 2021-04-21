@@ -96,4 +96,19 @@ Take a list of crossovers and nts and returns a new list without any crossover t
 
 
 ;;; Testing crossover creation
-(make-crossovers (first s) (second s))
+(remove-nilr (make-crossovers (first s) (second s)))
+(wmdna "crossovers" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+	       (alexandria:flatten (remove-nilr (make-crossovers (first s) (second s))))))
+
+(length (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+		(alexandria:flatten (remove-nilr (make-crossovers (first s) (second s))))))
+
+
+(length (remove-nilr (make-crossovers (first s) (second s))))
