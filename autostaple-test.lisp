@@ -1,11 +1,6 @@
 (in-package :small)
 
-(defclass/std crossover ()
-  ((nt1 :doc "The nt whichs partner will be on the 5' end of the crossover")
-   (nt2 :doc "The nt whichs partner will be on the 3' end of the crossover")
-   (pt1 :doc "5' of crossover")
-   (pt2 :doc "3' of crossover")
-   (dist :doc "The length in nm between pt1 and pt2")))
+
 
 
 ;; ==========================Helper functions =====================================
@@ -98,3 +93,7 @@ Take a list of crossovers and nts and returns a new list without any crossover t
 (length s)
 (length (antiparallel-strands (car s) (cdr s)))
 (wmdna "antiparallel" (first s) (antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
+
+
+;;; Testing crossover creation
+(make-crossovers (first s) (second s))

@@ -123,6 +123,8 @@
 	     nts-strand)))
 
 
+
+
 (defun partner-dists (s1 s2 &optional threshold)
   "Returns a list of (strand-nt  [nearest nt in strands] dist-between-partnrs) for each strand-nt in strand"
   (let* ((nts1 (strand-nts s1))
