@@ -171,6 +171,7 @@ https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindr
 
 (defun angle (v1 v2 &key deg)
   "Takes vector like objects and finds their dotproduct"
+  ;TODO: Tests
   (let* ((dotprod (MAGICL:dot (as-vec (as-unit-vec v1))
 			      (as-vec (as-unit-vec v2))))
 	 (ang (acos dotprod)))
@@ -180,5 +181,6 @@ https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindr
 
 (defun dotproduct (v1 v2 )
   "Takes vector like objects and finds their dotproduct"
+  ;TODO: Tests
    (MAGICL:dot (as-vec (as-unit-vec v1))
 	       (as-vec (as-unit-vec v2))))

@@ -21,16 +21,6 @@
 	     (vn (5nt strand2))) 
       *antiparallel-dotproduct*))
 
-
-(defun all-potential-crossovers (strands &key (cutoff-dist *cutoff-dist*))
-  "strands is a list of DNA-HELIX-STRANDS
-Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
-  ;; 1: Recurse through strands to get all potential antiparallel partners (list (list hel-in-1-dir all-antiparallel-helices))
-  ;; 2: double mapcar (over cdrs for second) for each car of potential antiparallel and create all possible crossovers
-  ;; 3: remove crossovers if > cutoff-dist
-  
-  )
-
 (defun antiparallel-strands (strand others)
   "strand: DNA-HELIX-STRAND
 other: (list DNA-HELIX-STRAND)
@@ -42,15 +32,43 @@ Returns a list of all DNA strands that are antiparallel by antiparallelp
 			x))
 		  others)))
 
-(setf l (make-instance 'dna-square-lattice))
-(setf s (scaffold l))
-(length s)
-(length (antiparallel-strands (car s) (cdr s)))
-(wmdna "tyr" (first s) (antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
+(defun potential-crossover-partners (strands)
+  (when (cdr strands)
+    (cons (list (car strands)
+		(antiparallel-strands (car strands)
+				      (cdr strands)))
+	  (potential-crossover-partners (cdr strands)))))	   
+	    
+(dolist (x (potential-crossover-partners s) )
+  (format t "~& ~A ~%" (length (second x))))      
+    
 
 
-(defun staple-crossovers (helices)
-  "Returns all the crossovers between helices TODO as what?")
+(defun staple-crossovers (strand strands)
+  "Returns all the crossovers between helices TODO as what?"
+  (mapcar #'(lambda (s)
+	      ) 
+)
+  
+
+	      
+(defun all-potential-crossovers (strands &key (cutoff-dist *cutoff-dist*))
+  "strands is a list of DNA-HELIX-STRANDS
+Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
+  ;; 1: Recurse through strands to get all potential antiparallel partners (list (list hel-in-1-dir all-antiparallel-helices))
+  ;; 2: double mapcar (over cdrs for second) for each car of potential antiparallel and create all possible crossovers
+  ;; 3: remove crossovers if > cutoff-dist
+  (let* ((ppts (potential-crossover-partners strands))
+	 (crossovers (mapcar #'(lambda (pt)
+				 (
+				 ) 
+
+	 
+  )
+
+
+		     
+
 
 (defun within-x (x crossover nts)
   "Returns t if crossover is within x nts from any nt in nts")
@@ -72,3 +90,11 @@ Take a list of crossovers and nts and returns a new list without any crossover t
 
   
 	    
+
+;;;; ==========================Scratch Area========================
+;; Testing antiparallel
+(setf l (make-instance 'dna-square-lattice))
+(setf s (scaffold l))
+(length s)
+(length (antiparallel-strands (car s) (cdr s)))
+(wmdna "antiparallel" (first s) (antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
