@@ -1,8 +1,6 @@
 (in-package :small)
 
 
-
-
 ;; ==========================Helper functions =====================================
 (defparameter *antiparallel-angle* pi "Variable that defines the minimum angle in radians for two helices to be considered antiparallel")
 
@@ -16,10 +14,12 @@
 	     (vn (5nt strand2))) 
       *antiparallel-dotproduct*))
 
-(defun antiparallel-strands (strand others)
+;; ==============================================================================
+
+(defun get-antiparallel-strands (strand others)
   "strand: DNA-HELIX-STRAND
-other: (list DNA-HELIX-STRAND)
-Returns a list of all DNA strands that are antiparallel by antiparallelp
+others: (list DNA-HELIX-STRAND)
+Returns a list of all DNA strands in others that are antiparallel to strand by antiparallelp
 "
   (remove nil
 	  (mapcar #'(lambda (x)
@@ -27,23 +27,25 @@ Returns a list of all DNA strands that are antiparallel by antiparallelp
 			x))
 		  others)))
 
-(defun potential-crossover-partners (strands)
+(defun unique-antiparallel-partners (strands)
+  "Recursively looks through strands to find and group all antiparallel strands
+Returns: (list DNA-HELIX-STRAND (list antiparallel-parter[DNA-HELIX-STRAND] ...))n
+Importantly nth strand in strands partner strands will not include DNA-HELIX-STRAND [0,(n-1)] in strands. This allows us not to generate double crossovers when traversing this list"
   (when (cdr strands)
     (cons (list (car strands)
-		(antiparallel-strands (car strands)
+		(get-antiparallel-strands (car strands)
 				      (cdr strands)))
-	  (potential-crossover-partners (cdr strands)))))	   
+	  (unique-antiparallel-partners (cdr strands)))))	   
 	    
-(dolist (x (potential-crossover-partners s) )
-  (format t "~& ~A ~%" (length (second x))))      
+      
     
 
 
-(defun staple-crossovers (strand strands)
-  "Returns all the crossovers between helices TODO as what?"
-  (mapcar #'(lambda (s)
-	      ) 
-)
+;; (defun staple-crossovers (strand strands)
+;;   "Returns all the crossovers between helices TODO as what?"
+;;   (mapcar #'(lambda (s)
+;; 	      ) 
+;; )
   
 
 	      
@@ -53,18 +55,57 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
   ;; 1: Recurse through strands to get all potential antiparallel partners (list (list hel-in-1-dir all-antiparallel-helices))
   ;; 2: double mapcar (over cdrs for second) for each car of potential antiparallel and create all possible crossovers
   ;; 3: remove crossovers if > cutoff-dist
-  (let* ((ppts (potential-crossover-partners strands))
+  (let* ((ppts (unique-antiparallel-partners strands))
 	 (crossovers (mapcar #'(lambda (pt)
 				 (
 				 ) 
 
-	 
-  )
+	)
 
 
 		     
 
 
+  
+	    
+
+;;;; ==========================Scratch Area========================
+;; Testing antiparallel
+(setf l (make-instance 'dna-square-lattice))
+(setf s (scaffold l))
+(length s)
+(length (antiparallel-strands (car s) (cdr s)))
+(wmdna "antiparallel" (first s) (get-antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
+
+
+;;; Testing crossover creation
+;; 1
+(dolist (x (unique-antiparallel-partners s) )
+  (format t "~& ~A ~%" (length (second x))))
+;; 2
+
+(remove-nilr (make-crossovers (first s) (second s)))
+(wmdna "crossovers" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+	       (alexandria:flatten (remove-nilr (make-crossovers
+						 (first s)
+						 (second s)
+						 :cutoff-dist 1.9)))))
+
+(length (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+		(alexandria:flatten (remove-nilr (make-crossovers (first s) (second s) :cutoff-dist 1.9)))))
+
+
+(length (remove-nilr (make-crossovers (first s) (second s))))
+
+
+;;=========================== Unimplemented ===========================================================
 (defun within-x (x crossover nts)
   "Returns t if crossover is within x nts from any nt in nts")
 
@@ -82,33 +123,3 @@ Take a list of crossovers and nts and returns a new list without any crossover t
 
   )
   
-
-  
-	    
-
-;;;; ==========================Scratch Area========================
-;; Testing antiparallel
-(setf l (make-instance 'dna-square-lattice))
-(setf s (scaffold l))
-(length s)
-(length (antiparallel-strands (car s) (cdr s)))
-(wmdna "antiparallel" (first s) (antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
-
-
-;;; Testing crossover creation
-(remove-nilr (make-crossovers (first s) (second s)))
-(wmdna "crossovers" (first s) (second s)
-       (mapcar #'(lambda (c)
-		   (list (make-partner (nt1 c))
-			 (make-partner (nt2 c)))
-		   )
-	       (alexandria:flatten (remove-nilr (make-crossovers (first s) (second s))))))
-
-(length (mapcar #'(lambda (c)
-		   (list (make-partner (nt1 c))
-			 (make-partner (nt2 c)))
-		   )
-		(alexandria:flatten (remove-nilr (make-crossovers (first s) (second s))))))
-
-
-(length (remove-nilr (make-crossovers (first s) (second s))))
