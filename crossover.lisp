@@ -41,13 +41,23 @@
 		  nts1))
     (remove-nilr all-crossovers)))
     
-   
+(defun bbangd (crossover)
+  (rad->deg (bbang crossover)))
 
 (defun find-best-crossover (crossovers)
-  "Takes a list of CROSSOVERS and finds the best one of them by checking
+  "Current implementation returns multiples valus, 
+first: best crossover (by shortest distance)
+second all crossovers sorted by distance
+Old Idea: 
+Takes a list of CROSSOVERS and finds the best one of them by checking
 1: distance 
 2: planarp
-3: angle")
+3: angle"
+
+  (let ((ordered (sort (copy-list crossovers) #'< :key #'dist)))
+    (values (car ordered) ordered)))
+    
+
 
 
 (defun planarp (crossover)
@@ -57,6 +67,7 @@
 
 
 
+  
 (defun remove-nilr (x)
   (if (consp x)
       (mapcar #'remove-nilr (remove nil x))

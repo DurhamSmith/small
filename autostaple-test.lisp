@@ -60,7 +60,9 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 				 (
 				 ) 
 
-	)
+				 )
+
+			     )))))
 
 
 		     
@@ -71,21 +73,43 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 
 ;;;; ==========================Scratch Area========================
 ;; Testing antiparallel
+;; 1
 (setf l (make-instance 'dna-square-lattice))
 (setf s (scaffold l))
+
+(setf cross (remove-nilr (make-crossovers (first s) (second s))))
+(setf fc (flatten cross))
 (length s)
 (length (antiparallel-strands (car s) (cdr s)))
 (wmdna "antiparallel" (first s) (get-antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
 
-
-;;; Testing crossover creation
-;; 1
+;; 2
 (dolist (x (unique-antiparallel-partners s) )
   (format t "~& ~A ~%" (length (second x))))
-;; 2
 
-(deg->rad (acos -1))
-(rad->deg (acos -1))
+;;; Testing crossover creation
+
+
+(1Dp (planarp (caar (remove-nilr (make-crossovers
+		    (first s)
+		    (second s)
+		    :cutoff-dist 2)))))
+
+(mapcar #'(lambda (x)
+	    (planarp x)
+	    ) 
+	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
+
+(mapcar #'(lambda (x)
+	    (1Dp (planarp x))
+	    ) 
+	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
+
+(remove-nilr (make-crossovers
+	      (first s)
+	      (second s)
+	      :cutoff-dist 2))
+
 (mapcar #'(lambda (x)
 	    (bbdot x)
 	    ) 
@@ -94,7 +118,10 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 (mapcar #'(lambda (x)
 	    (rad->deg (bbang x))
 	    ) 
-	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
+	(flatten (remove-nilr (make-crossovers
+			       (first s)
+			       (second s)
+			       :cutoff-dist 2))))
 
 (remove-nilr (make-crossovers (first s) (second s)))
 (wmdna "crossovers" (first s) (second s)
@@ -107,6 +134,14 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 						 (second s)
 						 :cutoff-dist 1.9)))))
 
+
+(wmdna "conflict-1" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+	       (list (first (second cross)))))
+(find-best-crossover (second cross))
 (length (mapcar #'(lambda (c)
 		   (list (make-partner (nt1 c))
 			 (make-partner (nt2 c)))
@@ -132,6 +167,6 @@ Take a list of crossovers and nts and returns a new list without any crossover t
   ;; 2: traverse by atleast min-helix-length then choose next pt-pair branch  if we cross a disallowed nt, stop strand creation, return whole strand if >= min-length, else error
 ;; keep track of crossed pt-pairs
 ; 3: if (intersection crossed-pt-pairs all-pt-pairs) is the empty set continue else repeat the process for next nt from 3' end of the scaffold that doesnt have a partner and isnt disallowed
-
+n
   )
   
