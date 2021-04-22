@@ -43,6 +43,19 @@
     
    
 
+(defun find-best-crossover (crossovers)
+  "Takes a list of CROSSOVERS and finds the best one of them by checking
+1: distance 
+2: planarp
+3: angle")
+
+
+(defun planarp (crossover)
+  (let ((cm1 (vbb (nt1 crossover)))
+	(cm2 (vbb (nt2 crossover)))
+    (MAGICL:.- cm1 cm2)))
+
+
 
 (defun remove-nilr (x)
   (if (consp x)
@@ -50,11 +63,7 @@
       x))
 
 
-  
-
-
-    
-    
+     
 
 (defun below-cutoffp (crossover &key (cutoff-dist *cutoff-dist*))
   (<= (dist crossover) cutoff-dist))
