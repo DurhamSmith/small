@@ -5,14 +5,20 @@
    (nt2 :doc "The nt whichs partner will be on the 3' end of the crossover")
    (pt1 :doc "5' of crossover")
    (pt2 :doc "3' of crossover")
-   (dist :doc "The length in nm between pt1 and pt2")))
+   (dist :doc "The length in nm between pt1 and pt2")
+   (bbdot :doc "dotproduct between vbbs")
+   (bbang :doc "angle between vbbs")
+   (planar :doc "t or false if vbb of nt1 and nt2 are in the same plane")))
 
 
 (defmethod initialize-instance :after  ((c crossover) &key)
-  (with-slots ((nt1 nt1) (nt2 nt2) (dist dist)) c    
-    (setf dist (euclidean-distance (partner-coords nt1)
-				   (partner-coords nt2))))
-  c)
+  (with-slots ((nt1 nt1) (nt2 nt2) (dist dist) (bbdot bbdot) (bbang bbang)) c
+    (multiple-value-bind (pcm1 pvbb1) (partner-coords nt1)
+      (multiple-value-bind (pcm2 pvbb2) (partner-coords nt2)	
+	(setf dist (euclidean-distance pcm1 pcm2)
+	      bbdot (dotproduct pvbb1 pvbb2)
+	      bbang (acos bbdot))
+	c))))
 
 (defun make-crossovers (s1 s2 &key (cutoff-dist *cutoff-dist*))
   "Returns all crossovers between nts in DNA-HELIX-STRAND s1 and DNA-HELIX-STRAND s2 within cutoff-dist"

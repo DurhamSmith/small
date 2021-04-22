@@ -84,6 +84,18 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
   (format t "~& ~A ~%" (length (second x))))
 ;; 2
 
+(deg->rad (acos -1))
+(rad->deg (acos -1))
+(mapcar #'(lambda (x)
+	    (bbdot x)
+	    ) 
+	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
+
+(mapcar #'(lambda (x)
+	    (rad->deg (bbang x))
+	    ) 
+	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
+
 (remove-nilr (make-crossovers (first s) (second s)))
 (wmdna "crossovers" (first s) (second s)
        (mapcar #'(lambda (c)
