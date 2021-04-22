@@ -27,7 +27,27 @@
 (defun conflictingp (crossover1 crossover2)
   "Predicate to test if two crossovers share nucleotides. 
 Returns a list of all conflicting nts in both crossovers or nil"
-  (intersection (nts crossover1) (nts crossover2)))
+  (let ((conflicting-nts (intersection (nts crossover1)
+				       (nts crossover2))))
+    (values conflicting-nts
+	    (and conflicting-nts (list crossover1 crossover2)))))
+
+
+(defun all-conflicting-crossovers (crossovers)
+  "crossovers: (list CROSSOVER ...)
+Returns
+(list (list CROSSOVER ...)) where each of the nested lists conflict with one another"
+  (remove-all-nils
+   (if (cdr crossovers)
+       (cons (mapcar #'(lambda (c)
+			 (multiple-value-bind (nts xovers)
+			     (conflictingp (car crossovers) c)
+			   xovers
+			  ) 
+			)
+		    (cdr crossovers))
+	    (all-conflicting-crossovers (cdr crossovers)))
+      nil)))
 
 
 
@@ -81,11 +101,17 @@ Takes a list of CROSSOVERS and finds the best one of them by checking
 
 
 
-  
+(defun remove-all-nils (x)
+  "Recursively removes all nils from nested lists"
+  (remove nil (remove-nilr x)))
+		    
+	    
+
 (defun remove-nilr (x)
-  (if (consp x)
-      (mapcar #'remove-nilr (remove nil x))
-      x))
+  "Todo use LABELs and move to remove-all-nils"
+	  (if (consp x)
+	      (mapcar #'remove-nilr (remove nil x))
+	      x))
 
 
      

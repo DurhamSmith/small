@@ -75,10 +75,12 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 ;; Testing antiparallel
 ;; 1
 (progn 
-  (setf l (make-instance 'dna-square-lattice))
-  (setf s (scaffold l))
-  (setf cross (remove-nilr (make-crossovers (first s) (second s))))
-  (setf fc (flatten cross)))
+  (setf l (make-instance 'dna-square-lattice)
+	s (scaffold l)
+	cross (remove-nilr (make-crossovers (first s) (second s)))
+	fc (flatten cross)
+	bc (mapcar #'find-best-crossover
+		   (remove-nilr cross))))
   
 (length s)
 (length (antiparallel-strands (car s) (cdr s)))
@@ -160,6 +162,9 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 			     (remove-nilr (make-crossovers (first s) (second s)))))
 	      (second (mapcar #'find-best-crossover
 		  (remove-nilr (make-crossovers (first s) (second s))))))
+
+(all-conflicting-crossovers bc)
+(remove-nilr (all-conflicting-crossovers bc))
 
 (length (mapcar #'find-best-crossover
 		(remove-nilr cross)))
