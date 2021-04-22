@@ -89,6 +89,11 @@ Takes a list of CROSSOVERS and finds the best one of them by checking
 
   (let ((ordered (sort (copy-list crossovers) #'< :key #'dist)))
     (values (car ordered) ordered)))
+
+(defun worst-crossovers (crossovers)
+  (multiple-value-bind (best all)
+      (find-best-crossover crossovers)
+    (nreverse (remove best all))))
     
 
 

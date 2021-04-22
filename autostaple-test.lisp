@@ -166,8 +166,8 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 (all-conflicting-crossovers bc)
 (remove-nilr (all-conflicting-crossovers bc))
 
-(length (mapcar #'find-best-crossover
-		(remove-nilr cross)))
+(find-best-crossover (second cross))
+(worst-crossovers (second cross))
 
 (length fc)
 
