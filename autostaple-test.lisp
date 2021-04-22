@@ -74,11 +74,12 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 ;;;; ==========================Scratch Area========================
 ;; Testing antiparallel
 ;; 1
-(setf l (make-instance 'dna-square-lattice))
-(setf s (scaffold l))
-
-(setf cross (remove-nilr (make-crossovers (first s) (second s))))
-(setf fc (flatten cross))
+(progn 
+  (setf l (make-instance 'dna-square-lattice))
+  (setf s (scaffold l))
+  (setf cross (remove-nilr (make-crossovers (first s) (second s))))
+  (setf fc (flatten cross)))
+  
 (length s)
 (length (antiparallel-strands (car s) (cdr s)))
 (wmdna "antiparallel" (first s) (get-antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
@@ -116,7 +117,7 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
 
 (mapcar #'(lambda (x)
-	    (rad->deg (bbang x))
+	    (rad->deg (bbangle x))
 	    ) 
 	(flatten (remove-nilr (make-crossovers
 			       (first s)
@@ -145,6 +146,20 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 		       (remove-nilr (make-crossovers (first s) (second s))))))
 
 
+;; Check best crossover
+(mapcar #'find-best-crossover
+	(remove-nilr (make-crossovers (first s) (second s))))
+
+;; check conflicting
+(conflictingp (third (mapcar #'find-best-crossover
+			     (remove-nilr (make-crossovers (first s) (second s)))))
+	      (second (mapcar #'find-best-crossover
+		  (remove-nilr (make-crossovers (first s) (second s))))))
+
+(conflictingp (first (mapcar #'find-best-crossover
+			     (remove-nilr (make-crossovers (first s) (second s)))))
+	      (second (mapcar #'find-best-crossover
+		  (remove-nilr (make-crossovers (first s) (second s))))))
 
 (length (mapcar #'find-best-crossover
 		(remove-nilr cross)))

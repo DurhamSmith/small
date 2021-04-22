@@ -7,18 +7,30 @@
    (pt2 :doc "3' of crossover")
    (dist :doc "The length in nm between pt1 and pt2")
    (bbdot :doc "dotproduct between vbbs")
-   (bbang :doc "angle between vbbs")
+   (bbangle :doc "angle between vbbs")
    (planar :doc "t or false if vbb of nt1 and nt2 are in the same plane")))
 
 
 (defmethod initialize-instance :after  ((c crossover) &key)
-  (with-slots ((nt1 nt1) (nt2 nt2) (dist dist) (bbdot bbdot) (bbang bbang)) c
+  (with-slots ((nt1 nt1) (nt2 nt2) (dist dist) (bbdot bbdot) (bbangle bbangle)) c
     (multiple-value-bind (pcm1 pvbb1) (partner-coords nt1)
       (multiple-value-bind (pcm2 pvbb2) (partner-coords nt2)	
 	(setf dist (euclidean-distance pcm1 pcm2)
 	      bbdot (dotproduct pvbb1 pvbb2)
-	      bbang (acos bbdot))
+	      bbangle (acos bbdot))
 	c))))
+
+(defmethod nts ((c crossover) &key all)
+  (list (nt1 c) (nt2 c)))
+    
+
+(defun conflictingp (crossover1 crossover2)
+  "Predicate to test if two crossovers share nucleotides. 
+Returns a list of all conflicting nts in both crossovers or nil"
+  (intersection (nts crossover1) (nts crossover2)))
+
+
+
 
 (defun make-crossovers (s1 s2 &key (cutoff-dist *cutoff-dist*))
   "Returns all crossovers between nts in DNA-HELIX-STRAND s1 and DNA-HELIX-STRAND s2 within cutoff-dist"
@@ -41,8 +53,9 @@
 		  nts1))
     (remove-nilr all-crossovers)))
     
-(defun bbangd (crossover)
-  (rad->deg (bbang crossover)))
+(defun bbangled (crossover)
+  "returns bbangle in degrees"
+  (rad->deg (bbangle crossover)))
 
 (defun find-best-crossover (crossovers)
   "Current implementation returns multiples valus, 
@@ -60,10 +73,11 @@ Takes a list of CROSSOVERS and finds the best one of them by checking
 
 
 
+
 (defun planarp (crossover)
   (let ((cm1 (vbb (nt1 crossover)))
 	(cm2 (vbb (nt2 crossover)))
-    (MAGICL:.- cm1 cm2)))
+    (MAGICL:.- cm1 cm2))))
 
 
 
