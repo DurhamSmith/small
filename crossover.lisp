@@ -33,6 +33,7 @@ Returns a list of all conflicting nts in both crossovers or nil"
 	    (and conflicting-nts (list crossover1 crossover2)))))
 
 
+
 (defun all-conflicting-crossovers (crossovers)
   "crossovers: (list CROSSOVER ...)
 Returns
@@ -49,6 +50,25 @@ Returns
 	    (all-conflicting-crossovers (cdr crossovers)))
       nil)))
 
+
+
+
+(defun all-conflicting-crossovers (crossovers)
+  "crossovers: (list CROSSOVER ...)
+Returns
+(list (list CROSSOVER ...)) where each of the nested lists conflict with one another
+;TODO: Check that reduce, union is what we want"
+  (remove-all-nils
+   (if (cdr crossovers)
+       (cons (reduce #'union (mapcar #'(lambda (c)
+			 (multiple-value-bind (nts xovers)
+			     (conflictingp (car crossovers) c)
+			   xovers
+			  ) 
+			)
+		    (cdr crossovers)))
+	    (all-conflicting-crossovers (cdr crossovers)))
+      nil)))
 
 
 
