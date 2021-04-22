@@ -135,6 +135,26 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 						 :cutoff-dist 1.9)))))
 
 
+
+(wmdna "crossovers-best" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+	       (mapcar #'find-best-crossover
+		       (remove-nilr (make-crossovers (first s) (second s))))))
+
+
+
+(length (mapcar #'find-best-crossover
+		(remove-nilr cross)))
+
+(length fc)
+
+;; We run into issues with double crossover generation both when the scaffold strand has two potential targets (here we select the best) or when the scaffold strand has a potetial target DNA-NT for the CORRECT staple that +1 or -1 from the correct target DNA-NT on the scaffold strand.
+
+
+
 (wmdna "conflict-1" (first s) (second s)
        (mapcar #'(lambda (c)
 		   (list (make-partner (nt1 c))
@@ -148,6 +168,9 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 		   )
 		(alexandria:flatten (remove-nilr (make-crossovers (first s) (second s) :cutoff-dist 1.9)))))
 
+
+(mapcar #'find-best-crossover
+	 (remove-nilr (make-crossovers (first s) (second s))))
 
 (length (remove-nilr (make-crossovers (first s) (second s))))
 
@@ -169,4 +192,5 @@ Take a list of crossovers and nts and returns a new list without any crossover t
 ; 3: if (intersection crossed-pt-pairs all-pt-pairs) is the empty set continue else repeat the process for next nt from 3' end of the scaffold that doesnt have a partner and isnt disallowed
 n
   )
-  
+ 
+ 
