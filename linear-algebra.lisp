@@ -184,3 +184,22 @@ https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindr
   ;TODO: Tests
    (MAGICL:dot (as-vec (as-unit-vec v1))
 	       (as-vec (as-unit-vec v2))))
+
+(defun 1Dp (v)
+  "Predicate to test if vector is 1D"
+  (or (and  (/= (x v) 0)
+	    (= (y v) 0)
+	    (= (z v) 0))
+      (and  (= (x v) 0)
+	    (/= (y v) 0)
+	    (= (z v) 0))
+      (and  (= (x v) 0)
+	    (= (y v) 0)
+	    (/= (z v) 0))))
+      
+(defun 2Dp (v)
+  "Predicate to test if vector is 2D"
+  (and (or (= (x v) 0)
+	   (= (y v) 0)
+	   (= (z v) 0))
+       (not (1Dp v))))
