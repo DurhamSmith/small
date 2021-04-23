@@ -34,21 +34,21 @@ Returns a list of all conflicting nts in both crossovers or nil"
 
 
 
-(defun all-conflicting-crossovers (crossovers)
-  "crossovers: (list CROSSOVER ...)
-Returns
-(list (list CROSSOVER ...)) where each of the nested lists conflict with one another"
-  (remove-all-nils
-   (if (cdr crossovers)
-       (cons (mapcar #'(lambda (c)
-			 (multiple-value-bind (nts xovers)
-			     (conflictingp (car crossovers) c)
-			   xovers
-			  ) 
-			)
-		    (cdr crossovers))
-	    (all-conflicting-crossovers (cdr crossovers)))
-      nil)))
+;; (defun all-conflicting-crossovers (crossovers)
+;;   "crossovers: (list CROSSOVER ...)
+;; Returns
+;; (list (list CROSSOVER ...)) where each of the nested lists conflict with one another"
+;;   (remove-all-nils
+;;    (if (cdr crossovers)
+;;        (cons (mapcar #'(lambda (c)
+;; 			 (multiple-value-bind (nts xovers)
+;; 			     (conflictingp (car crossovers) c)
+;; 			   xovers
+;; 			  ) 
+;; 			)
+;; 		    (cdr crossovers))
+;; 	    (all-conflicting-crossovers (cdr crossovers)))
+;;       nil)))
 
 
 
@@ -68,7 +68,22 @@ Returns
 			)
 		    (cdr crossovers)))
 	    (all-conflicting-crossovers (cdr crossovers)))
-      nil)))
+       nil)))
+
+(defun resolve-conflicting-crossovers (all-crossovers conflicting-crossovers)
+  "all-crossovers: (list CROSSOVER)
+conflicting-crossovers: (list (list CROSSOVER ...))
+Selects the worst crossovers per nested list in conflicting-crossovers and removes them"
+  (remove-crossovers bc
+		     (mapcar #'worst-crossovers
+			     (all-conflicting-crossovers bc))))
+
+(defun remove-crossovers (all remove)
+  "all : (list CROSSOVER)
+remove : (list CROSSOVER)
+Lists can be nested, returned list is flat
+;TODO: Should returned list be the same structure just with crossovers removed?"
+  (set-difference (flatten all) (flatten remove)))
 
 
 
@@ -96,6 +111,8 @@ Returns
 (defun bbangled (crossover)
   "returns bbangle in degrees"
   (rad->deg (bbangle crossover)))
+
+
 
 (defun find-best-crossover (crossovers)
   "Current implementation returns multiples valus, 
@@ -135,7 +152,8 @@ Takes a list of CROSSOVERS and finds the best one of them by checking
 (defun remove-nilr (x)
   "Todo use LABELs and move to remove-all-nils"
 	  (if (consp x)
-	      (mapcar #'remove-nilr (remove nil x))
+	      (remove nil
+		      (mapcar #'remove-nilr (remove nil x)))
 	      x))
 
 

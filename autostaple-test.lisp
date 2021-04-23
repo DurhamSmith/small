@@ -11,7 +11,7 @@
 (defun antiparallelp (strand1 strand2)
   "Returns t if strands are antiparallel. Antiparallel means dot-product between the first nts vn <= *antiparallel-dotproduct*"
   (<= (dotproduct (vn (5nt strand1))
-	     (vn (5nt strand2))) 
+	     (vn (5nt strand2)))
       *antiparallel-dotproduct*))
 
 ;; ==============================================================================
@@ -35,53 +35,59 @@ Importantly nth strand in strands partner strands will not include DNA-HELIX-STR
     (cons (list (car strands)
 		(get-antiparallel-strands (car strands)
 				      (cdr strands)))
-	  (unique-antiparallel-partners (cdr strands)))))	   
-	    
-      
-    
+	  (unique-antiparallel-partners (cdr strands)))))
+
+
+
 
 
 ;; (defun staple-crossovers (strand strands)
 ;;   "Returns all the crossovers between helices TODO as what?"
 ;;   (mapcar #'(lambda (s)
-;; 	      ) 
+;;	      )
 ;; )
-  
 
-	      
+
+
 (defun all-potential-crossovers (strands &key (cutoff-dist *cutoff-dist*))
   "strands is a list of DNA-HELIX-STRANDS
 Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
   ;; 1: Recurse through strands to get all potential antiparallel partners (list (list hel-in-1-dir all-antiparallel-helices))
   ;; 2: double mapcar (over cdrs for second) for each car of potential antiparallel and create all possible crossovers
   ;; 3: remove crossovers if > cutoff-dist
-  (let* ((ppts (unique-antiparallel-partners strands))
-	 (crossovers (mapcar #'(lambda (pt)
-				 (
-				 ) 
+  (let* ((antiparallel-groups (unique-antiparallel-partners strands))
+	 (crossovers (mapcar #'(lambda (antiparallel-group)
+				 ;; First entry of the nested list returned by unique-antiparallel-partners is the strand and the second is a nested list of partner strands"
+				 (mapcar #'(lambda (partner-strand)
+					     (make-crossovers (car antiparallel-group)
+							      partner-strand)
+;;					 (break partner-strand)
 
-				 )
+					     )
+					 (second antiparallel-group)))
+			     antiparallel-groups)))
+    crossovers))
 
-			     )))))
+(format t "hello ~A" (all-potential-crossovers s))
+
+(second (first (unique-antiparallel-partners s)))
 
 
-		     
-
-
-  
-	    
 
 ;;;; ==========================Scratch Area========================
 ;; Testing antiparallel
 ;; 1
-(progn 
+(progn
   (setf l (make-instance 'dna-square-lattice)
 	s (scaffold l)
 	cross (remove-nilr (make-crossovers (first s) (second s)))
 	fc (flatten cross)
 	bc (mapcar #'find-best-crossover
-		   (remove-nilr cross))))
-  
+		   (remove-nilr cross))
+	pc (all-potential-crossovers s)))
+
+(remove-all-nils pc)
+
 (length s)
 (length (antiparallel-strands (car s) (cdr s)))
 (wmdna "antiparallel" (first s) (get-antiparallel-strands (car (scaffold l)) (cdr (scaffold l))))
@@ -100,12 +106,12 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 
 (mapcar #'(lambda (x)
 	    (planarp x)
-	    ) 
+	    )
 	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
 
 (mapcar #'(lambda (x)
 	    (1Dp (planarp x))
-	    ) 
+	    )
 	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
 
 (remove-nilr (make-crossovers
@@ -115,12 +121,12 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 
 (mapcar #'(lambda (x)
 	    (bbdot x)
-	    ) 
+	    )
 	(flatten (remove-nilr (make-crossovers (first s) (second s)))))
 
 (mapcar #'(lambda (x)
 	    (rad->deg (bbangle x))
-	    ) 
+	    )
 	(flatten (remove-nilr (make-crossovers
 			       (first s)
 			       (second s)
@@ -163,7 +169,14 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 	      (second (mapcar #'find-best-crossover
 		  (remove-nilr (make-crossovers (first s) (second s))))))
 
-(all-conflicting-crossovers bc)
+
+(set-difference bc (flatten (mapcar #'worst-crossovers (all-conflicting-crossovers bc))))
+(flatten (mapcar #'worst-crossovers (all-conflicting-crossovers bc)))
+(flatten (mapcar #'find-best-crossover (all-conflicting-crossovers bc)))
+
+(intersection bc (flatten (mapcar #'worst-crossovers (all-conflicting-crossovers bc)))
+
+
 (remove-nilr (all-conflicting-crossovers bc))
 
 (find-best-crossover (second cross))
@@ -181,6 +194,24 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 			 (make-partner (nt2 c)))
 		   )
 	       (list (first (second cross)))))
+
+
+(wmdna "conflict-solved" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+	       (set-difference bc (flatten (mapcar #'worst-crossovers (all-conflicting-crossovers bc))))))
+
+(wmdna "conflicts-worst" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c)))
+		   )
+	       (intersection bc
+			     (flatten
+			      (mapcar #'worst-crossovers (all-conflicting-crossovers bc))))))
+
 (find-best-crossover (second cross))
 (length (mapcar #'(lambda (c)
 		   (list (make-partner (nt1 c))
@@ -189,10 +220,18 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
 		(alexandria:flatten (remove-nilr (make-crossovers (first s) (second s) :cutoff-dist 1.9)))))
 
 
-(mapcar #'find-best-crossover
+(mapcar #'find-best-crossovernnn
 	 (remove-nilr (make-crossovers (first s) (second s))))
 
 (length (remove-nilr (make-crossovers (first s) (second s))))
+
+(wmdna "conflicts-resolved" (first s) (second s)
+       (mapcar #'(lambda (c)
+		   (list (make-partner (nt1 c))
+			 (make-partner (nt2 c))))
+	       (resolve-conflicting-crossovers
+			      cross
+			      (all-conflicting-crossovers bc))))
 
 
 ;;=========================== Unimplemented ===========================================================
@@ -203,7 +242,7 @@ Returns a list of CROSSOVERs will have distances between them <= cutoff-dist"
   "nts: (list DNA-NT)
 crossovers: (list CROSSOVER)
 Take a list of crossovers and nts and returns a new list without any crossover that have a nt in nts as one of their nt slot. if :pts=t only if the nt in nts are in the CROSSOVERs pt1/2 slot are they removed")
-  
+
 
 (defun make-staples (scaffold-nts crossovers)
   ;; 1: Get all applicable crossovers
@@ -212,5 +251,3 @@ Take a list of crossovers and nts and returns a new list without any crossover t
 ; 3: if (intersection crossed-pt-pairs all-pt-pairs) is the empty set continue else repeat the process for next nt from 3' end of the scaffold that doesnt have a partner and isnt disallowed
 n
   )
- 
- 
