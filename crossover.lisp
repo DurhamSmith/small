@@ -1,5 +1,8 @@
 (in-package :small)
 
+
+
+;; ======================================Class Functions========================================
 (defclass/std crossover ()
   ((nt1 :doc "The nt whichs partner will be on the 5' end of the crossover")
    (nt2 :doc "The nt whichs partner will be on the 3' end of the crossover")
@@ -23,6 +26,11 @@
 (defmethod nts ((c crossover) &key all)
   (list (nt1 c) (nt2 c)))
     
+;; ==========================Helper functions =====================================
+
+
+
+
 
 (defun conflictingp (crossover1 crossover2)
   "Predicate to test if two crossovers share nucleotides. 
@@ -33,22 +41,6 @@ Returns a list of all conflicting nts in both crossovers or nil"
 	    (and conflicting-nts (list crossover1 crossover2)))))
 
 
-
-;; (defun all-conflicting-crossovers (crossovers)
-;;   "crossovers: (list CROSSOVER ...)
-;; Returns
-;; (list (list CROSSOVER ...)) where each of the nested lists conflict with one another"
-;;   (remove-all-nils
-;;    (if (cdr crossovers)
-;;        (cons (mapcar #'(lambda (c)
-;; 			 (multiple-value-bind (nts xovers)
-;; 			     (conflictingp (car crossovers) c)
-;; 			   xovers
-;; 			  ) 
-;; 			)
-;; 		    (cdr crossovers))
-;; 	    (all-conflicting-crossovers (cdr crossovers)))
-;;       nil)))
 
 
 
@@ -74,9 +66,10 @@ Returns
   "all-crossovers: (list CROSSOVER)
 conflicting-crossovers: (list (list CROSSOVER ...))
 Selects the worst crossovers per nested list in conflicting-crossovers and removes them"
-  (remove-crossovers bc
+  (remove-crossovers all-crossovers
 		     (mapcar #'worst-crossovers
-			     (all-conflicting-crossovers bc))))
+			     (all-conflicting-crossovers all-crossovers))))
+
 
 (defun remove-crossovers (all remove)
   "all : (list CROSSOVER)
@@ -87,7 +80,7 @@ Lists can be nested, returned list is flat
 
 
 
-(defun make-crossovers (s1 s2 &key (cutoff-dist *cutoff-dist*))
+(defun strand-crossovers (s1 s2 &key (cutoff-dist *cutoff-dist*))
   "Returns all crossovers between nts in DNA-HELIX-STRAND s1 and DNA-HELIX-STRAND s2 within cutoff-dist"
   (let ((nts1 (strand-nts s1))
 	(nts2 (strand-nts s2))
@@ -106,7 +99,20 @@ Lists can be nested, returned list is flat
 				      crossover))
 			      nts2))	    
 		  nts1))
-    (remove-nilr all-crossovers)))
+    (remove-all-nils all-crossovers)))
+
+
+
+(defun make-crossovers (strand partner-strands)
+  "strand : DNA-HELIX-STRAND
+partner-strands: (list DNA-HELIX-STRAND)
+Returns: (list [CROSSOVER | (list CROSSOVER ...)])"
+  (reduce #'append
+	(mapcar  #'(lambda (pt)
+		(strand-crossovers strand
+				   pt))
+     partner-strands)))
+
     
 (defun bbangled (crossover)
   "returns bbangle in degrees"
@@ -123,9 +129,16 @@ Takes a list of CROSSOVERS and finds the best one of them by checking
 1: distance 
 2: planarp
 3: angle"
+  (cond ((consp crossovers)
+	 (let ((ordered (sort (copy-list crossovers) #'< :key #'dist)))
+	   (values (car ordered) ordered)) )
+	((typep crossovers 'crossover) crossover)
+	(t (error "crossovers of wrong type"))))
 
-  (let ((ordered (sort (copy-list crossovers) #'< :key #'dist)))
-    (values (car ordered) ordered)))
+
+  (typep (make-instance 'dna-nt) 'dna-nt)
+  (if (consp crossovers)
+  )
 
 (defun worst-crossovers (crossovers)
   (multiple-value-bind (best all)
