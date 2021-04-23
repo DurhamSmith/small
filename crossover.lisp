@@ -158,18 +158,13 @@ Takes a list of CROSSOVERS and finds the best one of them by checking
 
 (defun remove-all-nils (x)
   "Recursively removes all nils from nested lists"
-  (remove nil (remove-nilr x)))
-		    
-	    
-
-(defun remove-nilr (x)
-  "Todo use LABELs and move to remove-all-nils"
-	  (if (consp x)
-	      (remove nil
-		      (mapcar #'remove-nilr (remove nil x)))
-	      x))
-
-
+  (labels ((remove-nilr (x)
+	     (if (consp x)
+		 (remove nil
+			 (mapcar #'remove-nilr (remove nil x)))
+		 x)))
+    (remove nil (remove-nilr x))))
+		   	   
      
 
 (defun below-cutoffp (crossover &key (cutoff-dist *cutoff-dist*))
