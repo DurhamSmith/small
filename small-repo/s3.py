@@ -15,7 +15,16 @@ d=[]
 for pre in pres:
     filename = f'{pre["Prefix"]}info'
     obj = s3.Object("zs3-demo", filename)
+    try:
+        des = obj.get()['Body'].read()
+        print(des)
+        print(des.decode('utf-8'))
+        d.append((obj.get()['Body'].read().decode('utf-8')))
+    except:
+        continue
 #    print(filename)
-    print(obj.get()['Body'].read().decode('utf-8'))
-    d.append((obj.get()['Body'].read().decode('utf-8')))
+
+
+
+    
 print(d)    

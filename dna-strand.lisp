@@ -11,9 +11,7 @@
    (vend :doc "The coordinates of the starting point of the axis (strands 3' end)")
    (len :doc "The number of nucleotides in the strand" :std 0
 	)
-   (seq :doc "The sequence of the strand (length must be equal to len)")
-   (5nt :doc "The DNA-NT at the 5'end of the DNA-STRAND")
-   (3nt :doc "The DNA-NT at the 3'end of the DNA-STRAND"))
+   (seq :doc "The sequence of the strand (length must be equal to len)"))
   (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a base class for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
 
 (defmethod 5end ((obj dna-strand) &key all)
