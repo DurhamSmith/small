@@ -17,7 +17,7 @@
 	   #:write-list ; MISC
 	   #:+ht ;hash table stuff
 	   #:numtype-in-ht
-	   #:oxdna->file
+	   #:oxdna->fileb
 	   #:chem-obj ; CHEM-OBJ related
 	   #:set-parent
 	   #:set-child

@@ -16,6 +16,7 @@
 ;;======================================== START UNCAT FUNCTIONS ================================
 
 (defun filter (fn 1st)
+  "I filter things"
   (let ((ace nil))
     (dolist (x 1st)
       (let ((val (funcall fn x)))
