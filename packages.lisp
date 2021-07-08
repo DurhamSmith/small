@@ -1,3 +1,4 @@
+;(in-package :small)
 (defpackage :small
   (:use #:cl #:alexandria #:asdf #:magicl #:defclass-std #:fset-user)
   (:shadowing-import-from :common-lisp "SOME" "=" "MAP" "TRACE" "NOTANY" "NOTEVERY" "EVERY")
@@ -45,5 +46,3 @@
 	   #:dna-single-strand
 	   #:dna-helix-strand
 	   #:t2))
-
-;(in-package :small)

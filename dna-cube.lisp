@@ -1,5 +1,5 @@
 (in-package :small)
-
+(make-instance 'dna-origami)
 (defclass/std dna-cube (dna-origami)
   ((c1 :doc "cone 1" :std (make-instance 'dna-cone))
    (c2 :doc "cone 2" :std (make-instance 'dna-cone))
@@ -65,9 +65,6 @@
 
 ;(break "~A" (length (stap-strands (c1 (make-instance 'dna-cube)))))
 ;(break (make-instance 'dna-cube))
-
-(nth 1 '(0 1 2 3))
-
 
   
 

@@ -11,9 +11,18 @@
   :depends-on (#:alexandria #:magicl #:defclass-std #:fset)
   :components ((:file "packages")
                (:file "src/core/linear-algebra")
-               (:file "src/core/chem-obj")))
+               (:file "src/core/chem-obj")
+               (:file "src/core/utils")
+               (:file "src/core/ht-helpers")
+               (:file "src/dna/dna")
+               (:file "src/dna/dna-nt")
+               (:file "src/dna/dna-strand")
+               (:file "src/dna/dna-helix-strand")
+               (:file "src/dna/dna-single-strand")
+               (:file "src/dna/dna-origami")
+               ))
 
-
+;;(make-instance 'dna-nt )
 
 ;; (asdf:defsystem small-dna
 ;;   :version "0.1.0"

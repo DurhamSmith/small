@@ -18,7 +18,7 @@ for pre in pres:
     try:
         des = obj.get()['Body'].read()
         print(des)
-        print(des.decode('utf-8'))
+        print(des.decode('utf-8').split("\n"))
         d.append((obj.get()['Body'].read().decode('utf-8')))
     except:
         continue
