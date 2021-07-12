@@ -1,0 +1,93 @@
+#+TITLE: Adding Internal Staps to triangle
+#+PROPERTY: header-args :tangle yes
+
+First we make sure we are using small
+#+begin_src lisp
+(ql:quickload :small)
+(in-package :small)
+#+end_src
+
+#+RESULTS:
+: #<PACKAGE "SMALL">
+
+Next we need to make sure we have the class definition for the DNA-TRIANGLE we created in part 1 and the DNA-TILE we created in part 2
+
+#+BEGIN_SRC lisp
+(load "./part1.lisp")
+#+END_SRC
+
+#+RESULTS:
+: T
+
+#+BEGIN_SRC lisp
+(load "./part2.lisp")
+#+END_SRC
+
+#+RESULTS:
+: T
+
+#+BEGIN_SRC lisp
+(setq tri (make-instance 'dna-triangle))
+#+END_SRC
+
+#+RESULTS:
+: #<DNA-TRIANGLE {1001E10D53}>
+
+#+BEGIN_SRC lisp
+(wmdna "./tmp/bra"  (children tri))
+#+END_SRC
+
+#+RESULTS:
+: NIL
+
+#+BEGIN_SRC lisp
+(wmdna  tri)
+#+END_SRC
+
+
+#+BEGIN_SRC lisp
+(defun s-staple (tile k i starts lengths)
+  "creates an s-shaped staple strand to hold tile helices i, i+1 and i+2 together.
+Starts are taken from tile edges"
+  (let* ((hi (SMALL::find-obj-with-props (scaffold tile)
+					  `((:i . ,i) (:k . ,k))))
+	 (hi+1 (small::find-obj-with-props (scaffold tile)
+					  `((:i . ,(+ i 1)) (:k . ,k))))
+	 (hi+2 (small::find-obj-with-props (scaffold tile)
+					   `((:i . ,(+ i 2)) (:k . ,k))))
+	 (ends (mapcar #'+ starts lengths)))
+    (if (evenp i) ;;TODO: Add error checking on i and k
+	(SMALL::create-staple `((:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end nil)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end t)
+				(:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end nil)))
+	(SMALL::create-staple `((:obj ,hi  :start ,(first starts) :end ,(first ends) :from-3end t)
+			        (:obj ,hi+1  :start ,(second starts) :end ,(second ends) :from-3end nil)
+				(:obj ,hi+2  :start ,(third starts) :end ,(third ends) :from-3end t))))))
+
+(SMALL::find-obj-with-props (scaffold tri)
+                            `((:i . 0) ))
+
+(defun staple-ordered-antiparallel-strands (strands i starts lengths &key from-3end)
+  "Creates a staple strand to hold strands from together.
+strands: List DNA strands that have property :i with value some numerical index. Subsequent indices should be antiparrallel alligned
+i: First indice, subsequent are i+1 up to i+(length (-1 ) starts)
+starts: list of nt offset
+lengths: list how long that section of the staple should be
+from-3end: if the first (:i i) start should be from the 5 end or 3 end"
+(let* ((helices (loop for x from i below (+ i (length starts))
+                      collect
+                      (SMALL::find-obj-with-props (scaffold tri)
+                            `((:i . ,x))))))
+  helices))
+
+
+(staple-ordered-antiparallel-strands (scaffold tri) 4 '(1 2 3) '(1 2 3))
+
+
+#+END_SRC
+
+#+RESULTS:
+: S-STAPLE
+
+
+*
