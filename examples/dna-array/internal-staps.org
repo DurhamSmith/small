@@ -34,7 +34,7 @@ Next we need to make sure we have the class definition for the DNA-TRIANGLE we c
 : #<DNA-TRIANGLE {1001E10D53}>
 
 #+BEGIN_SRC lisp
-(wmdna "./tmp/bra"  (children tri))
+(wmdna "./tri"  (5nt (first (scaffold tri))))
 #+END_SRC
 
 #+RESULTS:
@@ -73,18 +73,24 @@ Starts are taken from tile edges"
             a
             b)))
 
-(defun staple-ordered-antiparallel-strands (strands i starts lengths &key from-3end)
+(defun staple-ordered-antiparallel-strands (strands i starts lengths &key from-3end down)
   "Creates a staple strand to hold strands from together.
 strands: List DNA strands that have property :i with value some numerical index. Subsequent indices should be antiparrallel alligned
 i: First indice, subsequent are i+1 up to i+(length (-1 ) starts)
 starts: list of nt offset
 lengths: list how long that section of the staple should be
-from-3end: if the first (:i i) start should be from the 5 end or 3 end"
-(let* ((helices (loop for x from i below (+ i (length starts))
+from-3end: if the first (:i i) start should be from the 5 end or 3 end
+down: indices traveresd i-..."
+(let* ((helices (if down
+                    (loop for x from (- i (length starts)) above i
+                      collect
+                      (SMALL::find-obj-with-props (scaffold tri)
+                            `((:i . ,x))))
+                    (loop for x from i below (+ i (length starts))
                       collect
                       (SMALL::find-obj-with-props (scaffold tri)
                             `((:i . ,x)))))
-       (ends (mapcar #'+ starts lengths))
+                (ends (mapcar #'+ starts lengths))
        (f3ends (alternate (if from-3end
                             t
                             nil)
@@ -94,10 +100,8 @@ from-3end: if the first (:i i) start should be from the 5 end or 3 end"
                          (length starts)))
        (staple-spec (mapcar #'(lambda (hel start end f3e)
                                 (list :obj hel :start start :end end :from-3end f3e))
-                            helices starts ends f3ends)))
-  (if (first f3ends) ; We need to correctly order the staples depending if we make them in forward or reverse order
-      staple-spec
-      (nreverse staple-spec))))
+                            helices starts ends f3ends))))
+  staple-spec))
 
 
 #+END_SRC
@@ -106,10 +110,19 @@ from-3end: if the first (:i i) start should be from the 5 end or 3 end"
 : S-STAPLE
 
 #+BEGIN_SRC lisp
-(wmdna "rstap" (list
-               (create-staple (staple-ordered-antiparallel-strands (scaffold tri) 2 '(23 16 16) '(8 15 7)))
-        (scaffold tri)))
+(wmdna "me" (list
+                (5nt (first (scaffold tri)))
+                (loop for i from 22 to 21 by 1
+                      collect
+                      (create-staple
+                       (staple-ordered-antiparallel-strands
+                        (scaffold tri)
+                        i
+                        '(24 31 31) '(8 16 8))))
+                ))
 #+END_SRC
 
 #+RESULTS:
 : NIL
+
+
