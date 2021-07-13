@@ -85,24 +85,45 @@ desc: indices traveresd i-..."
                        (staple-ordered-antiparallel-strands
                         (scaffold tri)
                         i
-                       '(40 40 47) '(8 16 8)
+                       '(46 46 54) '(8 16 8)
                         :desc t
                         :from-3end nil)))))
 
-
-(wmdna "./tmp/all2" (list
+(wmdna "./tmp/tri-is-r4" (list
                 (5nt (first (scaffold tri)))
+                (loop for i from 7 upto 15 by 2
+                      collect
+                      (create-staple
+                       (staple-ordered-antiparallel-strands
+                        (scaffold tri)
+                        i
+                       '(69 62 62) '(8 15 7)
+                        :desc nil
+                        :from-3end t)))
+                ))
 
+
+(wmdna "./tmp/all4" (list
+                (5nt (first (scaffold tri)))
+                (loop for i from 7 upto 15 by 2
+                      collect
+                      (create-staple
+                       (staple-ordered-antiparallel-strands
+                        (scaffold tri)
+                        i
+                        '(69 62 62) '(8 15 7)
+                        :desc nil
+                        :from-3end t)))
                 (loop for i from 18 downto 8 by 2
                       collect
                       (create-staple
                        (staple-ordered-antiparallel-strands
                         (scaffold tri)
                         i
-                       '(40 40 47) '(8 16 8)
+                       '(46 46 54) '(8 16 8)
                         :desc t
                         :from-3end nil)))
-                                (loop for i from 5 upto 17 by 2
+                (loop for i from 5 upto 17 by 2
                       collect
                       (create-staple
                        (staple-ordered-antiparallel-strands
