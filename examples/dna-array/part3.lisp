@@ -59,7 +59,7 @@ desc: indices traveresd i-..."
                 collect
                 (create-staple
                  (staple-ordered-antiparallel-strands
-                  (scaffold tri)
+                  (scaffold ori)
                   i
                   '(77 77 85) '(8 16 8)
                   :desc t
@@ -68,7 +68,7 @@ desc: indices traveresd i-..."
                 collect
                 (create-staple
                  (staple-ordered-antiparallel-strands
-                  (scaffold tri)
+                  (scaffold ori)
                   i
                   '(69 62 62) '(8 15 7)
                   :desc nil
@@ -77,7 +77,7 @@ desc: indices traveresd i-..."
                 collect
                 (create-staple
                  (staple-ordered-antiparallel-strands
-                  (scaffold tri)
+                  (scaffold ori)
                   i
                   '(46 46 54) '(8 16 8)
                   :desc t
@@ -86,7 +86,7 @@ desc: indices traveresd i-..."
                 collect
                 (create-staple
                  (staple-ordered-antiparallel-strands
-                  (scaffold tri)
+                  (scaffold ori)
                   i
                   '(38 30 30) '(8 16 8)
                   :desc nil
@@ -95,21 +95,80 @@ desc: indices traveresd i-..."
                 collect
                 (create-staple
                  (staple-ordered-antiparallel-strands
-                  (scaffold tri)
+                  (scaffold ori)
                   i
                   '(15 15 22) '(8 15 8)  ;; zero based index
                   :desc t
                   :from-3end nil)))
           (create-staple
            (staple-ordered-antiparallel-strands
-            (scaffold tri)
+            (scaffold ori)
             11
             '(101 93 93) '(8 16 8)  ;; zero based index
             :desc nil
-            :from-3end t))))))
+            :from-3end t)))))
+  (mapcar #'(lambda (ss)
+              (add-child ori ss))  ;; to get them to rotate together
+          (staples ori))
+  ori
+)
 
 
 (setq tri (make-instance 'dna-triangle))
 (wmdna "./tmp/tri_int"
        (5nt (first (scaffold tri)))
        (staples tri))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;                 CONE                ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defclass/std dna-corner (dna-origami)
+  ((t1 :doc "triangle 1" :std (make-instance 'dna-triangle))
+   (t2 :doc "triangle 2" :std (make-instance 'dna-triangle))
+   (t3 :doc "triangle 3" :std (make-instance 'dna-triangle))
+   (stap-bridges :doc "Staple Bridges"))
+  (:documentation "Cone from triangle of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256"))
+
+
+
+(defmethod initialize-instance :after ((obj dna-corner) &key)
+  ;;Fist we loop over the scaffold so that we can set its sequence
+  ;;This way when we make partners they have the correct seq
+  (with-accessors ((t1 t1) (t2 t2) (t3 t3)) obj
+    (let* ((roty (rotation-matrix (v3 0 1 0) (/ pi -2))) ; - because we use normal coords
+           rot2 rot3)
+
+      ;; Rotate first then from second rot mat
+      (rotate-obj t2 roty)
+                                        ;(rotate-obj t2 (rotation-matrix (v3 1 0 0) (/ pi 4)))
+      (setf rot2 (rotation-matrix (midpoint (3nt t1)
+                                            (5nt t2))
+                                  (/ pi 2)))
+
+      (rotate-obj t2 rot2)
+      (rotate-obj t3 roty)
+      (rotate-obj t3 roty)
+      (rotate-obj t3 rot2)
+      (setf rot3 (rotation-matrix (midpoint (3nt t2)
+                                            (5nt t3))
+                                  (/ pi 2)))
+      (rotate-obj t3 rot3))))
+
+
+(defun all-triangle (tri)
+  (list
+   (5nt (first (scaffold tri)))
+   (staples tri)))
+
+
+(defun all-corner (c)
+  (list
+   (all-triangle (t1 c))
+   (all-triangle (t2 c))
+   (all-triangle (t3 c))))
+
+(describe 'dna-corner)
+
+
+(wmdna "./tmp/cube" (all-corner (make-instance 'dna-corner)))
