@@ -1,178 +1,115 @@
 (in-package :small)
-(load "~/quicklisp/local-projects/small/examples/dna-array/part2.lisp")
-
-(load "~/quicklisp/local-projects/small/autostaple.lisp")
 
 
-(let* ((tile (make-instance 'dna-tile))
-       (pts (mapcar #'make-partner (connected-nts (5nt tz))))
-       (ptsc (mapcar #'connect pts (cdr pts)))
-       (exts (mapcar #'(lambda (nt)
-				    (surface-extension-strand nt 30))
-				(bb-pointing pts)
-				)))
-  (update-scaffold-bases tile *m13mp18*)
-  (wmdna "tile-v6" tile (mapcar #'(lambda (nt)
-				    (surface-extension-strand nt 30))
-				(bb-pointing pts)
-				)))
-			 
-(length
- (let* ((tile (make-instance 'dna-tile))
-       (pts (mapcar #'make-partner (connected-nts (5nt tz))))
-       (ptsc (mapcar #'connect pts (cdr pts))))
-  (bb-pointing pts)))
+(defun alternate (a b len)
+  (loop for x from 1 to len collect
+        (if (oddp x)
+            a
+            b)))
 
 
-
-(find-obj-with-props (tile-helices tz)
-					`((:i . 1)))
-
-
-(defun bb-pointing (nts &key (v (v3 0 1 0)) (threshold (- 1 (deg->rad 0.07))))  
-  (remove nil
-	  (mapcar #'(lambda (nt)
-		      (let ((x (magicl:tref (magicl:@ (magicl::transpose (vbb nt)) v) 0 0)))
-			(if (> x threshold)
-			    nt
-			    nil)))
-		  nts)))
-
-(defun finddna (strand)
-  (let* ((nts (strand-nts strand))
-	 (pts (mapcar #'make-partner nts))
-	 (exts (mapcar #'(lambda (nt)
-			   (surface-extension-strand nt 30))
-		       (bb-pointing pts)
-		       )))
-    exts))
-
-
-
-(remove nil (mapcar #'finddna (triangle-helices tz 1)))
-
-(let* ((tz (make-instance 'dna-tile))
-       (pts (mapcar #'make-partner (connected-nts (5nt tz))))
-       (ptsc (mapcar #'connect pts (cdr pts))))
-       
-  (wmdna
-   "1"
-   tz
-   (first pts)
-   (remove nil
-	   (list
-	    (first (tri-row-exts tz 4 12))
-	    (tri-row-exts tz 4 15)
-	    (tri-row-exts tz 4 7)
-	    
-	    (tri-row-exts tz 1 9)
-	    (tri-row-exts tz 1 13)
-	    (second (tri-row-exts tz 1 20))
-	    
-	    (second (tri-row-exts tz 3 4))
-	    (tri-row-exts tz 3 9)
-	    (tri-row-exts tz 3 15)
-
-	    (third (tri-row-exts tz 2 10))
-	    (third (tri-row-exts tz 2 12))
-	    
-	    ))))
+(defun staple-ordered-antiparallel-strands (strands i starts lengths &key from-3end desc)
+  "Creates a staple strand to hold strands from together.
+strands: List DNA strands that have property :i with value some numerical index. Subsequent indices should be antiparrallel alligned
+i: First indice, subsequent are i+1 up to i+(length (-1 ) starts)
+starts: list of nt offset
+lengths: list how long that section of the staple should be
+from-3end: if the first (:i i) start should be from the 5 end or 3 end
+desc: indices traveresd i-..."
+  (let* ((helices (if desc
+                      (loop for x from i above (- i (length starts))
+                            collect
+                            (SMALL::find-obj-with-props (scaffold tri)
+                                                        `((:i . ,x))))
+                      (loop for x from i below (+ i (length starts))
+                            collect
+                            (SMALL::find-obj-with-props (scaffold tri)
+                                                        `((:i . ,x))))))
+         (ends (mapcar #'+ starts lengths))
+         (f3ends (alternate (if from-3end
+                                t
+                                nil)
+                            (if from-3end
+                                nil
+                                t)
+                            (length starts)))
+         (staple-spec (mapcar #'(lambda (hel start end f3e)
+                                  (list :obj hel :start start :end end :from-3end f3e))
+                              helices starts ends f3ends)))
+    staple-spec))
 
 
-(let* ((tz (make-instance 'dna-tile))
-       (pts (mapcar #'make-partner (connected-nts (5nt tz))))
-       (ptsc (mapcar #'connect pts (cdr pts))))
-       
-  (wmdna
-   "2"
-   tz
-   (first pts)
-   (remove nil
-	   (list
-	    (first (tri-row-exts tz 4 12))
-	    (tri-row-exts tz 4 15)
-	    (tri-row-exts tz 4 7)
-	    
-	    (tri-row-exts tz 1 9)
-	    (tri-row-exts tz 1 13)
-	    (second (tri-row-exts tz 1 20))
-	    
-	    (second (tri-row-exts tz 3 4))
-	    (tri-row-exts tz 3 9)
-	    (tri-row-exts tz 3 13)
+(defmethod initialize-instance :after ((ori dna-triangle) &key)
+  (loop for i from 1 to 22 do
+    (progn
+      ;;(break "scaff ~A" (scaffold ori))
+      (add-to-scaffold ori (tri-scaffold-helix i))
+      (when (evenp i)
+        (unless (= *2r* i)
+          (add-to-scaffold ori (tri-scaf-loop i)))
+        )))
+  ;; Now we set the 5' and 3' ends of the dna-tile
+  (setf (5nt ori) (5nt (first (scaffold ori)))
+        (3nt ori) (3nt (car (last (scaffold ori)))))
+  ;; Lets add the internal staples holiding the triangle together
+  (setf (staples ori)
+        (alexandria:flatten
+         (list
+          (loop for i from 14 downto 12 by 2
+                collect
+                (create-staple
+                 (staple-ordered-antiparallel-strands
+                  (scaffold tri)
+                  i
+                  '(77 77 85) '(8 16 8)
+                  :desc t
+                  :from-3end nil)))
+          (loop for i from 7 upto 15 by 2
+                collect
+                (create-staple
+                 (staple-ordered-antiparallel-strands
+                  (scaffold tri)
+                  i
+                  '(69 62 62) '(8 15 7)
+                  :desc nil
+                  :from-3end t)))
+          (loop for i from 18 downto 8 by 2
+                collect
+                (create-staple
+                 (staple-ordered-antiparallel-strands
+                  (scaffold tri)
+                  i
+                  '(46 46 54) '(8 16 8)
+                  :desc t
+                  :from-3end nil)))
+          (loop for i from 5 upto 17 by 2
+                collect
+                (create-staple
+                 (staple-ordered-antiparallel-strands
+                  (scaffold tri)
+                  i
+                  '(38 30 30) '(8 16 8)
+                  :desc nil
+                  :from-3end t)))
+          (loop for i from 22 downto 4 by 2
+                collect
+                (create-staple
+                 (staple-ordered-antiparallel-strands
+                  (scaffold tri)
+                  i
+                  '(15 15 22) '(8 15 8)  ;; zero based index
+                  :desc t
+                  :from-3end nil)))
+          (create-staple
+           (staple-ordered-antiparallel-strands
+            (scaffold tri)
+            11
+            '(101 93 93) '(8 16 8)  ;; zero based index
+            :desc nil
+            :from-3end t))))))
 
-	    (third (tri-row-exts tz 2 10))
-	    (third (tri-row-exts tz 2 12))
-	    
-	    ))))
 
-
-(defun tri-row-exts (tile k i)
-  (let ((hel (find-obj-with-props
-	      (triangle-helices tile k)
-	      `((:i . ,i)))))
-    (finddna hel)))
-
-
-
-(let* ((tile (make-instance 'dna-tile))
-       (pts (mapcar #'make-partner (connected-nts (5nt tz))))
-       (ptsc (mapcar #'connect pts (cdr pts)))
-       (exts (remove nil (mapcar #'finddna
-				 (list
-				  (find-obj-with-props
-				   (triangle-helices tile 1)
-				   `((:i . 2))))))))
-  (finddna
-
-   (find-obj-with-props
-   (triangle-helices tile 1)
-   `((:i . 3)))))
-
-  (update-scaffold-bases tile *m13mp18*)
-  (wmdna "tile-v6" tile exts))
-
-(length (remove nil (mapcar #'finddna (tile-helices tz))))
-
-		   
-	 
-	 
-
-  
-
-
-
-(defun triangle-helices (tile k)
-  (remove-if-not #'(lambda (x)
-		     (typep x 'dna-helix-strand))
-		 (scaffold (get-triangle tile k))))
-
-		 
-  
-
-(setq tz (make-instance 'dna-tile))
-(defun tile-helices (tile)
-  (remove-if-not #'(lambda (x)
-		     (typep x 'dna-helix-strand))
-		 (alexandria:flatten
-		  (mapcar #'scaffold (remove-if-not #'(lambda (x)
-							(typep x 'dna-triangle))
-						    (scaffold tile))))))
-(tile-helices tz)
-
-				    
-				      
-  
-(connected-nts (5nt tz))
-(reduce #'connect (mapcar #'make-partner (connected-nts (5nt tz))))
-
-(defun surface-extension-strand (nt num-nts &key
-					      (vaxis (v3 0 1 0))
-					      (ext-dist (v3 0 0 0));(v3 0 (+ *helix-radius* *helix-cm-offset*) 0))
-					      (vbb (v3 1 0 0)))
-  "Takes a NT, a direction of the axis and the number of nts and returns a DNA-HELIX-STRAND that forms an extension above the strand. Coords = cm of nt + ext-dist"
-  (let* ((ext-cm (MAGICL:.+ (cm->bb (cm nt) (vbb nt)) ext-dist))
-	 (ext (helix-strand ext-cm vaxis vbb num-nts)))
-    ext))
-
-(p
+(setq tri (make-instance 'dna-triangle))
+(wmdna "./tmp/tri_int"
+       (5nt (first (scaffold tri)))
+       (staples tri))

@@ -89,6 +89,7 @@ desc: indices traveresd i-..."
                         :desc t
                         :from-3end nil)))))
 
+
 (wmdna "./tmp/tri-is-r4" (list
                 (5nt (first (scaffold tri)))
                 (loop for i from 7 upto 15 by 2
@@ -102,9 +103,40 @@ desc: indices traveresd i-..."
                         :from-3end t)))
                 ))
 
-
-(wmdna "./tmp/all4" (list
+(wmdna "./tmp/tri-is-r5" (list
                 (5nt (first (scaffold tri)))
+                (loop for i from 14 downto 12 by 2
+                      collect
+                      (create-staple
+                       (staple-ordered-antiparallel-strands
+                        (scaffold tri)
+                        i
+                       '(77 77 85) '(8 16 8)
+                        :desc t
+                        :from-3end nil)))))
+
+(wmdna "./tmp/tri-is-r6"
+       (5nt (first (scaffold tri)))
+       (create-staple
+        (staple-ordered-antiparallel-strands
+         (scaffold tri)
+         11
+         '(101 93 93) '(8 16 8)  ;; zero based index
+         :desc nil
+         :from-3end t))
+       )
+
+(wmdna "./tmp/all" (list
+                (5nt (first (scaffold tri)))
+                (loop for i from 14 downto 12 by 2
+                      collect
+                      (create-staple
+                       (staple-ordered-antiparallel-strands
+                        (scaffold tri)
+                        i
+                       '(77 77 85) '(8 16 8)
+                        :desc t
+                        :from-3end nil)))
                 (loop for i from 7 upto 15 by 2
                       collect
                       (create-staple
@@ -141,6 +173,13 @@ desc: indices traveresd i-..."
                        '(15 15 22) '(8 15 8)  ;; zero based index
                         :desc t
                         :from-3end nil)))
+                (create-staple
+                       (staple-ordered-antiparallel-strands
+                        (scaffold tri)
+                        11
+                       '(101 93 93) '(8 16 8)  ;; zero based index
+                        :desc nil
+                        :from-3end t))
                 ))
 
 
