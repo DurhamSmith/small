@@ -59,16 +59,16 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 		   (bridging-single-strand prev-nt next-nt vbb :len num-nts))))))
 	 (staps
 	   ))
-    (setf staps 
+    (setf staps
 	  (loop
 	    for i from 0 to (- (length scaff-spec) 1)
 	    collect
 	    (cond ((getf (nth i scaff-spec) :obj)
 		   (nth i helix-staps))
-		  ((getf (nth i scaff-spec) :single-strand)			  
+		  ((getf (nth i scaff-spec) :single-strand)
 		   (nth i single-strands))
 		  (t (error "Not supported")))))
-	     
+
     ;(break "~A ~% SS  ~A ~% ALL ~A" helix-staps single-strands staps)
     (connect-staples staps)
     (values (staple-from-objs staps) (connected-nts (5nt (first staps))))))
@@ -95,12 +95,14 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
  (mapcar #'connect staps (cdr staps))
  ; (break "2  ~A" staps)
   staps)
-  
+
 ;;TODO: Recheck this and see in we need edge-staples
+
 
 (defclass/std dna-origami (dna)
   ((scaffold :doc "The sub chem-objs defining the DNA origamis scaffold strand")
    (edge-staples :doc "The sub chem-objs defining the DNA origamis edge-staples")
+   (staples :doc "The sub chem-objs defining the DNA origamis edge-staples")
    (5nt :doc "The DNA-NT at the 5'end of the DNA-STRAND")
    (3nt :doc "The DNA-NT at the 3'end of the DNA-STRAND")))
 ;; )
@@ -133,11 +135,11 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 	(setf edge-staples (append edge-staples (list obj))))))
 
 
-	
+
 
 ;;;; Generic implementation for connect for origami
 (defmethod connect ((o1 dna-origami) (o2 dna-origami) &rest rest)
-  
+
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
 
 					;  (break "~A ~A" o1 o2)
@@ -146,7 +148,7 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
   (dna-connect o1 o2))
 
 (defmethod connect ((o1 dna-strand) (o2 dna-origami) &rest rest)
-  
+
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
 
 					;  (break "~A ~A" o1 o2)
@@ -155,7 +157,7 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
   (dna-connect o1 o2))
 
 (defmethod connect ((o1 dna-origami) (o2 dna-strand) &rest rest)
-  
+
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
 
 					;  (break "~A ~A" o1 o2)
