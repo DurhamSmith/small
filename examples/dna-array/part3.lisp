@@ -64,7 +64,7 @@ desc: indices traveresd i-..."
                  (staple-ordered-antiparallel-strands
                   (scaffold ori)
                   i
-                  '(77 77 85) '(8 16 8)
+                  '(78 78 86) '(8 16 8)
                   :desc t
                   :from-3end nil)))
           (loop for i from 7 upto 15 by 2
@@ -73,7 +73,7 @@ desc: indices traveresd i-..."
                  (staple-ordered-antiparallel-strands
                   (scaffold ori)
                   i
-                  '(69 62 62) '(8 15 7)
+                  '(70 63 63) '(8 15 7)
                   :desc nil
                   :from-3end t)))
           (loop for i from 18 downto 8 by 2
@@ -82,7 +82,7 @@ desc: indices traveresd i-..."
                  (staple-ordered-antiparallel-strands
                   (scaffold ori)
                   i
-                  '(46 46 54) '(8 16 8)
+                  '(47 47 55) '(8 16 8)
                   :desc t
                   :from-3end nil)))
           (loop for i from 5 upto 17 by 2
@@ -91,7 +91,7 @@ desc: indices traveresd i-..."
                  (staple-ordered-antiparallel-strands
                   (scaffold ori)
                   i
-                  '(38 30 30) '(8 16 8)
+                  '(39 31 31) '(8 16 8)
                   :desc nil
                   :from-3end t)))
           (loop for i from 22 downto 4 by 2
@@ -100,14 +100,14 @@ desc: indices traveresd i-..."
                  (staple-ordered-antiparallel-strands
                   (scaffold ori)
                   i
-                  '(15 15 22) '(8 15 8)  ;; zero based index
+                  '(16 16 23) '(7 15 8)  ;; 23 and 7 since there is a crossover. NOT ?zero based index
                   :desc t
                   :from-3end nil)))
           (create-staple
            (staple-ordered-antiparallel-strands
             (scaffold ori)
             11
-            '(101 93 93) '(8 16 8)  ;; zero based index
+            '(102 94 94) '(8 16 8)  ;; zero based index
             :desc nil
             :from-3end t)))))
   (mapcar #'(lambda (ss)
@@ -118,10 +118,10 @@ desc: indices traveresd i-..."
 
 (describe 'dna-origami)
 
-;; (setf tri (make-instance 'dna-triangle))
-;; (wmdna "./tri_int"
-;;        (5nt (first (scaffold tri)))
-;;        (staples tri))
+(let ((tri (make-instance 'dna-triangle)))
+  (wmdna "./tri_int"
+         (5nt (first (scaffold tri)))
+         (staples tri)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -159,7 +159,9 @@ desc: indices traveresd i-..."
       (setf rot3 (rotation-matrix (midpoint (3nt t2)
                                             (5nt t3))
                                   (/ pi 2)))
-      (rotate-obj t3 rot3))))
+      (rotate-obj t3 rot3))
+    (connect t1 t2)
+    (connect t2 t3)))
 
 
 (defun all-triangle (tri)
@@ -436,3 +438,9 @@ if from22=t then the vector will point from helix 22->21"
 	((= num 2) (t2 corner))
 	((= num 3) (t3 corner))
 	(t (error "Only [1,3] are valid indexes"))))
+
+
+(let ((corner (make-instance 'dna-corner)))
+  (wmdna "corner_stap_briges_internal_staps_1"
+         (car (all-corner corner))
+         (staple-bridges-corner corner)))
