@@ -51,7 +51,7 @@ desc: indices traveresd i-..."
                               helices starts ends f3ends)))
     staple-spec))
 
-(wmdna "./tmp/tri-is-r1" (list
+(wmdna "./tri-is-r1" (list
                 (5nt (first (scaffold tri)))
                 (loop for i from 22 downto 4 by 2
                       collect
@@ -59,7 +59,7 @@ desc: indices traveresd i-..."
                        (staple-ordered-antiparallel-strands
                         (scaffold tri)
                         i
-                       '(15 15 22) '(8 15 8)  ;; zero based index
+                        '(16 16 23) '(7 15 8)  ;; 23 and 7 since there is a crossover. NOT ?zero based index
                         :desc t
                         :from-3end nil)))
                 ))
@@ -72,7 +72,7 @@ desc: indices traveresd i-..."
                        (staple-ordered-antiparallel-strands
                         (scaffold tri)
                         i
-                       '(38 30 30) '(8 16 8)
+                       '(39 31 31) '(8 16 8)
                         :desc nil
                         :from-3end t)))
                 ))
@@ -90,7 +90,7 @@ desc: indices traveresd i-..."
                         :from-3end nil)))))
 
 
-(wmdna "./tmp/tri-is-r4" (list
+(wmdna "./tri-is-r4" (list
                 (5nt (first (scaffold tri)))
                 (loop for i from 7 upto 15 by 2
                       collect
@@ -98,7 +98,7 @@ desc: indices traveresd i-..."
                        (staple-ordered-antiparallel-strands
                         (scaffold tri)
                         i
-                       '(69 62 62) '(8 15 7)
+                        '(70 63 63) '(8 15 7)
                         :desc nil
                         :from-3end t)))
                 ))

@@ -118,21 +118,21 @@ desc: indices traveresd i-..."
 
 (describe 'dna-origami)
 
-(setf tri (make-instance 'dna-triangle))
-(wmdna "./tri_int"
-       (5nt (first (scaffold tri)))
-       (staples tri))
+;; (setf tri (make-instance 'dna-triangle))
+;; (wmdna "./tri_int"
+;;        (5nt (first (scaffold tri)))
+;;        (staples tri))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                                        ;                 CONE                ;
+                                        ;                 CORNER                ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defclass/std dna-corner (dna-origami)
   ((t1 :doc "triangle 1" :std (make-instance 'dna-triangle))
    (t2 :doc "triangle 2" :std (make-instance 'dna-triangle))
    (t3 :doc "triangle 3" :std (make-instance 'dna-triangle))
    (stap-bridges :doc "Staple Bridges"))
-  (:documentation "Cone from triangle of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256"))
+  (:documentation "Corner from triangle of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256"))
 
 
 
@@ -182,11 +182,11 @@ desc: indices traveresd i-..."
 
 
 (defclass/std dna-cube (dna-origami)
-  ((c1 :doc "cone 1" :std (make-instance 'dna-corner))
-   (c2 :doc "cone 2" :std (make-instance 'dna-corner))
-   (c3 :doc "cone 3" :std (make-instance 'dna-corner))
-   (c4 :doc "cone 4" :std (make-instance 'dna-corner)))
-  (:documentation "An implementation the DNA cube made from 12 triangles (4 cones) of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
+  ((c1 :doc "corner 1" :std (make-instance 'dna-corner))
+   (c2 :doc "corner 2" :std (make-instance 'dna-corner))
+   (c3 :doc "corner 3" :std (make-instance 'dna-corner))
+   (c4 :doc "corner 4" :std (make-instance 'dna-corner)))
+  (:documentation "An implementation the DNA cube made from 12 triangles (4 corners) of the tile of Tikhomirov et al https://www.nature.com/articles/nnano.2016.256. The triangle has coords which correspond to index k=1 with the y-coords flipped to make the axis correspond to normal cartesian coords"))
 
 
 
@@ -198,7 +198,7 @@ desc: indices traveresd i-..."
    (all-corner (c4 cube))))
 
 
-(defun align-cones (c1 c2 edge)
+(defun align-corners (c1 c2 edge)
   ;;(break)
   (let* ((tri (cond ((= 1 edge) (t1 c1))
                     ((= 2 edge) (t2 c1))
@@ -242,10 +242,10 @@ if from22=t then the vector will point from helix 22->21"
 (defmethod initialize-instance :after ((ori dna-cube) &key)
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) ori
     (format t "pre ~A" (all-tfms c2))
-    (align-cones c1 c2 1)
+    (align-corners c1 c2 1)
     (format t "post ~A" (all-tfms c2))
-                                        ;   (align-cones c1 c3 2)
-    (align-cones c1 c4 3))
+    (align-corners c1 c3 2)
+    (align-corners c1 c4 3))
   ori)
 
 (t1 )
@@ -254,3 +254,185 @@ if from22=t then the vector will point from helix 22->21"
 (wmdna "./cube" (all-cube (make-instance 'dna-cube)))
 
 (make-instance 'dna-corner)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;        staple bridges to corner       ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun staple-bridge-corner (corner k i)
+  (let* ((prevk (if (= k 1)
+		    3
+		    (- k 1)))
+	 (nextk (if (= k 3)
+		    1
+		    (+ k 1)))
+	 (prev-tri (corner-triangle corner prevk))
+	 (cur-tri (corner-triangle corner k))
+	 (next-tri (corner-triangle corner nextk)))
+    (cond ((= i 2)
+	   (let* ((h1 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . ,(- *2r* i)))))
+		  (h2 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . ,(+ (- *2r* i) 1)))))
+		  (h3 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i))))
+		  (h4 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,(+ i 1)))))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 12 :end 20  :from-3end t)
+			   (:obj ,h2  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h3  :start 0  :end 11 :from-3end t)
+			   (:obj ,h4  :start 12  :end 20 :from-3end nil)))))
+	     stap))
+	  ((= i 3)
+	   (let* ((h1 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (h2 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 20) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 12  :from-3end nil)
+			   (:single-strand t :num-nts 4)
+			   (:obj ,h2  :start 0 :end 12  :from-3end t)))))
+	     stap))
+	  ((= i 4)
+	   (let* ((h1 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 19) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 21  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h2  :start 0 :end 13  :from-3end t)))))
+	     stap))
+	  ((= i 5)
+	   (let* ((h1 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,(+ i 1)) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (h3 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 18) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 22 :end 30  :from-3end t)
+			   (:obj ,h2  :start 0 :end 22  :from-3end nil)
+			   (:single-strand t :num-nts 6)
+			   (:obj ,h3  :start 0 :end 14  :from-3end t)))))
+	     stap))
+	  ((= i 6)
+	   (let* ((h1 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . ,17) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (h3 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . 7) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 7  :from-3end nil)
+			   (:single-strand t :num-nts 4)
+			   (:obj ,h2  :start 0 :end 14  :from-3end t)
+			   (:obj ,h3  :start 16 :end 23  :from-3end nil)))))
+	     stap))
+	  ((= i 7)
+	   (let* ((h1 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,8) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,7) )))
+		  (h3 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . ,16) )))
+		  (h4 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 15) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 9 :end 17 :from-3end t)
+			   (:obj ,h2  :start 0 :end 8 :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h3  :start 0 :end 8  :from-3end t)
+			   (:obj ,h4  :start 9 :end 17  :from-3end nil)))))
+	     stap))
+	  ((= i 8)
+	   (let* ((h1 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 15) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 9  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h2  :start 0 :end 9  :from-3end t)))))
+	     stap))
+	  ((= i 9)
+	   (let* ((h1 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (h2 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 14) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 10  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h2  :start 0 :end 18  :from-3end t)))))
+	     stap))
+	  ((= i 10)
+	   (let* ((h1 (find-obj-with-props (scaffold prev-tri)
+						  `((:i . 13) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,i) )))
+		  (h3 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . ,(+ i 1)) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h2  :start 0 :end 19  :from-3end t)
+			   (:obj ,h3  :start 19 :end 27  :from-3end nil)))))
+	     stap))
+	  ((and (= i 11) (= k 1));(or (= k 1) (= k 3)))
+	   (let* ((h1 (find-obj-with-props (scaffold next-tri)
+					   `((:i . ,i) )))
+		  (h2 (find-obj-with-props (scaffold cur-tri)
+					   `((:i . ,12) )))
+		  (h3 (find-obj-with-props (scaffold cur-tri)
+					   `((:i . ,i) )))
+		  (h4 (find-obj-with-props (scaffold prev-tri)
+					   `((:i . 12) )))
+		  (h5 (find-obj-with-props (scaffold prev-tri)
+					   `((:i . 11) )))
+		  (h6 (find-obj-with-props (scaffold next-tri)
+					   `((:i . 12) )))
+		  (stap (create-staple
+			 `((:obj ,h1  :start 0 :end 11 :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h2  :start 0 :end 11 :from-3end t)
+			   (:obj ,h3  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t :num-nts 7)
+			   (:obj ,h4  :start 0 :end 11  :from-3end t)
+			   (:obj ,h5  :start 0 :end 11  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h6  :start 0 :end 11  :from-3end t)))))
+	     stap))
+	  ((= i 22) ;; These hold the corners edges together BUT MIGHT BE WRONG (5->3) directions
+	   (let* ((h1 (find-obj-with-props (scaffold cur-tri)
+						  `((:i . 22) )))
+		  (h2 (find-obj-with-props (scaffold next-tri)
+						  `((:i . 1) )))
+		  (h3 (find-obj-with-props (scaffold next-tri)
+						  `((:i . 2) )))
+		  (stap (create-staple
+			 `((:obj ,h3  :start 18 :end 26  :from-3end t)
+			   (:obj ,h2  :start 0 :end 17  :from-3end nil)
+			   (:single-strand t :num-nts 3)
+			   (:obj ,h1  :start 23 :end 33  :from-3end nil)))))
+	     stap))
+	  (t nil))))
+
+
+(defun staple-bridges-corner (corner)
+  (let ((staps (remove nil
+		       (loop for k from 1 to 3 collect
+					       (remove nil
+						       (loop for i from 1 to 22 collect
+										(staple-bridge-corner corner k i)))))))
+    staps))
+
+
+
+(defmethod corner-triangle ((corner dna-corner) num)
+  (cond ((= num 1) (t1 corner))
+	((= num 2) (t2 corner))
+	((= num 3) (t3 corner))
+	(t (error "Only [1,3] are valid indexes"))))
