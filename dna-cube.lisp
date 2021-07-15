@@ -10,23 +10,23 @@
 
 (defun align-cones (c1 c2 edge)
   (let* ((tri (cond ((= 1 edge) (t1 c1))
-		    ((= 2 edge) (t2 c1))
-		    ((= 3 edge) (t3 c1))
-		    (t (error "invalid num for edge"))))
-	 (tri2 (cond ((= 1 edge) (t1 c2))
-		     ((= 2 edge) (t2 c2))
-		     ((= 3 edge) (t3 c2))
-		     (t (error "invalid num for edge"))))
-	 (r1 (rotation-matrix
-	      (tri-edge tri)
-	      pi))
-	 (r2 (rotation-matrix
-	      (edge->center tri)
-	      pi)))
+                    ((= 2 edge) (t2 c1))
+                    ((= 3 edge) (t3 c1))
+                    (t (error "invalid num for edge"))))
+         (tri2 (cond ((= 1 edge) (t1 c2))
+                     ((= 2 edge) (t2 c2))
+                     ((= 3 edge) (t3 c2))
+                     (t (error "invalid num for edge"))))
+         (r1 (rotation-matrix
+              (tri-edge tri)
+              pi))
+         (r2 (rotation-matrix
+              (edge->center tri)
+              pi)))
     (rotate-obj c2 r1)
     (rotate-obj c2 r2)
     (translate-obj c2 (scale (edge->center tri)
-			     (- *w*)))))
+                             (- *w*)))))
 
 (progn
   (defmethod initialize-instance :after ((obj dna-cube) &key)  
@@ -42,11 +42,11 @@
       (add-parent c4 obj)
       (join-cube obj))
     (format t "~A" (tfms obj))
-    ;(rotate-obj obj (rotation-matrix (v3 0 1 0) (/ pi 4)))
+                                        ;(rotate-obj obj (rotation-matrix (v3 0 1 0) (/ pi 4)))
     obj
     )
-;  (make-instance 'dna-cube)
-     
+                                        ;  (make-instance 'dna-cube)
+
   (defun join-cube (cube)
     (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
       (join-triangle (t1 c1) (t1 c2) :parent cube)
@@ -56,28 +56,28 @@
       (join-triangle (t2 c2) (t2 c4) :parent cube)
       (join-triangle (t1 c3) (t1 c4) :parent cube)
       
-      ;(break  c1)
+                                        ;(break  c1)
       ))
   )
 
 
 
 
-;(break "~A" (length (stap-strands (c1 (make-instance 'dna-cube)))))
-;(break (make-instance 'dna-cube))
+                                        ;(break "~A" (length (stap-strands (c1 (make-instance 'dna-cube)))))
+                                        ;(break (make-instance 'dna-cube))
 
-  
+
 
 (defmethod write-oxdna ((obj dna-cube) &key filename (all t) (start 0) (prev -1) (next -1) (strand 1))
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) obj
-    ;(break "~A" (5nt c1))
+                                        ;(break "~A" (5nt c1))
     (wmdna filename
-	   (all-to-write obj)
-	   )))
+           (all-to-write obj)
+           )))
 
 (defmethod all-to-write ((obj dna-cube))
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) obj
-    ;(break "~A" (5nt c1))
+                                        ;(break "~A" (5nt c1))
     (list
      (all-to-write c1)
      (all-to-write c2)
@@ -90,9 +90,9 @@
 (defmethod stap-bridges-as-idt ((cube dna-cube) prefix )
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
     (let ((name1 (concatenate 'string prefix "_stap_bridge_cone1"))
-	  (name2 (concatenate 'string prefix "_stap_bridge_cone2"))
-	  (name3 (concatenate 'string prefix "_stap_bridge_cone3"))
-	  (name4 (concatenate 'string prefix "_stap_bridge_cone4")))
+          (name2 (concatenate 'string prefix "_stap_bridge_cone2"))
+          (name3 (concatenate 'string prefix "_stap_bridge_cone3"))
+          (name4 (concatenate 'string prefix "_stap_bridge_cone4")))
       (list
        (stap-bridges-as-idt c1 name1)
        (stap-bridges-as-idt c2 name2)
@@ -102,9 +102,9 @@
 (defmethod joining-strands-as-idt ((cube dna-cube) prefix )
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
     (let ((name1 (concatenate 'string prefix "_joining_strand_cone1"))
-	  (name2 (concatenate 'string prefix "_joining_strand_cone2"))
-	  (name3 (concatenate 'string prefix "_joining_strand_cone3"))
-	  (name4 (concatenate 'string prefix "_joining_strand_cone4")))
+          (name2 (concatenate 'string prefix "_joining_strand_cone2"))
+          (name3 (concatenate 'string prefix "_joining_strand_cone3"))
+          (name4 (concatenate 'string prefix "_joining_strand_cone4")))
       (list
        (joining-strands-as-idt c1 name1)
        (joining-strands-as-idt c2 name2)
@@ -114,9 +114,9 @@
 (defmethod internal-staps-as-idt ((cube dna-cube) prefix )
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
     (let ((name1 (concatenate 'string prefix "_internal_stap_cone1"))
-	  (name2 (concatenate 'string prefix "_internal_stap_cone2"))
-	  (name3 (concatenate 'string prefix "_internal_stap_cone3"))
-	  (name4 (concatenate 'string prefix "_internal_stap_cone4")))
+          (name2 (concatenate 'string prefix "_internal_stap_cone2"))
+          (name3 (concatenate 'string prefix "_internal_stap_cone3"))
+          (name4 (concatenate 'string prefix "_internal_stap_cone4")))
       (list
        (internal-staps-as-idt c1 name1)
        (internal-staps-as-idt c2 name2)
@@ -125,6 +125,6 @@
 
 (defun as-idt (cube)
   (let* ((idt (list (stap-bridges-as-idt cube "cube")
-		    (joining-strands-as-idt cube "cube")
-		    (internal-staps-as-idt cube "cube"))))
+                    (joining-strands-as-idt cube "cube")
+                    (internal-staps-as-idt cube "cube"))))
     idt))
