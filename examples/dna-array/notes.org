@@ -1,0 +1,7 @@
+#+TITLE: Notes
+
+* Need a better way to define the NTs we get from children for printing
+* Document indexing for (create-staple) (seems like 0 based indexing is used)
+* Considate using extra class slots for things like c1 vs properties
+* Considate using extra class slots for things like c1 vs properties
+* Consider adding props to staples to give their type
