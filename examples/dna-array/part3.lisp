@@ -180,12 +180,14 @@ desc: indices traveresd i-..."
   (list
    (all-triangle (t1 c))
    (all-triangle (t2 c))
-   (all-triangle (t3 c))))
+   (all-triangle (t3 c))
+   (staples c)))
 
 (describe 'dna-corner)
 
 
 (wmdna "./corner" (all-corner (make-instance 'dna-corner)))
+
 
 
 
@@ -450,3 +452,126 @@ if from22=t then the vector will point from helix 22->21"
   (wmdna "corner_stap_briges_internal_staps_1"
          (car (all-corner corner))
          (staple-bridges-corner corner)))
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;           Triangle Joining          ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun triangle-joining-staples (t1 i1 t2 i2  &key (overlap-len 4))
+  "Joins triangle t1 helice i1 to t2 i2,
+Returns values staple1 (ext) staple2 (tru)"
+  (let* ((h1-i1 (find-obj-with-props (scaffold t1)
+                                     `((:i . ,i1))))
+         (h1-i1+1 (find-obj-with-props (scaffold t1)
+                                       `((:i . ,(+ i1 1)) )))
+         (h2-i2 (find-obj-with-props (scaffold t2)
+                                     `((:i . ,i2) )))
+         (h2-i2-1 (find-obj-with-props (scaffold t2)
+                                       `((:i . ,(- i2 1)) )))
+         stap1 stap2)
+    (multiple-value-bind (stap nts)
+        (create-staple `((:obj ,h2-i2  :start 0 :end ,overlap-len  :from-3end nil)
+                         (:obj ,h1-i1  :start 0 :end 16  :from-3end t)
+                         (:obj ,h1-i1+1  :start 0 :end 16  :from-3end nil)))
+      (setf stap1 stap))
+    (multiple-value-bind (stap nts)
+        (create-staple `((:obj ,h2-i2-1  :start 0 :end 16  :from-3end t)
+                         (:obj ,h2-i2  :start ,overlap-len :end 16  :from-3end nil)))
+      (setf stap2 stap))
+                                        ;(break "~A"  (list stap1 stap2))
+    (list stap1 stap2)
+    ))
+
+
+(defun join-triangles (t1 t2
+                       &key (overlap-len 4)
+                         (indices '(1 5 9 13 17 21))
+                         parent)
+  "Creates staple strands which connect triangle 1 and 2 with truncations on t2 and extensions on t1"
+  (let* ((i1s indices)
+         (i2s (mapcar #'(lambda (x)
+                          (- (+ *2r* 1) x))
+                      i1s))
+         (staps (mapcar #'(lambda (i1 i2)
+                            (triangle-joining-staples t1 i1 t2  i2
+                                                      :overlap-len overlap-len))
+                        i1s i2s)))
+    (mapcar #'(lambda (stap-pair i1 i2)
+                (add-prop (first stap-pair) :i i1)
+                (add-prop (first stap-pair) :join-strand t)
+                (add-parent (first stap-pair)
+                            (if parent
+                                parent
+                                t1))
+                (push (first stap-pair) (staples t1))
+                (add-prop (second stap-pair) :i i2)
+                (add-prop (second stap-pair) :join-strand t)
+                (add-parent (second stap-pair) (if parent
+                                                   parent
+                                                   t2))
+                (push (second stap-pair) (staples t2)))
+            staps i1s i2s)
+    staps))
+
+
+
+
+(defun join-cube (cube &key (overlap-len 2))
+    (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) cube
+      (join-triangle (t1 c1) (t1 c2) :parent cube :overlap-len overlap-len)
+      (join-triangle (t2 c1) (t2 c3) :parent cube :overlap-len overlap-len)
+      (join-triangle (t3 c1) (t3 c4) :parent cube :overlap-len overlap-len)
+      (join-triangle (t3 c2) (t3 c3) :parent cube :overlap-len overlap-len)
+      (join-triangle (t2 c2) (t2 c4) :parent cube :overlap-len overlap-len)
+      (join-triangle (t1 c3) (t1 c4) :parent cube :overlap-len overlap-len)
+
+                                        ;(break  c1)
+      ))
+
+
+
+(defun capping-ends (triangle &key
+                                (indices '(3 7 11 15 19))
+                                (len 16)
+                                parent)
+  (let* ((h1s (mapcar #'(lambda (x)
+                          (find-obj-with-props
+                           (scaffold triangle)
+                           `((:i . ,x))))
+                      indices))
+         (h2s (mapcar #'(lambda (x)
+                          (find-obj-with-props
+                           (scaffold triangle)
+                           `((:i . ,(+ x 1)))))
+                      indices))
+         (staps (mapcar
+                 #'(lambda (h1 h2)
+                     (create-staple `((:obj ,h1  :start 0 :end ,len  :from-3end t)
+                                      (:obj ,h2  :start 0 :end ,len  :from-3end nil))))
+
+                 h1s h2s)))
+    (mapcar #'(lambda (stap)
+                (add-child triangle stap))
+            staps)
+
+    staps))
+
+(let* ((c (make-instance 'dna-cube))
+       ;(t1 (t1 c))
+       ;(t2 (t2 c))
+       ;; (staps (join-triangle t1 t2))
+       ;; (staps (join-cube c))
+       )
+  ;staps
+  (push (capping-ends (t1 (c1 c))) (staples (t1 (c1 c))))
+  (wmdna "joining"
+         (all-triangle (t1 (c1 c)))
+         ;staps
+         ))
