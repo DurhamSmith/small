@@ -216,8 +216,15 @@
     (connect t1 t2) ;; Make them one origami
     (connect t2 t3)
     ;; Add staples
-    (setf (staples obj)
-          (staple-bridges-corner obj))
+    (let ((staps (staple-bridges-corner obj)))
+      (setf (staples obj) staps)
+      ;(break staps)
+      (mapcar #'(lambda (stap)
+                  (add-child obj stap))
+              staps)
+      )
+
+    
     ;; Set 3 and 5nt
     (setf (5nt obj) (5nt t1)
           (3nt obj) (3nt t3))))
