@@ -5,3 +5,5 @@
 * Considate using extra class slots for things like c1 vs properties
 * Considate using extra class slots for things like c1 vs properties
 * Consider adding props to staples to give their type
+** Issue for (wmdna (children obj)) because we write out the scaffold to many times
+* When does manipulating a child

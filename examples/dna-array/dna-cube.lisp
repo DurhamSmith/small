@@ -57,6 +57,7 @@
   ;; Create staple strands to keep corners together
   (join-cube ori)
   ;; Cap unused scaffolds
+  (cap-cube ori)
   ori)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;      DNA-CONE WRITING FUNCTIONS     ;
@@ -71,8 +72,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;               SCRATCH               ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(* 2 (length (connected-nts (5nt (make-instance 'dna-triangle)))) 3 4)
 
-(wmdna "allcube"
+   (wmdna "allcube"
           (all-cube (make-instance 'dna-cube)))
 
 (let* ((c (make-instance 'dna-cube))
