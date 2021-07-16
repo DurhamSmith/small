@@ -203,6 +203,7 @@ Returns values staple1 (ext) staple2 (tru)"
     (add-prop cap-stap :i i)
     (add-prop cap-stap "capping-staple" t)
     (add-child tri cap-stap)
+    (push cap-stap (staples tri))
     cap-stap))
 
 
@@ -327,13 +328,15 @@ if from22=t then the vector will point from helix 22->21"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun all-triangle (tri)
   (list
-   (5nt (first (scaffold tri)))
-   (children tri)
-   ;; (staples tri)
+   (5nt tri)
+   ;(children tri)
+   (staples tri)
    ))
 
 
 (let* ((tri (make-instance 'dna-triangle)))
-  (wmdna "uncapped" tri (children tri))
+  (wmdna "uncapped" tri )
   (cap-triangle tri)
-  (wmdna "capped" tri (children tri)))
+  (wmdna "capped" (all-triangle tri)))
+
+(wmdna "cor" (all-corner (make-instance 'dna-corner)))

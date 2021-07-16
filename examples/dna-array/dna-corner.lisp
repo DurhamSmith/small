@@ -217,18 +217,21 @@
     (connect t2 t3)
     ;; Add staples
     (setf (staples obj)
-        (staple-bridges-corner obj)
-
-    )))
+          (staple-bridges-corner obj))
+    ;; Set 3 and 5nt
+    (setf (5nt obj) (5nt t1)
+          (3nt obj) (3nt t3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;     DNA-CORNER WRITING FUNCTIONS    ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(cdr (all-triangle (make-instance 'dna-triangle)))
 (defun all-corner (c)
   (list
-   (all-triangle (t1 c))
-   (all-triangle (t2 c))
-   (all-triangle (t3 c))
+   (5nt c)
+   (cdr (all-triangle (t1 c)))
+   (cdr (all-triangle (t2 c)))
+   (cdr (all-triangle (t3 c)))
    (staples c)))
 
 (wmdna "./corner" (all-corner (make-instance 'dna-corner)))
