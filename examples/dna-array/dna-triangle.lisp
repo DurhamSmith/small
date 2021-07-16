@@ -206,17 +206,16 @@ Returns values staple1 (ext) staple2 (tru)"
     cap-stap))
 
 
-(defun cap-all (tri &key
-                      (indices '(3 7 11 15 19))
-                      (len 16))
+(defun cap-triangle (tri &key
+                           (indices '(3 7 11 15 19))
+                           (len 16))
   (mapcar #'(lambda (i)
               (cap-triangle-end tri i :len len))
           indices))
 
 
-(let* ((tri (make-instance 'dna-triangle))
-       (stap (cap-all tri)))
-  (wmdna "capped" tri (children tri)))
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -329,6 +328,12 @@ if from22=t then the vector will point from helix 22->21"
 (defun all-triangle (tri)
   (list
    (5nt (first (scaffold tri)))
-   (staples tri)))
+   (children tri)
+   ;; (staples tri)
+   ))
 
-(wmdna "triangle" (all-triangle (make-instance 'dna-triangle)))
+
+(let* ((tri (make-instance 'dna-triangle)))
+  (wmdna "uncapped" tri (children tri))
+  (cap-triangle tri)
+  (wmdna "capped" tri (children tri)))
