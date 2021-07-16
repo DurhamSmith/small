@@ -221,7 +221,7 @@
       ;(break staps)
       (mapcar #'(lambda (stap)
                   (add-child obj stap))
-              staps)
+              (alexandria:flatten staps))
       )
 
     

@@ -49,6 +49,11 @@
 
 (defmethod initialize-instance :after ((ori dna-cube) &key)
   (with-accessors ((c1 c1) (c2 c2) (c3 c3) (c4 c4)) ori
+    ;; Add corners as children so they rotate nicely
+    (add-child ori c1)
+    (add-child ori c2)
+    (add-child ori c3)
+    (add-child ori c4)
     (format t "pre ~A" (all-tfms c2))
     (align-corners c1 c2 1)
     (format t "post ~A" (all-tfms c2))
@@ -58,6 +63,8 @@
   (join-cube ori)
   ;; Cap unused scaffolds
   (cap-cube ori)
+  ;; Rotate the cube so its faces are perpendicular to the axes
+  (rotate-obj ori (rotation-matrix (v3 0 1 0) (/ pi 4)))
   ori)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;      DNA-CONE WRITING FUNCTIONS     ;
@@ -72,6 +79,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;               SCRATCH               ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NT upper limit
 (* 2 (length (connected-nts (5nt (make-instance 'dna-triangle)))) 3 4)
 
    (wmdna "allcube"
@@ -92,4 +100,44 @@
   (wmdna "allcd"
          (ca (all-cube c))
          ;staps
-         )) 
+         ))
+
+
+(let* ((c (make-instance 'dna-cube)))
+  (mapcar #'(lambda (nt)
+              (update-base nt "B"))
+          (connected-nts (5nt (t1 (c1 c)))))
+  (wmdna "taggedcube"
+          (all-cube c)))
+
+
+(let* ((c1 (make-instance 'dna-cube))
+       (c2 (make-instance 'dna-cube)))
+  (mapcar #'(lambda (nt)
+              (update-base nt "B"))
+          (connected-nts (5nt (t1 (c1 c1)))))
+  (mapcar #'(lambda (nt)
+              (update-base nt "X"))
+          (connected-nts (5nt (t1 (c1 c2)))))
+  (translate-obj c2 (v3 (+ (* (cos (/ pi 4)) *w*) 5)
+                        0 0))
+  ;(break "~A" c1)
+  ;(break "~A" c2)
+  (wmdna "rotcube"
+          (all-cube c1)
+          (all-cube c2)))
+
+
+
+
+       
+  ;staps
+  ;(push (capping-ends (t1 (c1 c))) (staples (t1 (c1 c))))
+  (break "~A" (staples (t2 (c1 c))))
+  (push (capping-ends (t2 (c1 c))) (staples (t2 (c1 c))))
+  (break "~A" (staples (t2 (c1 c))))
+  (push (capping-ends (t3 (c1 c))) (staples (t3 (c1 c))))
+  (wmdna "allcd"
+         (ca (all-cube c))
+         ;staps
+         ))
