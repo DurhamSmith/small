@@ -54,9 +54,9 @@
     (add-child ori c2)
     (add-child ori c3)
     (add-child ori c4)
-    (format t "pre ~A" (all-tfms c2))
+    ;(format t "pre ~A" (all-tfms c2))
     (align-corners c1 c2 1)
-    (format t "post ~A" (all-tfms c2))
+    ;(format t "post ~A" (all-tfms c2))
     (align-corners c1 c3 2)
     (align-corners c1 c4 3))
   ;; Create staple strands to keep corners together
@@ -80,27 +80,29 @@
                                         ;               SCRATCH               ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; NT upper limit
-(* 2 (length (connected-nts (5nt (make-instance 'dna-triangle)))) 3 4)
+;;
+;;
 
-   (wmdna "allcube"
-          (all-cube (make-instance 'dna-cube)))
+(+
+ (* 4 (length (connected-nts (5nt (make-instance 'dna-corner)))) 2)
+ (* 4 1141 2))
 
-(let* ((c (make-instance 'dna-cube))
-       ;(t1 (t1 c))
-       ;(t2 (t2 c))
-       ;; (staps (join-triangle t1 t2))
-       ;; (staps (join-cube c))
-       )
-  ;staps
-  ;(push (capping-ends (t1 (c1 c))) (staples (t1 (c1 c))))
-  (break "~A" (staples (t2 (c1 c))))
-  (push (capping-ends (t2 (c1 c))) (staples (t2 (c1 c))))
-  (break "~A" (staples (t2 (c1 c))))
-  (push (capping-ends (t3 (c1 c))) (staples (t3 (c1 c))))
-  (wmdna "allcd"
-         (ca (all-cube c))
-         ;staps
-         ))
+;; (let* ((c (make-instance 'dna-cube))
+;;        ;(t1 (t1 c))
+;;        ;(t2 (t2 c))
+;;        ;; (staps (join-triangle t1 t2))
+;;        ;; (staps (join-cube c))
+;;        )
+;;   ;staps
+;;   ;(push (capping-ends (t1 (c1 c))) (staples (t1 (c1 c))))
+;;   ;(break "~A" (staples (t2 (c1 c))))
+;;   (push (capping-ends (t2 (c1 c))) (staples (t2 (c1 c))))
+;;   ;(break "~A" (staples (t2 (c1 c))))
+;;   (push (capping-ends (t3 (c1 c))) (staples (t3 (c1 c))))
+;;   (wmdna "allcd"
+;;          (ca (all-cube c))
+;;          ;staps
+;;          ))
 
 
 (let* ((c (make-instance 'dna-cube)))
@@ -130,14 +132,20 @@
 
 
 
-       
-  ;staps
-  ;(push (capping-ends (t1 (c1 c))) (staples (t1 (c1 c))))
-  (break "~A" (staples (t2 (c1 c))))
-  (push (capping-ends (t2 (c1 c))) (staples (t2 (c1 c))))
-  (break "~A" (staples (t2 (c1 c))))
-  (push (capping-ends (t3 (c1 c))) (staples (t3 (c1 c))))
-  (wmdna "allcd"
-         (ca (all-cube c))
-         ;staps
-         ))
+;; (reduce #'+ (mapcar #'(lambda (ss)
+;;             ;(break "~A" ss)
+;;             (length (connected-nts (5nt ss))))
+;;         (remove nil (flatten (cdr (all-corner (make-instance 'dna-corner))))))
+;;         )
+
+
+;;   ;staps
+;;   ;(push (capping-ends (t1 (c1 c))) (staples (t1 (c1 c))))
+;;   ;(break "~A" (staples (t2 (c1 c))))
+;;   (push (capping-ends (t2 (c1 c))) (staples (t2 (c1 c))))
+;;   ;(break "~A" (staples (t2 (c1 c))))
+;;   (push (capping-ends (t3 (c1 c))) (staples (t3 (c1 c))))
+;;   (wmdna "allcd"
+;;          (ca (all-cube c))
+;;          ;staps
+;;          ))

@@ -330,7 +330,7 @@ if from22=t then the vector will point from helix 22->21"
   (list
    (5nt tri)
    ;(children tri)
-   (staples tri)
+   ;(staples tri)
    ))
 
 
@@ -338,5 +338,3 @@ if from22=t then the vector will point from helix 22->21"
   (wmdna "uncapped" tri )
   (cap-triangle tri)
   (wmdna "capped" (all-triangle tri)))
-
-(wmdna "cor" (all-corner (make-instance 'dna-corner)))
