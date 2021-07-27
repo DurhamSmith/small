@@ -10,3 +10,26 @@
 		    ))
 
 (upload-design ext-dna)
+
+
+(setf ext-np (make-instance 'extension
+                             :files '("nanoparticle.lisp")
+                             :uuid 2
+                             :name "Nanoparticle Model"
+                                        ;':doi "4.4.4.4"
+                             :dir "/home/dd/quicklisp/local-projects/small/src/nanoparticle"
+                             :desc "A model for cubic nanoparticle"
+                             ))
+
+(upload-design ext-np)
+
+(setf ext-snupi (make-instance 'extension
+                             :files '("nanoparticle.lisp")
+                             :uuid 4
+                             :name "SNUPI (Structured NUcleic acids Programming Interface) Integration"
+                                        ;':doi "4.4.4.4"
+                             :dir "/home/dd/quicklisp/local-projects/small/src/snupi"
+                             :desc "Integration with the SNUPI (Structured NUcleic acids Programming Interface) Multiscale Analysis Framework"
+                             ))
+
+(upload-design ext-np)
