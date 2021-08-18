@@ -69,6 +69,11 @@
   (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
 
 
+(defun write-as (filename filetype &rest dna-objs)
+  (cond ((string-equal "oxdna" filetype) (wmdna filename dna-objs))
+        (t (error "On applicable writing method for filetype ~A" filetype))))
+        
+
 
 (defun wmdna (filename &rest dna-objs)
   "Write oxdna of multiple dna objs"

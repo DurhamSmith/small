@@ -23,8 +23,20 @@
 
 (upload-design ext-np)
 
+(setf ext-oxdna (make-instance 'extension
+                             :files '("oxdna.lisp")
+                             :uuid 3
+                             :name "oxDNA Integration"
+                                        ;':doi "4.4.4.4"
+                             :dir "/home/dd/quicklisp/local-projects/small/src/oxdna"
+                             :desc "Integration with the oxDNA molecular dynamics simulator"
+                             ))
+
+(upload-design ext-oxdna)
+
+
 (setf ext-snupi (make-instance 'extension
-                             :files '("nanoparticle.lisp")
+                             :files '("snupi.lisp")
                              :uuid 4
                              :name "SNUPI (Structured NUcleic acids Programming Interface) Integration"
                                         ;':doi "4.4.4.4"
@@ -32,4 +44,28 @@
                              :desc "Integration with the SNUPI (Structured NUcleic acids Programming Interface) Multiscale Analysis Framework"
                              ))
 
-(upload-design ext-np)
+(upload-design ext-snupi)
+
+
+
+(setf ext-meep (make-instance 'extension
+                             :files '("meep.lisp")
+                             :uuid 5
+                             :name "Meep and MPB Integration"
+                                        ;':doi "4.4.4.4"
+                             :dir "/home/dd/quicklisp/local-projects/small/src/meep"
+                             :desc "Integration with MIT Electromagnetic Equation Propagation (Meep) and MIT Photonic Bands (MPB) software packages"
+                             ))
+
+(upload-design ext-meep)
+
+(setf ext-vmd (make-instance 'extension
+                             :files '("vmd.lisp")
+                             :uuid 6
+                             :name "Visual Molecular Dynamics (VMD) Integration"
+                                        ;':doi "4.4.4.4"
+                             :dir "/home/dd/quicklisp/local-projects/small/src/vmd"
+                             :desc "Integration with the Visual Molecular Dynamics software package"
+                             ))
+
+(upload-design ext-vmd)

@@ -5,13 +5,7 @@
 ;;TODO: We need a way of creating strands and initializing them with a given sequence.
 
 (defclass/std dna-strand (dna)
-  ((vaxis :doc "A vector pointing in the 5'->3' direction")
-   (vbb :doc "A vector pointing in from the base towards the backbone")
-   (vstart :doc "The coordinates of the starting point of the axis (strands 5' end)")
-   (vend :doc "The coordinates of the starting point of the axis (strands 3' end)")
-   (len :doc "The number of nucleotides in the strand" :std 0
-	)
-   (seq :doc "The sequence of the strand (length must be equal to len)"))
+  ()
   (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a base class for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
 
 (defmethod 5end ((obj dna-strand) &key all)
@@ -48,8 +42,16 @@
 ;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
   (dna-connect (3nt o1) (5nt o2))
   (dna-connect o1 o2))
+
+
 ;  (connect-nts (connected-nts o1) (connected-nts o2)))
 ;TODO implemment full logic  (connect-nts (connected-nts o1) (connected o2)))
+
+
+(defmethod connect ((o1 dna-strand) (o2 dna-nt) &rest rest)
+  "TODO check"
+  (dna-connect (3nt o1) o2)
+  (dna-connect o1 o2))
 
 (defun make-dna-strand (&rest rest)
   (make-instance 'dna-strand))
@@ -178,6 +180,9 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
       nts 
       )))
 
+
+
+
 (defmethod make-partner ((obj dna-strand) &key start end from-3end)
   ;;  (let* ((rnts (reverse (connected-nts (5nt obj)))) ; Reverse strand so our new strand points in the 0correct direction
   (let* ((scaff-nts (strand-nts obj
@@ -197,7 +202,7 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
        	 (ps (make-instance (class-of obj) ; Make sure the partner is of the correct strand type 
 			    :5nt (first nts)
 			    :3nt (car (last nts))
-			    :len (length nts)
+			    ;;:len (length nts)
 			    ;; :5nt (if from-3end
 			    ;; 	     (car (last nts))
 			    ;; 	     (first nts))
@@ -240,3 +245,30 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
 
 	
 
+
+;; (defclass/std dna-strand (dna)
+;;   ((vaxis :doc "A vector pointing in the 5'->3' direction")
+;;    (vbb :doc "A vector pointing in from the base towards the backbone")
+;;    (vstart :doc "The coordinates of the starting point of the axis (strands 5' end)")
+;;    (vend :doc "The coordinates of the starting point of the axis (strands 3' end)")
+;;    (len :doc "The number of nucleotides in the strand" :std 0
+;; 	)
+;;    (seq :doc "The sequence of the strand (length must be equal to len)"))
+;;   (:documentation "A CHEM-OBJ representing a DNA strand, mainly used as a base class for DNA-HELIX-STRAND and DNA-SINGLE-STRAND"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;              From demo              ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun reverse-strand (s)
+  (let ((rn (reverse (connected-nts (5nt s)))))
+    (mapcar #'(lambda (nt)
+                (setf (prev nt) nil)
+                (setf (next nt) nil)
+                (setf (vn nt) (magicl::scale (vn nt) -1)))
+            rn)
+    (setf (children s) (connect-nts rn))
+    (setf (5nt s) (first (children s)))
+    (setf (3nt s) (car (last (children s))))
+    s))

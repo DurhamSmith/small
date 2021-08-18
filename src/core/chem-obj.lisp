@@ -3,9 +3,9 @@
 
 ;;TODO:  Can we remove the chem-obj slot
 (defclass/std chem-obj ()
-  ((chem-objs :doc "Contains a hash-table of other CHEM-OBJs. Use  #'add-chem-obj to add to them")
+  ;; ((chem-objs :doc "Contains a hash-table of other CHEM-OBJs. Use  #'add-chem-obj to add to them")
    ;;(parents :std (make-hash-table))
-   (parent :doc "A (single) parent for the chem-obj")
+   ((parent :doc "A (single) parent for the chem-obj")
    (children :doc "A list of children of the chem-obj")
    ;; (children :std (make-hash-table))
    (tfms :doc "A list of transformations (translations and rotations) The order is the first applied opperation is first in the list")

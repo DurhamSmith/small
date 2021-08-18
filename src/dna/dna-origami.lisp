@@ -34,42 +34,42 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 (defun create-staple (scaff-spec)
   "Creates a partner for each scaff-obj"
   (let* ((helix-staps
-	   (mapcar #'(lambda (obj-spec)
-		       (when (getf obj-spec :obj)
-			 (staple-partner
-			  (getf obj-spec :obj)
-			  :start (getf obj-spec :start)
-			  :end (getf obj-spec :end)
-			  :from-3end (getf obj-spec :from-3end)
-			  )))
-		   scaff-spec))
-	 (single-strands
-	   (loop
-	     for i from 0 to (- (length scaff-spec) 1)
-	     collect
-	     (let* ((spec (nth i scaff-spec))
-		    (vbb (v3 0 1 1))
-		    prev-hel next-hel)
-	       (when (getf spec :single-strand)
-		 (let ((prev-nt (cm->bb (cm (3nt (nth (- i 1) helix-staps )))
-					(vbb (3nt (nth (- i 1) helix-staps )))))
-		       (next-nt (cm->bb (cm (5nt (nth (+ i 1) helix-staps)))
-					(vbb (5nt (nth (+ i 1) helix-staps)))))
-		       (num-nts (getf spec :num-nts)))
-		   (bridging-single-strand prev-nt next-nt vbb :len num-nts))))))
-	 (staps
-	   ))
+           (mapcar #'(lambda (obj-spec)
+                       (when (getf obj-spec :obj)
+                         (staple-partner
+                          (getf obj-spec :obj)
+                          :start (getf obj-spec :start)
+                          :end (getf obj-spec :end)
+                          :from-3end (getf obj-spec :from-3end)
+                          )))
+                   scaff-spec))
+         (single-strands
+           (loop
+             for i from 0 to (- (length scaff-spec) 1)
+             collect
+             (let* ((spec (nth i scaff-spec))
+                    (vbb (v3 0 1 1))
+                    prev-hel next-hel)
+               (when (getf spec :single-strand)
+                 (let ((prev-nt (cm->bb (cm (3nt (nth (- i 1) helix-staps )))
+                                        (vbb (3nt (nth (- i 1) helix-staps )))))
+                       (next-nt (cm->bb (cm (5nt (nth (+ i 1) helix-staps)))
+                                        (vbb (5nt (nth (+ i 1) helix-staps)))))
+                       (num-nts (getf spec :num-nts)))
+                   (bridging-single-strand prev-nt next-nt vbb :len num-nts))))))
+         (staps
+           ))
     (setf staps
-	  (loop
-	    for i from 0 to (- (length scaff-spec) 1)
-	    collect
-	    (cond ((getf (nth i scaff-spec) :obj)
-		   (nth i helix-staps))
-		  ((getf (nth i scaff-spec) :single-strand)
-		   (nth i single-strands))
-		  (t (error "Not supported")))))
+          (loop
+            for i from 0 to (- (length scaff-spec) 1)
+            collect
+            (cond ((getf (nth i scaff-spec) :obj)
+                   (nth i helix-staps))
+                  ((getf (nth i scaff-spec) :single-strand)
+                   (nth i single-strands))
+                  (t (error "Not supported")))))
 
-    ;(break "~A ~% SS  ~A ~% ALL ~A" helix-staps single-strands staps)
+                                        ;(break "~A ~% SS  ~A ~% ALL ~A" helix-staps single-strands staps)
     (connect-staples staps)
     (values (staple-from-objs staps) (connected-nts (5nt (first staps))))))
 
@@ -109,8 +109,14 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 ;;   (:documentation "This class defines a DNA origami object. Its scaffold strand is defined as a list similar to subobjs. Its subobjs contain the other dna elements such as edge strands connectorn and staple strands/briges"))
 
 
-;; (defgeneric add-staples (ori staples)
-;;   "Adds a list of origami staples (DNA-STRAND) to oris subobjects. These subobjs have a property list on them which the property :scaffold=t")
+(defmethod add-staples ((ori dna-origami) &rest staples)
+  "Adds a list of origami staples (DNA-STRAND) to oris subobjects. These subobjs have a property list on them which the property :scaffold=t"
+  (mapcar #'(lambda (stap)
+              (add-child ori stap))
+          staples)
+  (if (staples ori)
+      (push staples (staples ori))
+      (setf (staples ori) staples)))
 
 
 (defmethod add-to-scaffold ((ori dna-origami) (scaff-obj dna))
@@ -169,3 +175,27 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
   "Take a dna-origami object and a string containing the new bases for the scaffold and sets the scaffold bases to this string"
   (let ((nts (connected-nts (5nt ori))))
     (mapcar #'update-base nts (map 'list #'string  bases))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;              From Demo              ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun children-without-scaff (ori)
+  ;(break "cws ~A" ori)
+  (let* ((all-children (children ori))
+        (all-scaff (scaffold ori))
+        (cwos (mapcar #'(lambda (scaff)
+                          (delete scaff all-children))
+                      all-scaff)))
+    all-children))
+
+
+
+(defun non-scaffold (ori)
+  (alexandria:flatten (mapcar #'(lambda (child)
+   ;           (break "~A" child)
+              (if (typep child 'dna-origami)
+                  (children-without-scaff child)
+                  child))
+          (children ori))))
