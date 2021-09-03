@@ -27,7 +27,6 @@
    (partner :doc "A DNA-NT object that forms a Watson-Crick base pair"))
   (:documentation "A class for DNA chem-objs. Defines constants and connect methods"))
 
-                                        ;(describe 'dna)
 
                                         ;TODO: Should I add a destructive keyword?
 (defgeneric make-partner (obj &key start end from-3end)
@@ -69,7 +68,7 @@
   (:documentation "Returns (VALUES DNA-NT vector-with-dna-nts-axis-coords) of the 5 prime end."))
 
 
-(defun write-as (filename filetype &rest dna-objs)
+(defun write-as (filetype filename &rest dna-objs)
   (cond ((string-equal "oxdna" filetype) (wmdna filename dna-objs))
         (t (error "On applicable writing method for filetype ~A" filetype))))
         
