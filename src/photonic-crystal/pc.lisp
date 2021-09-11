@@ -166,9 +166,9 @@
 (get-band-structure h)
 
 (pymethod (mode-solver h) 'run_te)
-                (mpb:output-at-kpoint (meep-v3 (/ -1 3) (/ 1 3) 0)
-                                      #'mpb:fix-efield-phase
-                                      #'mpb:output-efield-z))
+                ;; (mpb:output-at-kpoint (meep-v3 (/ -1 3) (/ 1 3) 0)
+                ;;                       #'mpb:fix-efield-phase
+                ;;                       #'mpb:output-efield-z))
 
 (setq h (make-instance 'hybrid-cube-array :cube-type 'hybrid-cube))
 (pyslot-value (get-band-structure h) 'geometry)
