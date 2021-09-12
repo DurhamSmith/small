@@ -45,4 +45,5 @@
 	   #:add-nt
 	   #:dna-single-strand
 	   #:dna-helix-strand
+	   #:dna-origami
 	   #:t2))

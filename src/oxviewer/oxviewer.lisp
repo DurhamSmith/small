@@ -4,7 +4,7 @@
 
 
 
-(show-in-oxview "cb" (all-cube (make-instance 'dna-cube)))
+;;(show-in-oxview "cb" (all-cube (make-instance 'dna-cube)))
 
 (defun show-in-oxview (filename &rest dna)
   (write-as "oxdna" filename dna)
