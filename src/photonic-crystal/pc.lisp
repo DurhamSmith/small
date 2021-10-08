@@ -1,12 +1,10 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+       ;; Package Importing and loading the DNA cube array definitions       ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (ql:quickload :small)
 (ql:quickload '("defclass-std"  "py4cl2"))
 (defpackage :small (:use #:cl #:defclass-std #:py4cl2 #:small))
 (in-package :small)
-
-;; (ql:quickload '("defclass-std"  "py4cl2" "small"))
-;; (defpackage :pc (:use #:cl #:defclass-std #:py4cl2 #:small))
-;; (in-package :pc)
-
 
 ;; Here we import the actual DNA cube and an array of it
 (load "/home/dd/small_demos/dna-array/utils.lisp")
@@ -14,13 +12,17 @@
 (load "/home/dd/small_demos/dna-array/dna-corner.lisp")
 (load "/home/dd/small_demos/dna-array/dna-cube.lisp")
 (load "/home/dd/small_demos/dna-array/dna-cube-array.lisp")
+
 ;; Here we just have a dummy cube. Sometimes this can be useful if we just want
 ;; to test size/material combinations and we don't need other info than band struct
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;             py4cl2 setup            ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setf (py4cl2::config-var 'py4cl2:pycmd) "/home/dd/anaconda3/envs/meep/bin/python")
 
-(defpymodule "meep" t)
-(defpymodule "meep.mpb" t :lisp-package "MPB")
+(py4cl2:defpymodule "meep" t)
+(py4cl2:defpymodule "meep.mpb" t :lisp-package "MPB")
 (py4cl2:defpymodule "matplotlib.pyplot" nil :lisp-package "PLT")
 
 
@@ -31,22 +33,24 @@
 (defparameter *nm/a* (/ 130 1) "Conversion factor to convert nanometers to units of a used in meep. Set using set-meep-system-size")
 (defparameter *a/nm* (/ 1 130) "Conversion factor to convert units of a used in meep to nanometers. Set using set-meep-system-size")
 
+(defmethod nm->a (vec)
+  "Converts a measurment in nanometers to MEEP/MPBs units of a"
+  (magicl::scale vec *a/nm*))
+
+(defmethod a->nm (vec)
+  "Converts a measurment in MEEP/MPBs units of a to nanometers"
+  (magicl::scale vec *nm/a*))
+
 (defun set-meep-system-size (nm a)
   "Sets the global variables *nm/a* and *a/nm*"
   (setf *nm/a* (/ nm a)
         *a/nm* (/ a nm)))
 
 
-(defparameter *w* 88.44)
-
+(defparameter *w* 88.44) ;; Width of the side of a DNA-Triangle
+;; We multiply because triangle edges run between opposite corners of the cubes face
+;; This gives us the side length of the cube
 (set-meep-system-size (+ (* (cos (/ pi 4)) *w* 2) 5) 1)
-
-(defmethod nm->a (vec)
-  (magicl::scale vec *a/nm*))
-
-(defmethod a->nm (vec)
-  (magicl::scale vec *nm/a*))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;  Scaling transforms for units of a  ;
