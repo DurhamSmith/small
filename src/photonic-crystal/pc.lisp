@@ -55,9 +55,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;  Scaling transforms for units of a  ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun scale-tfms (tfms scale)
-
+  "Takes a list of valid transformation in small and scales them to meeps units of a.
+NOTE only translations are scaled since rotations are invariant when shrinking/expanding coordinate system "
     (let* ((scaled-tfms (mapcar #'(lambda (tfm)
                                     (if (string-equal (car tfm) "translate")
                                         (cons "translate" (magicl:scale (cdr tfm) scale))
@@ -67,29 +67,21 @@
 
 
 (defmethod apply-tfms-scaled ((obj chem-obj) v scale)
-  "Does all the transformations that have been applied to the object in the order they were applied"
+  "First scales translations then does all the transformations that have been applied to the object in the order they were applied"
   (let* ((tfms (scale-tfms (small::all-tfms obj) scale))
          (rl (reverse tfms))
          (res (reduce #'small::apply-transformation tfms :initial-value  v :from-end t)))
     res))
 
 (defmethod apply-tfms-in-units-of-a ((obj chem-obj) v)
+  "Gets transformations applied to obj, scales the translations so that they are expressed in MEEP/MPBs units of a then applies all transformations to vector v"
   (apply-tfms-scaled obj v *a/nm*))
-
-;; (mapcar #'(lambda (child)
-;;             ;(apply-tfms-in-units-of-a child (nm->a (center child))))
-;;              (nm->a (size child)))
-        ;;         (small::children (make-instance 'cube-array)))
-
-
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                      ; Meep function calls and class creation ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun meep-v3 (&optional (x 0d0) (y 0d0) (z 0d0))
+  "Creates a vector used by MEEP/MPB"
   (pyeval "meep.Vector3(" x "," y "," z ")"))
 
 (defun set-python-class-slots (class slots-alist)
@@ -120,15 +112,14 @@
 
 
 (defmethod as-meep-dielectric ((di meep-dielectric))
-  "Creates a dielectric material in meep units"
+  "Creates a dielectric used in MEEP/MPB and specified  in  MEEP/MPB units of a"
   (with-accessors ((eps eps) (center center) (size size)) di
     (let ((asize (nm->a size)) ; We convert to units of a since thats what the meep package requires
-          ;; Here we need to make sure that if any translation have been do them in units of a not nm
+          ;; Here we need to make sure that if any translation have been do them in units of a notnm
           (acenter (apply-tfms-in-units-of-a di (nm->a center))))
       (meep:block/class :size (list (x asize) (y asize) (z asize))
                         :center (list (x acenter) (y acenter) (z acenter))
                         :material (meep:medium/class :epsilon eps )))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;        Photonic Crystal Class       ;
