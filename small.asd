@@ -20,6 +20,7 @@
                (:file "src/dna/dna-helix-strand")
                (:file "src/dna/dna-single-strand")
                (:file "src/dna/dna-origami")
+               (:file "src/oxviewer/oxviewer")
                ))
 
 ;;(make-instance 'dna-nt )

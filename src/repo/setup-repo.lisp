@@ -2,7 +2,7 @@
 
 (setf ext-dna (make-instance 'extension
 		    :files '("dna.lisp" "dna-nt.lisp" "dna-strand.lisp" "dna-helix-strand.lisp" "dna-single-strand.lisp" "dna-origami.lisp")
-		    :uuid 1
+		    :uuid 18
 		    :name "DNA Model"
 		    ;':doi "4.4.4.4"
 		    :dir "/home/dd/quicklisp/local-projects/small/src/dna"
@@ -10,7 +10,7 @@
 		    ))
 
 (upload-design ext-dna)
-
+*credentials*
 
 (setf ext-np (make-instance 'extension
                              :files '("nanoparticle.lisp")

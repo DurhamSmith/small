@@ -138,12 +138,17 @@
    (tm-freqs)
    (te-gaps)
    (te-freqs)
-   (kpoints :std (vector (meep-v3)          ;; Gamma
-                         (meep-v3 0.5)      ;; X
-                         (meep-v3 0.5 0.5)  ;; M
-                         (meep-v3))
+   (kpoints :std (meep:interpolate
+                  :n 4
+                  :nums (vector (meep-v3)          ;; Gamma
+                                (meep-v3 0.5)      ;; X
+                                (meep-v3 0.5 0.5)  ;; M
+                                (meep-v3)))
             :doc "The kpoints to calculate the bands between in units of a."))
   (:documentation "A class that will perform the simulation of the TM and TE band gaps of a photonic crystal. Any children meep-dielectrics are used for the PC's unit cell."))
+
+
+
 
 (defmethod get-dielectrics ((obj chem-obj))
   "Returns any children that are meep-dielectrics"
@@ -180,9 +185,12 @@
     (let* ((x (pycall 'range (pycall 'len tm-freqs)))
            (z (pycall 'zip x tm-freqs te-freqs))
            (subplot-list (plt:subplots))
-                                        ;(fig (first subplot-list))
+           (fig (first subplot-list))
            (ax (second subplot-list)))
       ;; NOTE: Be careful about the spacing (because python sucks) of these hacky mixes of lisp and python
+      (pymethod fig 'set_figheight 15)
+      (pymethod fig 'set_figwidth 25)
+
       (pyexec "for xz, tmz, tez in " z ": "
               ax".scatter([xz]*len(tmz), tmz, color='blue'); "
               ax".scatter([xz]*len(tez), tez, color='red', facecolors='none')")
@@ -200,15 +208,16 @@
         (pyexec "for gap in " te-gaps ":
     if gap[0] > 1: " ax ".fill_between(" x ", gap[1], gap[2], color='red', alpha=0.2)"))
       ;; Plot labels
-      (pymethod ax 'text 12 0.04 "TM bands" :color "blue" :size 15)
-      (pymethod ax 'text 13.05 0.235 "TE bands" :color "red" :size 15)
+      (pymethod ax 'text 5 0.9 "TM bands" :color "blue" :size 60)
+      (pymethod ax 'text 10 0.9 "TE bands" :color "red" :size 60)
       (pymethod ax 'set_xticks (pyeval "[i*((len(" tm-freqs ") - 4) / 3)+i for i in range(4)]"))
-      (pymethod ax 'set_xticklabels (vector "Γ" "X" "M" "Γ") :size 16)
-      (pymethod ax 'set_ylabel "frequency (c/a)" :size 16)
+      (pymethod ax 'set_xticklabels (vector "Γ" "X" "M" "Γ") :size 80)
+      (pymethod ax 'set_ylabel "Frequency (c/a)" :size 80)
       (pymethod ax 'grid t)
+      ;(pyexec "plt.figure(figsize=(1,1))")
       (plt:savefig (concatenate 'string filename ".pdf")))))
 
-
+(plot-gaps harr "DNA27-band-gap")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;            Photonic Cube            ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -239,7 +248,8 @@
 
 (setq harr (make-instance 'hybrid-cube-array :cube-type 'hybrid-cube))
 (get-band-structure harr)
-(plot-gaps harr "DNA27-band-gaps")
+(plot-gaps harr "DNA27-band-gap")
+
 (show-in-oxview "DNA27-photonic-crystal" (all-array harr))
 
 

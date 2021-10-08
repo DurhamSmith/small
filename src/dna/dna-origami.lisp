@@ -108,9 +108,11 @@ spec: (:obj DNA  :start INT :end INT  :from-3end BOOL) of
 
 (defmethod add-staples ((ori dna-origami) &rest staples)
   "Adds a list of origami staples (DNA-STRAND) to oris subobjects. These subobjs have a property list on them which the property :scaffold=t"
+                                        ;
   (mapcar #'(lambda (stap)
+                                        ;(break "~A" stap)
               (add-child ori stap))
-          staples)
+          (alexandria::flatten staples))
   (if (staples ori)
       (push staples (staples ori))
       (setf (staples ori) staples)))

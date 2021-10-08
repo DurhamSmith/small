@@ -46,4 +46,5 @@
 	   #:dna-single-strand
 	   #:dna-helix-strand
 	   #:dna-origami
-	   #:t2))
+	   #:t2
+	   #:show-in-oxview))
