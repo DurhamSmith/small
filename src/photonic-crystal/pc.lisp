@@ -126,13 +126,13 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defclass/std photonic-crystal (chem-obj)
   ((cell-size :std (meep:lattice/class :size '(1.2 1.2 1.2)) :doc "size of the unit cell in nm")
-   (mode-solver :doc "A meep.ModeSolver used to compute the modes of the pc. Other args provide setup to this, see get-band-structure")
+   (mode-solver :doc "A meep.MPB.ModeSolver used to compute the modes of the pc. Other args provide setup to this, see get-band-structure")
    (num-bands :std 8 :doc "The number of photonic bands to compute")
    (res :std 32 :doc "The resolution of the meep sim. See:")
-   (tm-gaps)
-   (tm-freqs)
-   (te-gaps)
-   (te-freqs)
+   (tm-gaps :doc "The calculated TM band gaps")
+   (tm-freqs :doc "The calculated TM frequencies")
+   (te-gaps :doc "The calculated TE band gaps")
+   (te-freqs :doc "The calculated TE frequencies")
    (kpoints :std (meep:interpolate
                   :n 4
                   :nums (vector (meep-v3)          ;; Gamma
@@ -141,8 +141,6 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
                                 (meep-v3)))
             :doc "The kpoints to calculate the bands between in units of a."))
   (:documentation "A class that will perform the simulation of the TM and TE band gaps of a photonic crystal. Any children meep-dielectrics are used for the PC's unit cell."))
-
-
 
 
 (defmethod get-dielectrics ((obj chem-obj))
@@ -176,6 +174,7 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
 
 
 (defmethod plot-gaps ((pc photonic-crystal) &optional (filename "result"))
+  "Uses matplotlib to plot the bandgaps of the photonic crystal."
   (with-slots (tm-gaps tm-freqs te-gaps te-freqs) pc
     (let* ((x (pycall 'range (pycall 'len tm-freqs)))
            (z (pycall 'zip x tm-freqs te-freqs))
@@ -212,7 +211,7 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
       ;(pyexec "plt.figure(figsize=(1,1))")
       (plt:savefig (concatenate 'string filename ".pdf")))))
 
-(plot-gaps harr "DNA27-band-gap")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;            Photonic Cube            ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -241,44 +240,9 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
                                  (+ (* (cos (/ pi 4)) small::*w* -1) -2.5)
                                  (+ (* (cos (/ pi 4)) small::*w* -1) -2.5))))
 
+
+
 (setq harr (make-instance 'hybrid-cube-array :cube-type 'hybrid-cube))
 (get-band-structure harr)
 (plot-gaps harr "DNA27-band-gap")
-
 (show-in-oxview "DNA27-photonic-crystal" (all-array harr))
-
-
-
-
-
-
-
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                                        ;               Scratch               ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (small::all-array harr)
-;; (small::write-as "oxdna" "hybrid-array" (small::all-array h))
-;; (small::write-as "oxdna" "hybrid-arrays" (small::all-array harrs))
-;; (small::write-as "oxdna" "hybrid-arrayz" (small::all-array harrz))
-;; (get-dielectrics harr)
-
-
-;; (mapcar #'(lambda (d)
-;;             (list (cons "center"
-;;                         (list (pyslot-value (pyslot-value d 'center) 'x)
-;;                               (pyslot-value (pyslot-value d 'center) 'y)
-;;                               (pyslot-value (pyslot-value d 'center) 'z)))
-;;                   (cons "size"
-;;                         (list (pyslot-value (pyslot-value d 'size) 'x)
-;;                               (pyslot-value (pyslot-value d 'size) 'y)
-;;                               (pyslot-value (pyslot-value d 'size) 'z)))
-;;                   (cons "eps"
-;;                         (pyslot-value
-;;                          (pyslot-value (pyslot-value d 'material) 'epsilon-diag)
-;;                          'x))))
-;;         (mapcar #'as-meep-dielectric
-;;                 (get-dielectrics harrs)))
