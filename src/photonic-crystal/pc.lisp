@@ -21,6 +21,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setf (py4cl2::config-var 'py4cl2:pycmd) "/home/dd/anaconda3/envs/meep/bin/python")
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;        Import python modules        ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (py4cl2:defpymodule "meep" t)
 (py4cl2:defpymodule "meep.mpb" t :lisp-package "MPB")
 (py4cl2:defpymodule "matplotlib.pyplot" nil :lisp-package "PLT")
@@ -50,6 +55,8 @@
 (defparameter *w* 88.44) ;; Width of the side of a DNA-Triangle
 ;; We multiply because triangle edges run between opposite corners of the cubes face
 ;; This gives us the side length of the cube
+(show-in-oxview "cube" (all-cube (make-instance 'dna-cube))) ; => NIL, NIL, 0
+
 (set-meep-system-size (+ (* (cos (/ pi 4)) *w* 2) 5) 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -128,7 +135,7 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
   ((cell-size :std (meep:lattice/class :size '(1.2 1.2 1.2)) :doc "size of the unit cell in nm")
    (mode-solver :doc "A meep.MPB.ModeSolver used to compute the modes of the pc. Other args provide setup to this, see get-band-structure")
    (num-bands :std 8 :doc "The number of photonic bands to compute")
-   (res :std 32 :doc "The resolution of the meep sim. See:")
+   (res :std 32 :doc "The resolution of the meep sim. See meep/mpb docs")
    (tm-gaps :doc "The calculated TM band gaps")
    (tm-freqs :doc "The calculated TM frequencies")
    (te-gaps :doc "The calculated TE band gaps")
@@ -217,6 +224,7 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defclass/std hybrid-cube (meep-dielectric small::dna-cube)
   ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;            DNA-CUBE-ARRAY           ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -242,7 +250,7 @@ NOTE only translations are scaled since rotations are invariant when shrinking/e
 
 
 
-(setq harr (make-instance 'hybrid-cube-array :cube-type 'hybrid-cube))
-(get-band-structure harr)
-(plot-gaps harr "DNA27-band-gap")
-(show-in-oxview "DNA27-photonic-crystal" (all-array harr))
+;(setq harr (make-instance 'hybrid-cube-array :cube-type 'hybrid-cube))
+;(show-in-oxview "photonic-crystal" (all-array harr))
+;(get-band-structure harr)
+;(plot-gaps harr "band-gaps")
