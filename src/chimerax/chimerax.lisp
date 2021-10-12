@@ -6,10 +6,8 @@
   (tacox-convert filename :from 'oxdna :to 'pdb)
   (uiop:rename-file-overwriting-target
    (concatenate 'string filename ".oxdna.pdb")
-   (concatenate 'string filename ".pdb")))
-
-
-  ;(uiop:run-program (concatenate 'string "oxview " filename ".top " filename ".oxdna")))
+   (concatenate 'string filename ".pdb"))
+  (uiop:run-program (concatenate 'string  "chimerax " filename ".pdb")))
 
 
 (run-chimerax "atest" (helix-strand (v3 1 0 0) (v3 0 1 0) (v3 0 0 1) 10))
