@@ -22,7 +22,8 @@
                (:file "src/dna/dna-origami")
                (:file "src/tacoxdna/tacoxdna")
                (:file "src/oxviewer/oxviewer")
-               (:file "src/chimerax/chimerax.lisp")
+               (:file "src/chimerax/chimerax")
+               (:file "src/vmd/vmd")
                ))
 
 ;;(make-instance 'dna-nt )
