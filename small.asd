@@ -20,7 +20,9 @@
                (:file "src/dna/dna-helix-strand")
                (:file "src/dna/dna-single-strand")
                (:file "src/dna/dna-origami")
+               (:file "src/tacoxdna/tacoxdna")
                (:file "src/oxviewer/oxviewer")
+               (:file "src/chimerax/chimerax.lisp")
                ))
 
 ;;(make-instance 'dna-nt )

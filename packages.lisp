@@ -47,4 +47,7 @@
 	   #:dna-helix-strand
 	   #:dna-origami
 	   #:t2
-	   #:show-in-oxview))
+	   #:tacox-convert
+	   #:show-in-oxview
+	   #:show-in-chimerax
+	   ))

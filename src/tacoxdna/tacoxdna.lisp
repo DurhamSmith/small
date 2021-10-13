@@ -1,8 +1,6 @@
 ;(ql:quickload :small)
 (in-package :small)
 
-(defun find-conversion (from to)
-
 
 (defparameter *tacoxdna-path* "/home/dd/PhD/Software/tacoxDNA")
 (defun tacox-convert (filename &key from to)
