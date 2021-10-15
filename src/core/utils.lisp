@@ -1,5 +1,13 @@
 (in-package #:small)
 
+
+(defun group (source n)
+  (if (endp source)
+      nil
+      (let ((rest (nthcdr n source)))
+        (cons (if (consp rest) (subseq source 0 n) source)
+              (group rest n)))))
+
 ;; (let* ((t1  (make-instance 'dna-triangle))
 ;;        (af (alexandria::flatten (all-to-write t1))))
 ;;   ;(all-to-write t1)

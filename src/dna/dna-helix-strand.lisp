@@ -119,6 +119,8 @@ nts: string ordered from 5'->3'"
 
 
 	   
+
+;(defun make-helix-strand (vax vbb len &key seq tfms)
 (defun make-helix-strand (vax vbb len &opt tfms seq)
   "Returns a DNA-HELIX-STRAND CHEM-OBJ with len NUCLEOTIDEs in its chem-objs class var"
   (make-instance 'dna-helix-strand
