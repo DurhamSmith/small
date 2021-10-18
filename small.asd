@@ -24,6 +24,7 @@
                (:file "src/oxviewer/oxviewer")
                (:file "src/chimerax/chimerax")
                (:file "src/vmd/vmd")
+               (:file "src/oxdna/oxdna.lisp")
                ))
 
 ;;(make-instance 'dna-nt )

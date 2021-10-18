@@ -33,11 +33,11 @@
                 (format stream "~A  = ~A ~%"
                         ;; (break "~A ~A" (first key-val)
                         ;; (second key-val))
-                        (string-downcase (first key-val))
-                        (second key-val)))
+                        (format-oxdna-param (first key-val))
+                        (format-oxdna-param (second key-val))))
             (group options-pairs 2)))
   filename)
-(string 2)
+
 ;(run-oxdna-util output_bonds.py <input_file> <trajectory_file> [counter])
 
 (defmacro run-oxdna-util (&rest rest)
@@ -52,12 +52,97 @@
 
 
 (defun format-oxdna-param (param)
+"Handles case and formatting for writing oxDNA input files"
+  (cond ((numberp param)
+         param)
+        ((stringp param)
+         param)
+        (t (string-downcase param))
+        ))
 
 
-  (cond ((equalp 'sim_type param)
-         (string-upcase param))
-        ((equalp 'backend param)
-         (string-upcase param))
-        ((equalp 'backend_precision param)
-         (string-upcase param))
-         ))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;    Data processing for plotting     ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun get-data (input)
+  "Reads in all data as lisp objects, returns list of read objects"
+  (let* ((data (with-open-file (in input)
+                (loop for line = (read in nil)
+                      while line collect line))))
+    data))
+
+(defun data-range (data)
+  "Returns the range of the data"
+  (- (car (last data)) (first data)))
+
+(defun sort-data (data)
+  "Sorts data"
+  (sort (remove-if-not #'floatp  data) #'>))
+
+
+
+(defun data-between (data min max)
+  "Takes data sorted with #'sort-data and returns how many data are in the interval [min,max)"
+  (let* ((min-pos (position-if #'(lambda (d)
+                                   (>= min d))
+                               data))
+         (max-pos (position-if #'(lambda (d)
+                                   (> max d))
+                               data))
+         (num-in-bin (when min-pos
+                                        ;(break "~A ~A ~A ~A" min-pos max-pos min max)
+                       (if max-pos
+                           (- max-pos min-pos)
+                           (- (length data) min-pos)))))
+    num-in-bin))
+
+
+(defun bin-data (data &key (num-bins 5) (prob t))
+  "Bins with [,) intervals. If prob=t then data is normalized to probability of data"
+  (let* ((num-data (length data))
+         (min (first data))
+         (max (last data))
+         (range (data-range data))
+         (bin-width (/ range num-bins))
+         (bins (loop for i from 1 upto num-bins collect
+                                                (list (+ min (* bin-width (1- i)))
+                                                      (data-between data
+                                                                    (+ min (* bin-width (1- i) ))
+                                                                    (+ min (* bin-width i)))))))
+    (if prob
+        (mapcar #'(lambda (bin)
+                    (setf (second bin) (float (/ (second bin) num-data)))
+                    bin)
+                bins)
+        bins)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                        ;               Plotting              ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun histogram-like-plot (data output)
+  "Plots histogram like data, data should be bined already with form ((interval_start num_entries) ..."
+  (eazy-gnuplot:with-plots (*standard-output* :debug nil)
+    (eazy-gnuplot:gp-setup :terminal '(pngcairo) :output output)
+    (eazy-gnuplot:plot
+     (lambda ()
+       (dolist (l data)
+         (format t "~&~a ~a"  (car l) (second l))))
+     :with '(:histeps)))
+  output)
+
+(defun histogram-plot (input output &key (num-bins 10))
+  "Reads data in input where each line is x y val, sorts, bins and plots as histogram"
+  (histogram-like-plot (bin-data (sort-data (get-data input)) :num-bins 10)
+                       output))
+
+(defun scatter-plot (input output)
+  "Writes data in input file (each line should be xval yval) to file named output"
+  (eazy-gnuplot:with-plots (common-lisp:*standard-output* :debug nil)
+    (eazy-gnuplot:gp-setup :terminal '(pngcairo) :output output)
+    (eazy-gnuplot:plot
+     (pathname input)
+     :with '(:histeps)))
+  output)

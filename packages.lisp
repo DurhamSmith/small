@@ -50,4 +50,9 @@
 	   #:tacox-convert
 	   #:show-in-oxview
 	   #:show-in-chimerax
+	   #:set-oxdna-path
+	   #:run-oxdna
+	   #:make-oxdna-input-file
+	   #:run-oxdna-util
+	   #:format-oxdna-param
 	   ))
