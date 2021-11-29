@@ -2,8 +2,6 @@
 (defparameter *oxdna-exe-path* "/home/dd/PhD/Software/oxDNA/build/bin/oxDNA")
 (defparameter *oxdna-utils-path* "/home/dd/PhD/Software/oxDNA/UTILS/")
 
-
-
 (defun set-oxdna-path (oxdna-path)
   (setf *oxdna-path* oxdna-path
         *oxdna-exe-path* (concatenate 'string oxdna-path "/bulid/bin/oxDNA")
@@ -13,13 +11,14 @@
 (defun run-oxdna (input-file)
   "runs an oxdna sim"
   (break "oxDNA simulation starting on input file ~A" input-file)
-  (let ((shell (uiop:launch-program "bash" :input :stream :output :stream)))
-    (write-line (concatenate 'string
-                            *oxdna-exe-path* " "
-                             input-file)
-                (uiop:process-info-input shell))
-    (force-output (uiop:process-info-input shell))
-    )
+  (sleep 2)
+  ;; (let ((shell (uiop:launch-program "bash" :input :stream :output :stream)))
+  ;;   (write-line (concatenate 'string
+  ;;                           *oxdna-exe-path* " "
+  ;;                            input-file)
+  ;;               (uiop:process-info-input shell))
+  ;;   (force-output (uiop:process-info-input shell))
+  ;;   )
   (break "oxDNA simulation on input file ~A complete" input-file))
 
 
@@ -122,10 +121,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;               Plotting              ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun histogram-like-plot (data output)
+(defun histogram-like-plot (data output &key title xlabel ylabel)
   "Plots histogram like data, data should be bined already with form ((interval_start num_entries) ..."
   (eazy-gnuplot:with-plots (*standard-output* :debug nil)
-    (eazy-gnuplot:gp-setup :terminal '(pngcairo) :output output)
+    (eazy-gnuplot:gp-setup :terminal '(pngcairo)
+                           :output output
+                           :title title
+                           :xlabel xlabel
+                           :ylabel ylabel)
     (eazy-gnuplot:plot
      (lambda ()
        (dolist (l data)
@@ -133,16 +136,24 @@
      :with '(:histeps)))
   output)
 
-(defun histogram-plot (input output &key (num-bins 10))
+(defun histogram-plot (input output &key (num-bins 10) title xlabel ylabel)
   "Reads data in input where each line is x y val, sorts, bins and plots as histogram"
-  (histogram-like-plot (bin-data (sort-data (get-data input)) :num-bins 10)
-                       output))
+  (histogram-like-plot (bin-data (sort-data (get-data input)) :num-bins num-bins)
+                       output
+                       :title title
+                       :xlabel xlabel
+                       :ylabel ylabel))
 
-(defun scatter-plot (input output)
+(defun scatter-plot (input output &key title xlabel ylabel)
   "Writes data in input file (each line should be xval yval) to file named output"
   (eazy-gnuplot:with-plots (common-lisp:*standard-output* :debug nil)
-    (eazy-gnuplot:gp-setup :terminal '(pngcairo) :output output)
+    (eazy-gnuplot:gp-setup :terminal '(pngcairo)
+                           :output output
+                           :title title
+                           :xlabel xlabel
+                           :ylabel ylabel)
     (eazy-gnuplot:plot
      (pathname input)
-     :with '(:histeps)))
+      :with '(:histeps)
+     ))
   output)

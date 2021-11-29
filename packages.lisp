@@ -1,6 +1,6 @@
 ;(in-package :small)
 (defpackage :small
-  (:use #:cl #:alexandria #:asdf #:magicl #:defclass-std #:fset-user)
+  (:use #:cl #:alexandria #:asdf #:magicl #:defclass-std #:fset-user #:eazy-gnuplot)
   (:shadowing-import-from :common-lisp "SOME" "=" "MAP" "TRACE" "NOTANY" "NOTEVERY" "EVERY")
   (:export #:v3       ; vector related 
 	   #:v3l

@@ -2,15 +2,23 @@
 
 
 ;;TODO:  Can we remove the chem-obj slot
-(defclass/std chem-obj ()
-  ;; ((chem-objs :doc "Contains a hash-table of other CHEM-OBJs. Use  #'add-chem-obj to add to them")
-   ;;(parents :std (make-hash-table))
-   ((parent :doc "A (single) parent for the chem-obj")
-   (children :doc "A list of children of the chem-obj")
-   ;; (children :std (make-hash-table))
-   (tfms :doc "A list of transformations (translations and rotations) The order is the first applied opperation is first in the list")
-   (props :std (make-hash-table) :doc "A hashtable for abitrary properties one would like to store"))
-  (:documentation "The base class used for containing chemical objects and the rule for maniipulating them. They can be used to create atomic (in the lisp sense of evaluating to themselves) level detail chemical objects such as atoms or course grain nucleotide models, which have well defined coordinate descriptions. Or chem-obj children can define higher level structures composed of atomic chem-obj or other higher level structures themselves, for example small molecules composed from atoms, DNA helical strands from nucleotides and Double helices from DNA helical strands."))
+;; (defclass/std chem-obj ()
+;;   ;; ((chem-objs :doc "Contains a hash-table of other CHEM-OBJs. Use  #'add-chem-obj to add to them")
+;;    ;;(parents :std (make-hash-table))
+;;    ((parent :doc "A (single) parent for the chem-obj")
+;;    (children :doc "A list of children of the chem-obj")
+;;    ;; (children :std (make-hash-table))
+;;    (tfms :doc "A list of transformations (translations and rotations) The order is the first applied opperation is first in the list")
+;;    (props :std (make-hash-table) :doc "A hashtable for abitrary properties one would like to store"))
+;;   (:documentation "The base class used for containing chemical objects and the rule for maniipulating them. They can be used to create atomic (in the lisp sense of evaluating to themselves) level detail chemical objects such as atoms or course grain nucleotide models, which have well defined coordinate descriptions. Or chem-obj children can define higher level structures composed of atomic chem-obj or other higher level structures themselves, for example small molecules composed from atoms, DNA helical strands from nucleotides and Double helices from DNA helical strands."))
+
+
+(defclass/std CHEM-OBJ ()
+   ((parent :doc "A (single) parent of the CHEM-OBJ")
+    (children :doc "A list of children of the CHEM-OBJ")
+    (tfms :doc "A list of transformations (translations and rotations). The order is the first applied opperation is first in the list")
+    (props :std (make-hash-table) :doc "A hashtable for associating properties the CHEM-OBJ"))
+  (:documentation "The base class used for describing chemical objects in small. CHEM-OBJ facilitates the creation of hierarchical chemical entities using smalls parent child hierarchy (parents and children slots), geometric manipulation of chemical entities (tfms slot), and associating arbitrary properties to chemical entities (props slot). NOTE: models for specific chemical entities should be implemented by inheriting from CHEM-OBJ and providing a geometric description of the entity being modeled"))
 
 
 ;;======================================== START UNCAT FUNCTIONS ================================

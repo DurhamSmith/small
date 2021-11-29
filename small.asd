@@ -8,7 +8,7 @@
   :bug-tracker "https://github.com/DurhamSmith/small/issues"
   :source-control (:git "https://github.com/DurhamSmith/small.git")
   :serial T
-  :depends-on (#:alexandria #:magicl #:defclass-std #:fset)
+  :depends-on (#:alexandria #:magicl #:defclass-std #:fset #:eazy-gnuplot)
   :components ((:file "packages")
                (:file "src/core/linear-algebra")
                (:file "src/core/chem-obj")
@@ -24,7 +24,7 @@
                (:file "src/oxviewer/oxviewer")
                (:file "src/chimerax/chimerax")
                (:file "src/vmd/vmd")
-               (:file "src/oxdna/oxdna.lisp")
+               (:file "src/oxdna/oxdna")
                ))
 
 ;;(make-instance 'dna-nt )
