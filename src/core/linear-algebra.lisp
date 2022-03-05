@@ -51,6 +51,10 @@
 (defun z (v3)
   (v3-elem v3 2))
 
+(defparameter *x-axis* (v3 1 0 0))
+(defparameter *y-axis* (v3 0 1 0))
+(defparameter *z-axis* (v3 0 0 1))
+
 (defun bounds (&rest vecs)
   "Returns VALUES with the first being a v3 with x-coords 
 = max-x-of-all-vecs - min-x-of-all-vecs 
