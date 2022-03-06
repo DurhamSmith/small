@@ -61,7 +61,13 @@
   (:method ((parent chem-obj) (child chem-obj))
     (setf (parent child) parent)
     (push child (children parent))))
-    
+
+
+(defgeneric add-children (parent children)
+  (:method ((parent chem-obj) (children list))
+    (mapcar #'(lambda (child)
+                (add-child parent child))
+            (flatten children))))
 
 
 ;;======================================== END PARENT-CHILD FUNCTIONS ================================
