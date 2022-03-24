@@ -79,16 +79,27 @@
     (+ht (props obj) val :key key)))
 
 ;TODO: Check the behaviour of this for passing (key . vals) and just keys
-(defun has-props (chem-obj needed-props)
-  "Returns t if chemobj contains keys and vals from props in its prop field
-e.g props is an alist "
+;; (defun has-props (chem-obj needed-props)
+;;   "Returns t if chemobj contains keys and vals from props in its prop field
+;; e.g props is an alist "
+;;   (with-accessors ((props props)) chem-obj
+;;     (every #'identity
+;; 	    (mapcar #'(lambda (obj-prop needed-prop)
+;; 			(equal (gethash (car needed-prop) props)
+;; 			       (cdr needed-prop))) ;TODO: Change to take a test fn in
+;; 		    (alexandria::hash-table-alist props)
+;; 		    needed-props))))
+(defun has-props (chem-obj needed-props-alist)
   (with-accessors ((props props)) chem-obj
-    (every #'identity
-	    (mapcar #'(lambda (obj-prop needed-prop)
-			(equal (gethash (car needed-prop) props)
-			       (cdr needed-prop))) ;TODO: Change to take a test fn in
-		    (alexandria::hash-table-alist props)
-		    needed-props))))
+    (when (not (position nil
+                   (mapcar #'(lambda (needed-prop)
+                               (find needed-prop
+                                     (hash-table-alist props)
+                                     :test #'equal))
+                           needed-props-alist)))
+      chem-obj)))
+
+
 
 (defun find-obj-with-props (objs-list props)
   (if (listp objs-list)
