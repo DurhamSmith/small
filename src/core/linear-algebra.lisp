@@ -210,12 +210,6 @@ https://www.web-formulas.com/Math_Formulas/Linear_Algebra_Transform_from_Cylindr
            (= (z v) 0))
        (not (1Dp v))))
 
-(defun crossproduct (v1 v2)
-  (let* (cp (v3
-              (- (* (y v1) (z v2)) (* (z v1) (y v2)))
-              (- (* (z v1) (x v2)) (* (x v1) (z v2)))
-              (- (* (x v1) (y v2)) (* (y v1) (x v2)))
-              ))))
 
 (defun crossproduct (v1 v2 &key (norm t))
   (let* ((cp (v3
