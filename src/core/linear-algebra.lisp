@@ -1,9 +1,6 @@
 (in-package :small)
 
 
-(defparameter *x-axis* (v3 1 0 0))
-(defparameter *y-axis* (v3 0 1 0))
-(defparameter *z-axis* (v3 0 0 1))
 
 
 (defun v3 (x y z &key (type-spec '(double-float)))
@@ -13,6 +10,11 @@
          (z (coerce z type-spec))
          (v (from-list `(,x ,y ,z) '(3 1))))
     v))
+
+(defparameter *x-axis* (v3 1 0 0))
+(defparameter *y-axis* (v3 0 1 0))
+(defparameter *z-axis* (v3 0 0 1))
+
 
 (defun v3l (l  &key (type-spec '(double-float)))
   (v3 (nth 0 l) (nth 1 l) (nth 2 l)))
