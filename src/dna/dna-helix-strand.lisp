@@ -121,18 +121,18 @@ nts: string ordered from 5'->3'"
     (when seq
       (mapcar #'(lambda (nt b)
                   (setf (base nt) b))
-              nts (loop for b across seq collect (string b))))
+              nts (loop for b cross seq collect (string b))))
     (values strand nts)))
 
 
-(defun make-helix-strand (vax vbb len &opt tfms seq)
-  "Returns a DNA-HELIX-STRAND CHEM-OBJ with len NUCLEOTIDEs in its chem-objs class var"
-  (make-instance 'dna-helix-strand
-		 :v-axis vax
-		 :v-bb vbb
-		 :len len
-		 :tfms tfms
-		 :seq seq))
+;; (defun make-helix-strand (vax vbb len &opt tfms seq)
+;;   "Returns a DNA-HELIX-STRAND CHEM-OBJ with len NUCLEOTIDEs in its chem-objs class var"
+;;   (make-instance 'dna-helix-strand
+;; 		 :v-axis vax
+;; 		 :v-bb vbb
+;; 		 :len len
+;; 		 :tfms tfms
+;; 		 :seq seq))
 
 
 
