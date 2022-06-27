@@ -61,7 +61,7 @@ VALUES cm vn vbb"
   "Returns coordinates for the next DNA-NT extending in the 3' direction (or 5' if 5end = t) as
 VALUES cm vn vbb"
   (let* ((vbb+n (next-n-helix-vbb vbb vn :5end 5end :n n))
-	 (cm+n (next-n-helix-cm cm vbb vn :5end 5end :n))
+	 (cm+n (next-n-helix-cm cm vbb vn :5end 5end :n n))
 	 (vn+n (as-unit-vec vn)))
     (values cm+n vbb+n vn+n)))
 
@@ -121,7 +121,7 @@ nts: string ordered from 5'->3'"
     (when seq
       (mapcar #'(lambda (nt b)
                   (setf (base nt) b))
-              nts (loop for b cross seq collect (string b))))
+              nts (loop for b across seq collect (string b))))
     (values strand nts)))
 
 
