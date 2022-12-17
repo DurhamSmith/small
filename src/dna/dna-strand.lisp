@@ -41,7 +41,10 @@
 					;  (break "~A ~A" o1 o2)
 ;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
   (dna-connect (3nt o1) (5nt o2))
-  (dna-connect o1 o2))
+  (dna-connect o1 o2)
+  (setf (5nt o2) (5nt o1))
+  (setf (3nt o1) (3nt o2))
+  (values o1 o2))
 
 
 ;  (connect-nts (connected-nts o1) (connected-nts o2)))
@@ -51,7 +54,17 @@
 (defmethod connect ((o1 dna-strand) (o2 dna-nt) &rest rest)
   "TODO check"
   (dna-connect (3nt o1) o2)
-  (dna-connect o1 o2))
+  (dna-connect o1 o2)
+  (setf (3nt o1) o2)
+  (values o1 o2))
+
+
+(defmethod connect ((o1 dna-nt) (o2 dna-strand) &rest rest)
+  "TODO check"
+  (dna-connect o1 (5nt o2))
+  ;(dna-connect o1 o2)
+  (setf (5nt o2) o1)
+  (values o1 o2))
 
 (defun make-dna-strand (&rest rest)
   (make-instance 'dna-strand))
@@ -98,7 +111,7 @@ if nt=nil the next dna-nt is calculated via (next-nt s)")
   (with-accessors ((5nt 5nt) (3nt 3nt)) obj
     (if 5end
 	(next-nt 5nt :kind (type-of obj))
-	(next-nt 3nt))))
+	(next-nt 3nt :kind (type-of obj)))))
 
   
 (defgeneric nt->3end (obj nt)  
