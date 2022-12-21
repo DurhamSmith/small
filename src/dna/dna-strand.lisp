@@ -38,8 +38,10 @@
   
   "Sets  o2:prev = o1, o1:next = o2 and connects their DNA-NTs"
 
-					;  (break "~A ~A" o1 o2)
-;  (connect-nts (strand-nts o1) (reverse (strand-nts o2)))
+  (mapcar #'(lambda (nt) ; This make sure objects move as one
+                  (add-parent nt o1))
+              (connected-nts (5nt o2)))
+
   (dna-connect (3nt o1) (5nt o2))
   (dna-connect o1 o2)
   (setf (5nt o2) (5nt o1))

@@ -79,7 +79,7 @@ VALUES cm vn vbb"
 
 (defun axis->cm (axis vbb)
   (.+ axis (scale (as-unit-vec vbb) 0.6d0)))
-
+;; TODO Can I make these generic fns and specialize on NT and the other stuff?
 (defun cm->axis (cm vbb)
   (.- cm (scale (as-unit-vec vbb) 0.6d0)))
 
