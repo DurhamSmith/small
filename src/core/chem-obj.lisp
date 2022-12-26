@@ -109,7 +109,11 @@
 	    (find-obj-with-props (cdr objs-list) props)))
       nil))
         
-
+(defun all-obj-with-props (objs-list props)
+  (delete 'nil
+          (mapcar #'(lambda (obj)
+                      (has-props obj props))
+                  objs-list)))
 ;;======================================== END PROP FUNCTIONS ================================
 
 
