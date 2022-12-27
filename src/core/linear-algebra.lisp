@@ -39,6 +39,10 @@
       (from-list (list (x v) (y v) (z v)) '(3))
       v))
 
+
+(defun v3-as-list (v)
+  (list (x v) (y v) (z v)))
+
 ;;; Accessor functions for 3D Vecs. We have the zero check so we can print 0 instead of -0 when we magicl:scale (todo create PR to fix this)
 
 (defun v3-elem (v3 idx)
