@@ -89,15 +89,26 @@
 ;; 			       (cdr needed-prop))) ;TODO: Change to take a test fn in
 ;; 		    (alexandria::hash-table-alist props)
 ;; 		    needed-props))))
+
+
 (defun has-props (chem-obj needed-props-alist)
   (with-accessors ((props props)) chem-obj
     (when (not (position nil
                    (mapcar #'(lambda (needed-prop)
                                (find needed-prop
                                      (hash-table-alist props)
-                                     :test #'equal))
+                                     ;:test #'equal
+                                     :test #'has-props-p))
                            needed-props-alist)))
       chem-obj)))
+
+;;  this fixes has-props to better handle numbers of different types as props
+(defun has-props-p (needed-prop given-prop)
+  ;(break "needed: ~A given: ~A" (cdr needed-prop) (cdr given-prop))
+  (if (numberp (cdr needed-prop))
+      (and (equal (car given-prop) (car needed-prop))
+           (= (cdr given-prop) (cdr needed-prop)))
+      (equal given-prop needed-prop)))
 
 
 
