@@ -355,7 +355,7 @@ if inc-headers = true the header strings are prepended to the list of topology s
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                         ;          Setting sequences          ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun set-sequence (nts sequence)
+(defun set-sequence (nts sequence &key (update-partners nil))
   "Sets the sequence of a list NT (and will also update any partner nts with the complementary base)
 nts: List of DNA-NTs
 sequence: String or List"
@@ -364,7 +364,9 @@ sequence: String or List"
                                  (t ("Error sequence must be a string or list, currently it is a ~A~%With value ~A" (type-of A) A)))))
     (if (= (length nts) (length sequence-as-list))
         (mapcar #'(lambda (nt base)
-                    (update-base nt base))
+                    (if update-partners
+                        (update-base nt base)
+                        (setf (base nt) base)))
                 nts sequence-as-list)
         (error "Length of domain must be the same length.~% Currently domain length=~A and Sequence length=~A" (length nts) (length sequence-as-list)))
     (values nts)))
