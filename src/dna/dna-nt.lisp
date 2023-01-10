@@ -361,7 +361,7 @@ nts: List of DNA-NTs
 sequence: String or List"
   (let* ((sequence-as-list (cond ((stringp sequence) (string->list sequence))
                                  ((listp sequence) sequence)
-                                 (t ("Error sequence must be a string or list, currently it is a ~A~%With value ~A" (type-of A) A)))))
+                                 (t (error "Error sequence must be a string or list, currently it is a ~A~%With value ~A" (type-of sequence) sequence)))))
     (if (= (length nts) (length sequence-as-list))
         (mapcar #'(lambda (nt base)
                     (if update-partners

@@ -190,6 +190,15 @@ Parents transformations are applied AFTER child ones
 Returns VALUES obj & list of transforms on obj"
   (add-transformation obj (cons "translate" v)))
 
+;; NOTE translate-objs largly untested
+(defun translate-objs (objs vec)
+  ;(break "~A" objs)
+  (mapcar #'(lambda (obj)
+              (translate-obj obj vec))
+          objs)
+  objs)
+
+
 (defmethod rotate-obj ((obj chem-obj) rot-mat)
     "prepends translation to tfms obj
 Returns VALUES obj & list of transforms on obj"
